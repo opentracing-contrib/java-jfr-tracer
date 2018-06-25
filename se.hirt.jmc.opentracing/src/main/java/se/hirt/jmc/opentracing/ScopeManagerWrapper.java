@@ -21,7 +21,6 @@ import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 
 /**
- * 
  * @author Marcus Hirt
  */
 final class ScopeManagerWrapper implements ScopeManager {

@@ -1,0 +1,2 @@
+se.hirt.jmc.opentracing.extractors.JaegerContextExtractor
+se.hirt.jmc.opentracing.extractors.NoOpContextExtractor

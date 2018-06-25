@@ -20,7 +20,6 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 
 /**
- * 
  * @author Marcus Hirt
  */
 final class ScopeWrapper implements Scope {
@@ -39,5 +38,4 @@ final class ScopeWrapper implements Scope {
 	public Span span() {
 		return new SpanWrapper(delegate.span());
 	}
-
 }

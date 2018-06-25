@@ -22,13 +22,14 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer.SpanBuilder;
 
 /**
- * 
  * @author Marcus Hirt
  */
 final class SpanBuilderWrapper implements SpanBuilder {
+	private final DelegatingJfrTracer owner;
 	private final SpanBuilder delegate;
 
-	SpanBuilderWrapper(SpanBuilder delegate) {
+	SpanBuilderWrapper(DelegatingJfrTracer owner, SpanBuilder delegate) {
+		this.owner = owner;
 		this.delegate = delegate;
 	}
 
@@ -82,7 +83,9 @@ final class SpanBuilderWrapper implements SpanBuilder {
 
 	@Override
 	public Scope startActive(boolean finishSpanOnClose) {
-		return new ScopeWrapper(delegate.startActive(finishSpanOnClose));
+		Scope scope = delegate.startActive(finishSpanOnClose);
+		System.out.println(owner.toString(scope.span()));
+		return new ScopeWrapper(scope);
 	}
 
 	@Override
@@ -93,6 +96,9 @@ final class SpanBuilderWrapper implements SpanBuilder {
 
 	@Override
 	public Span start() {
+		Span span = delegate.start();
+		ContextExtractor extractor = owner.getRegistry().getExtractor(span.getClass());
+		System.out.println(extractor.extractTraceId(span));
 		return new SpanWrapper(delegate.start());
 	}
 

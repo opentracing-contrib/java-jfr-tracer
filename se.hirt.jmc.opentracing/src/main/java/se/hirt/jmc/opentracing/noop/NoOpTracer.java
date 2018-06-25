@@ -3,6 +3,7 @@ package se.hirt.jmc.opentracing.noop;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
@@ -12,18 +13,18 @@ import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 
 /**
- * A do nothing tracer that is used if there is no delegating tracer to delegate
- * to.
+ * A do nothing tracer that is used if there is no delegating tracer to delegate to.
  * 
  * @author Marcus Hirt
  */
 public final class NoOpTracer implements Tracer {
+	private static final Random RND = new Random();
 	private final NoOpScopeManager scopeManager = new NoOpScopeManager();
 	private volatile Scope activeScope;
-	
+
 	private class NoOpScopeManager implements ScopeManager {
 		private volatile Span activeSpan;
-		
+
 		@Override
 		public Scope activate(Span span, boolean finishSpanOnClose) {
 			activeSpan = span;
@@ -34,7 +35,7 @@ public final class NoOpTracer implements Tracer {
 		public Scope active() {
 			return activeScope;
 		}
-		
+
 		public Span getActiveSpan() {
 			return activeSpan;
 		}
@@ -62,11 +63,17 @@ public final class NoOpTracer implements Tracer {
 		}
 	}
 
-	private class NoOpSpan implements Span {
+	public class NoOpSpan implements Span {
 		private String operationName;
+		private final long traceId;
+		private final long spanId;
+		private final long parentId;
 
-		private NoOpSpan(String operationName) {
+		private NoOpSpan(String operationName, long traceId, long spanId, long parentId) {
 			this.operationName = operationName;
+			this.traceId = traceId;
+			this.spanId = spanId;
+			this.parentId = parentId;
 		}
 
 		@Override
@@ -136,6 +143,18 @@ public final class NoOpTracer implements Tracer {
 		public String toString() {
 			return operationName;
 		}
+
+		public long getTraceId() {
+			return traceId;
+		}
+
+		public long getSpanId() {
+			return spanId;
+		}
+
+		public long getParentId() {
+			return parentId;
+		}
 	}
 
 	public class NoOpSpanBuilder implements SpanBuilder {
@@ -191,15 +210,19 @@ public final class NoOpTracer implements Tracer {
 		public Scope startActive(boolean finishSpanOnClose) {
 			return scopeManager.activate(start(), finishSpanOnClose);
 		}
-	
+
 		@Override
 		public Span startManual() {
-			return new NoOpSpan(operationName);
+			return new NoOpSpan(operationName, nextLong(), nextLong(), nextLong());
+		}
+
+		private long nextLong() {
+			return Math.abs(RND.nextLong());
 		}
 
 		@Override
 		public Span start() {
-			return new NoOpSpan(operationName);
+			return new NoOpSpan(operationName, nextLong(), nextLong(), nextLong());
 		}
 
 		public String toString() {

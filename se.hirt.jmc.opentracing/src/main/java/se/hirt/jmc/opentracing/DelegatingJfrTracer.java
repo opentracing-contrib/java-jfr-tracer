@@ -21,14 +21,15 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
+import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
 import se.hirt.jmc.opentracing.noop.NoOpTracer;
 
 /**
- * 
  * @author Marcus Hirt
  */
 public final class DelegatingJfrTracer implements Tracer {
 	private final Tracer delegate;
+	private final ExtractorRegistry registry = ExtractorRegistry.createNewRegistry();
 
 	public DelegatingJfrTracer(Tracer delegate) {
 		this.delegate = delegate == null ? new NoOpTracer() : delegate;
@@ -36,7 +37,7 @@ public final class DelegatingJfrTracer implements Tracer {
 
 	@Override
 	public ScopeManager scopeManager() {
-		return delegate.scopeManager();
+		return new ScopeManagerWrapper(delegate.scopeManager());
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public final class DelegatingJfrTracer implements Tracer {
 
 	@Override
 	public SpanBuilder buildSpan(String operationName) {
-		return new SpanBuilderWrapper(delegate.buildSpan(operationName));
+		return new SpanBuilderWrapper(this, delegate.buildSpan(operationName));
 	}
 
 	@Override
@@ -58,5 +59,15 @@ public final class DelegatingJfrTracer implements Tracer {
 	@Override
 	public <C> SpanContext extract(Format<C> format, C carrier) {
 		return delegate.extract(format, carrier);
+	}
+
+	public ExtractorRegistry getRegistry() {
+		return registry;
+	}
+
+	public String toString(Span span) {
+		ContextExtractor extractor = registry.getExtractor(span.getClass());
+		return String.format("Trace id: %s, Span id: %s, Parent id: %s", extractor.extractTraceId(span),
+				extractor.extractSpanId(span), extractor.extractParentId(span));
 	}
 }

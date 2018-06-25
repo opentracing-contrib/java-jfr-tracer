@@ -22,7 +22,6 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 
 /**
- * 
  * @author Marcus Hirt
  */
 final class SpanWrapper implements Span {
@@ -31,7 +30,7 @@ final class SpanWrapper implements Span {
 	SpanWrapper(Span delegate) {
 		this.delegate = delegate;
 	}
-	
+
 	@Override
 	public SpanContext context() {
 		return delegate.context();
