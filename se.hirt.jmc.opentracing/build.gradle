@@ -1,32 +1,38 @@
 
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
+apply from: 'jdks.gradle'
 
 repositories {
-    mavenCentral()
-    //jcenter()
+	mavenCentral()
+	//jcenter()
 }
 
 jar {
-    baseName = 'se.hirt.jmc.opentracing'
-    version = '0.0.1-SNAPSHOT'
+	baseName = 'se.hirt.jmc.opentracing'
+	version = '0.0.1-SNAPSHOT'
 }
 
 dependencies {
 	compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
 	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.27.0'
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+	testImplementation 'junit:junit:4.12'
 }
 
 
 sourceSets {
 	main {
-    	java {
-        	srcDirs = ['src/main/java']
+		java {
+			srcDirs = ['src/main/java']
 		}
 		resources {
-    		srcDirs = ['src/main/resources']
+			srcDirs = ['src/main/resources']
+		}
+	}
+	
+	java9 {
+		java {
+			srcDirs = ['src/main/java9']
 		}
 	}
 	
@@ -35,18 +41,37 @@ sourceSets {
 			srcDirs = ['src/test/java']
 		}
 		resources {
-        	srcDirs = ['src/test/resources']
+			srcDirs = ['src/test/resources']
 		}
-    }
+	}
+}
+
+compileJava {
+   sourceCompatibility = 7
+   targetCompatibility = 7
+}
+
+compileJava9Java {
+   sourceCompatibility = 9
+   targetCompatibility = 9
+}
+
+jar {
+	into('META-INF/versions/9') {
+		from sourceSets.java9.output
+	}
+	manifest.attributes(
+		'Multi-Release': 'true', 
+	)
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
+	publications {
+		mavenJava(MavenPublication) {
 			groupId 'se.hirt.jmc'
-            artifactId 'jfr-tracer'
-            version= '0.0.1-SNAPSHOT'
-            from components.java
-        }
-    }
+			artifactId 'jfr-tracer'
+			version= '0.0.1-SNAPSHOT'
+			from components.java
+		}
+	}
 }
