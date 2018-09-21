@@ -24,7 +24,6 @@ import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
  */
 @SuppressWarnings("deprecation")
 final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
-	private static final Logger LOGGER = Logger.getLogger(JfrEmitterImpl.class.getName());
 	private static final Producer PRODUCER;
 	private static final EventToken SPAN_EVENT_TOKEN;
 	private SpanEvent currentEvent;
@@ -37,7 +36,7 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 	}
 
 	@EventDefinition(path = "jfrtracer/spanevent", name = "SpanEvent", description = "An event triggered by span activation.", stacktrace = true, thread = true)
-	static class SpanEvent extends TimedEvent {
+	private static class SpanEvent extends TimedEvent {
 		@ValueDefinition(name = "TraceId", description = "The trace identifier for this event.")
 		private String traceId;
 
@@ -51,14 +50,17 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 			super(eventToken);
 		}
 
+		@SuppressWarnings("unused")
 		public String getTraceId() {
 			return traceId;
 		}
 
+		@SuppressWarnings("unused")
 		public String getSpanId() {
 			return spanId;
 		}
 
+		@SuppressWarnings("unused")
 		public String getParentId() {
 			return parentId;
 		}

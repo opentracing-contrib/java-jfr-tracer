@@ -28,7 +28,6 @@ import jdk.jfr.Description;
 import io.opentracing.Span;
 import se.hirt.jmc.opentracing.ContextExtractor;
 import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
-import se.hirt.jmc.opentracing.jfr.JfrEmitterImpl.SpanEvent;
 
 /**
  * This is the JDK 9 or later implementation.
@@ -36,23 +35,23 @@ import se.hirt.jmc.opentracing.jfr.JfrEmitterImpl.SpanEvent;
  * @author Marcus Hirt
  */
 public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
-	private Event currentEvent;
+	private Jdk9SpanEvent currentEvent;
 	
 	@Label("Span Event")
 	@Description("Open tracing event corresponding to a span/activation scope.")
 	@Category("Open Tracing")
-	private static class SpanEvent extends Event {
+	private static class Jdk9SpanEvent extends Event {
 	    @Label("Trace Id")
 	    @Description("The trace id for the span")
 	    private String traceId;
 
 	    @Label("Span Id")
 	    @Description("The id of the parent span")
-	    private String traceId;
+	    private String spanId;
 	    
 	    @Label("Parent Id")
 	    @Description("The id of the parent span")
-	    private String traceId;
+	    private String parentId;
 	}
 	
 	JfrEmitterImpl(Span span) {
@@ -73,7 +72,7 @@ public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 	@Override
 	public void start() {
 		ContextExtractor extractor = ExtractorRegistry.getInstance().getCurrentExtractor();
-		currentEvent = new SpanEvent();
+		currentEvent = new Jdk9SpanEvent();
 		if (extractor != null) {
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
