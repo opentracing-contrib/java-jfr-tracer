@@ -13,13 +13,6 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
-dependencies {
-	compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
-	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.27.0'
-	testImplementation 'junit:junit:4.12'
-}
-
-
 sourceSets {
 	main {
 		java {
@@ -44,6 +37,13 @@ sourceSets {
 			srcDirs = ['src/test/resources']
 		}
 	}
+}
+
+dependencies {
+	compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
+	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.27.0'
+    java9Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
+	testImplementation 'junit:junit:4.12'
 }
 
 compileJava {

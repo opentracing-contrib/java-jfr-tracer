@@ -1,3 +1,4 @@
+package se.hirt.jmc.opentracing;
 /*
  * Copyright (c) 2018, Marcus Hirt
  * 

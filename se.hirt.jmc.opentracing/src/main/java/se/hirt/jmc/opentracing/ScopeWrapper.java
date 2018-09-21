@@ -18,20 +18,31 @@ package se.hirt.jmc.opentracing;
 
 import io.opentracing.Scope;
 import io.opentracing.Span;
+import se.hirt.jmc.opentracing.jfr.JfrEmitter;
+import se.hirt.jmc.opentracing.jfr.JfrEmitterFactory;
 
 /**
  * @author Marcus Hirt
  */
 final class ScopeWrapper implements Scope {
+	private final static JfrEmitterFactory EMITTER_FACTORY = new JfrEmitterFactory();
 	private final Scope delegate;
+	private final JfrEmitter emitter;
 
 	ScopeWrapper(Scope delegate) {
 		this.delegate = delegate;
+		emitter = EMITTER_FACTORY.create(delegate.span());
+		emitter.start();
 	}
 
 	@Override
 	public void close() {
 		delegate.close();
+		try {
+			emitter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
