@@ -54,8 +54,8 @@ public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 	    private String parentId;
 	}
 	
-	JfrEmitterImpl(Span span) {
-		super(span);
+	JfrEmitterImpl(Span span, ContextExtractor extractor) {
+		super(span, extractor);
 	}
 	
 	@Override
@@ -71,7 +71,6 @@ public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public void start() {
-		ContextExtractor extractor = ExtractorRegistry.getInstance().getCurrentExtractor();
 		currentEvent = new Jdk9SpanEvent();
 		if (extractor != null) {
 			currentEvent.traceId = extractor.extractTraceId(span);
