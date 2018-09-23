@@ -80,5 +80,11 @@ public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 			LOGGER.warning(
 					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");
 		}
+		currentEvent.begin();
+	}
+	
+	@Override
+	public String toString() {
+		return "JDK 9+ JFR Emitter for " + extractor.getSupportedTracerType() + "/" + extractor.getSupportedSpanType();
 	}
 }

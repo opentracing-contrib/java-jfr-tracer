@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>se.hirt.jmc.opentracing</name>
-	<comment>Project se.hirt.jmc.opentracing created by Buildship.</comment>
+	<comment>Provides a OpenTracing tracer which records information to JFR</comment>
 	<projects>
 	</projects>
 	<buildSpec>
