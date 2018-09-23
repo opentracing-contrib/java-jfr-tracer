@@ -43,6 +43,10 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Category("Open Tracing")
 	@StackTrace(false)
 	private static class Jdk9SpanEvent extends Event {
+		@Label("Operation Name")
+		@Description("The operation name for the span")
+		private String operationName;
+		
 		@Label("Trace Id")
 		@Description("The trace id for the span")
 		private String traceId;
@@ -100,6 +104,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	public void start() {
 		currentEvent = new Jdk9SpanEvent();
 		if (extractor != null) {
+			currentEvent.operationName = extractor.extractOperationName(span);
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);

@@ -156,7 +156,8 @@ public final class NoOpTracer implements Tracer {
 		public void finish(long finishMicros) {
 		}
 
-		public String toString() {
+
+		public String getOperationName() {
 			return operationName;
 		}
 
@@ -170,6 +171,11 @@ public final class NoOpTracer implements Tracer {
 
 		public long getParentId() {
 			return parentId;
+		}
+
+		@Override
+		public String toString() {
+			return operationName;
 		}
 	}
 

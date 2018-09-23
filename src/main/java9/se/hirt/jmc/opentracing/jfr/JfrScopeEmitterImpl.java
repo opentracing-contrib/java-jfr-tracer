@@ -38,9 +38,13 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	private Jdk9ScopeEvent currentEvent;
 
 	@Label("Scope Event")
-	@Description("Open tracing event corresponding to an activation scope.")
+	@Description("Open tracing event corresponding to an activation scope")
 	@Category("Open Tracing")
 	private static class Jdk9ScopeEvent extends Event {
+		@Label("Operation Name")
+		@Description("The operation name for the span")
+		private String operationName;
+
 		@Label("Trace Id")
 		@Description("The trace id for the span")
 		private String traceId;
@@ -73,6 +77,7 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	public void start() {
 		currentEvent = new Jdk9ScopeEvent();
 		if (extractor != null) {
+			currentEvent.operationName = extractor.extractOperationName(span);
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);

@@ -27,6 +27,11 @@ import io.opentracing.Tracer;
  */
 public interface ContextExtractor {
 	/**
+	 * Extracts the operation name from the span.
+	 */
+	String extractOperationName(Span span);
+	
+	/**
 	 * Extracts the vendor specific trace id from the span.
 	 */
 	String extractTraceId(Span span);

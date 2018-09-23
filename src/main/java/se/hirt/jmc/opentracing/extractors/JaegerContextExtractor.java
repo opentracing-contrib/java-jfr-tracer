@@ -26,7 +26,12 @@ import se.hirt.jmc.opentracing.ContextExtractor;
  * @see ContextExtractor
  * @author Marcus Hirt
  */
-public class JaegerContextExtractor implements ContextExtractor {
+public class JaegerContextExtractor implements ContextExtractor {	
+	@Override
+	public String extractOperationName(Span span) {
+		return ((io.jaegertracing.Span) span).getOperationName();
+	}
+
 	@Override
 	public String extractTraceId(Span span) {
 		return String.format("%x", ((io.jaegertracing.Span) span).context().getTraceId());

@@ -48,6 +48,9 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 
 	@EventDefinition(path = "jfrtracer/spanevent", name = "SpanEvent", description = "And event representing a span", stacktrace = false, thread = true)
 	private static class SpanEvent extends TimedEvent {
+		@ValueDefinition(name = "OperationName", description = "The operationName for the span active in this scope")
+		private String operationName;
+		
 		@ValueDefinition(name = "TraceId", description = "The trace identifier for this event")
 		private String traceId;
 
@@ -122,6 +125,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	public void start() {
 		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
 		if (extractor != null) {
+			currentEvent.operationName = extractor.extractOperationName(span);
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);

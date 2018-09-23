@@ -52,6 +52,9 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@EventDefinition(path = "jfrtracer/scopeevent", name = "ScopeEvent", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
 	private static class ScopeEvent extends TimedEvent {
+		@ValueDefinition(name = "OperationName", description = "The operationName for the span active in this scope")
+		private String operationName;
+
 		@ValueDefinition(name = "TraceId", description = "The trace identifier for this event")
 		private String traceId;
 
@@ -65,6 +68,11 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 			super(eventToken);
 		}
 
+		@SuppressWarnings("unused")
+		public String getOperationName() {
+			return operationName;
+		}
+		
 		@SuppressWarnings("unused")
 		public String getTraceId() {
 			return traceId;
@@ -122,6 +130,7 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	public void start() {
 		currentEvent = new ScopeEvent(SCOPE_EVENT_TOKEN);
 		if (extractor != null) {
+			currentEvent.operationName = extractor.extractOperationName(span);
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);
