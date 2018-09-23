@@ -20,15 +20,23 @@ import java.util.Map;
 
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
+import se.hirt.jmc.opentracing.jfr.JfrEmitter;
+import se.hirt.jmc.opentracing.jfr.JfrEmitterFactory;
 
 /**
+ * Wrapper for {@link Span}.
+ * 
  * @author Marcus Hirt
  */
 final class SpanWrapper implements Span {
-	private final Span delegate;
+	static JfrEmitterFactory EMITTER_FACTORY = new JfrEmitterFactory();
 
-	SpanWrapper(Span delegate) {
+	private final Span delegate;
+	private final JfrEmitter spanEmitter;
+
+	SpanWrapper(Span delegate, ContextExtractor extractor) {
 		this.delegate = delegate;
+		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate, extractor);
 	}
 
 	@Override
@@ -98,11 +106,30 @@ final class SpanWrapper implements Span {
 	@Override
 	public void finish() {
 		delegate.finish();
+		try {
+			spanEmitter.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void finish(long finishMicros) {
 		delegate.finish(finishMicros);
+		try {
+			spanEmitter.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
+	public Span getDelegate() {
+		return delegate;
+	}
+
+	public void start() {
+		spanEmitter.start();
+	}
 }

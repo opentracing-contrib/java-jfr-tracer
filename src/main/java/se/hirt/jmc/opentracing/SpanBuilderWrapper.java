@@ -22,11 +22,14 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer.SpanBuilder;
 
 /**
+ * Wrapper for {@link SpanBuilder}.
+ * 
  * @author Marcus Hirt
  */
 final class SpanBuilderWrapper implements SpanBuilder {
 	private final DelegatingJfrTracer owner;
 	private final SpanBuilder delegate;
+	private SpanWrapper spanWrapper;
 
 	SpanBuilderWrapper(DelegatingJfrTracer owner, SpanBuilder delegate) {
 		this.owner = owner;
@@ -83,18 +86,25 @@ final class SpanBuilderWrapper implements SpanBuilder {
 
 	@Override
 	public Scope startActive(boolean finishSpanOnClose) {
-		return new ScopeWrapper(delegate.startActive(finishSpanOnClose), owner.getContextExtractor());
+		return owner.scopeManager().activate(start(), finishSpanOnClose);
 	}
 
 	@Override
 	@Deprecated
 	public Span startManual() {
-		return new SpanWrapper(delegate.startManual());
+		if (spanWrapper == null) {
+			spanWrapper = new SpanWrapper(delegate.startManual(), owner.getContextExtractor());
+		}
+		return spanWrapper;
 	}
 
 	@Override
 	public Span start() {
-		return new SpanWrapper(delegate.start());
+		if (spanWrapper == null) {
+			spanWrapper = new SpanWrapper(delegate.start(), owner.getContextExtractor());
+			spanWrapper.start();
+		}
+		return spanWrapper;
 	}
 
 }

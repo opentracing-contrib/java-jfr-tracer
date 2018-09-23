@@ -27,15 +27,29 @@ import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
 import se.hirt.jmc.opentracing.noop.NoOpTracer;
 
 /**
+ * A tracer that records context information into the JDK Flight Recorder, making it possible to
+ * correlate interesting findings in distributed traces with detailed information in the flight
+ * recordings.
+ * <p>
+ * For scopes and spans the following will be recorded:
+ * <ul>
+ * <li>Trace Id</li>
+ * <li>Span Id</li>
+ * <li>Parent Id</li>
+ * </ul>
+ * </p>
+ * 
  * @author Marcus Hirt
  */
 public final class DelegatingJfrTracer implements Tracer {
 	private final Tracer delegate;
 	private final ContextExtractor extractor;
+	private final ScopeManagerWrapper scopeManager;
 
 	public DelegatingJfrTracer(Tracer delegate) {
 		this.delegate = initialize(delegate);
 		this.extractor = initializeExtractor(delegate);
+		this.scopeManager = new ScopeManagerWrapper(delegate.scopeManager(), extractor);
 	}
 
 	private static ContextExtractor initializeExtractor(Tracer delegate) {
@@ -64,13 +78,12 @@ public final class DelegatingJfrTracer implements Tracer {
 
 	@Override
 	public ScopeManager scopeManager() {
-		return new ScopeManagerWrapper(delegate.scopeManager(), getContextExtractor());
+		return scopeManager;
 	}
 
 	@Override
 	public Span activeSpan() {
-		// Will probably want to keep track of this separately...
-		return new SpanWrapper(delegate.activeSpan());
+		return scopeManager.active().span();
 	}
 
 	@Override

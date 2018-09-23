@@ -21,6 +21,8 @@ import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 
 /**
+ * Wrapper for {@link ScopeManager}.
+ * 
  * @author Marcus Hirt
  */
 final class ScopeManagerWrapper implements ScopeManager {
@@ -35,7 +37,14 @@ final class ScopeManagerWrapper implements ScopeManager {
 
 	@Override
 	public Scope activate(Span span, boolean finishSpanOnClose) {
-		ScopeWrapper wrapper = new ScopeWrapper(delegate.activate(span, finishSpanOnClose), extractor);
+		ScopeWrapper wrapper;
+		if (!(span instanceof SpanWrapper)) {
+			SpanWrapper spanWrapper = new SpanWrapper(span, extractor);
+			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(span, finishSpanOnClose), extractor); 
+		} else {
+			SpanWrapper spanWrapper = (SpanWrapper) span;
+			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), extractor);
+		}
 		activeScope.set(wrapper);
 		return wrapper;
 	}

@@ -30,34 +30,34 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
 
 /**
- * This is the JDK 9 or later implementation.
+ * This is the JDK 9 or later implementation of the JfrEmitter.
  * 
  * @author Marcus Hirt
  */
-public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
-	private Jdk9SpanEvent currentEvent;
-	
-	@Label("Span Event")
-	@Description("Open tracing event corresponding to a span/activation scope.")
-	@Category("Open Tracing")
-	private static class Jdk9SpanEvent extends Event {
-	    @Label("Trace Id")
-	    @Description("The trace id for the span")
-	    private String traceId;
+public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
+	private Jdk9ScopeEvent currentEvent;
 
-	    @Label("Span Id")
-	    @Description("The id of the parent span")
-	    private String spanId;
-	    
-	    @Label("Parent Id")
-	    @Description("The id of the parent span")
-	    private String parentId;
+	@Label("Scope Event")
+	@Description("Open tracing event corresponding to an activation scope.")
+	@Category("Open Tracing")
+	private static class Jdk9ScopeEvent extends Event {
+		@Label("Trace Id")
+		@Description("The trace id for the span")
+		private String traceId;
+
+		@Label("Span Id")
+		@Description("The id of the parent span")
+		private String spanId;
+
+		@Label("Parent Id")
+		@Description("The id of the parent span")
+		private String parentId;
 	}
-	
-	JfrEmitterImpl(Span span, ContextExtractor extractor) {
+
+	JfrScopeEmitterImpl(Span span, ContextExtractor extractor) {
 		super(span, extractor);
 	}
-	
+
 	@Override
 	public void close() throws Exception {
 		if (currentEvent != null) {
@@ -71,7 +71,7 @@ public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public void start() {
-		currentEvent = new Jdk9SpanEvent();
+		currentEvent = new Jdk9ScopeEvent();
 		if (extractor != null) {
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
@@ -82,7 +82,7 @@ public class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 		}
 		currentEvent.begin();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "JDK 9+ JFR Emitter for " + extractor.getSupportedTracerType() + "/" + extractor.getSupportedSpanType();

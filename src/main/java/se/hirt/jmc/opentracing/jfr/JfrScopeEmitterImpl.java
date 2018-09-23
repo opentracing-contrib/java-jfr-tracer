@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2018, Marcus Hirt
+ * 
+ * jfr-tracer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * jfr-tracer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jfr-tracer. If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.hirt.jmc.opentracing.jfr;
 
 import java.net.URI;
@@ -22,30 +38,30 @@ import se.hirt.jmc.opentracing.ContextExtractor;
  * @author Marcus Hirt
  */
 @SuppressWarnings("deprecation")
-final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
+final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	private static final Producer PRODUCER;
-	private static final EventToken SPAN_EVENT_TOKEN;
-	private SpanEvent currentEvent;
+	private static final EventToken SCOPE_EVENT_TOKEN;
+	private ScopeEvent currentEvent;
 
 	static {
 		URI producerURI = URI.create("http://hirt.se/jfr-tracer");
 		PRODUCER = new Producer("jfr-tracer", "Events produced by the OpenTracing jfr-tracer.", producerURI);
 		PRODUCER.register();
-		SPAN_EVENT_TOKEN = register(SpanEvent.class);
+		SCOPE_EVENT_TOKEN = register(ScopeEvent.class);
 	}
 
-	@EventDefinition(path = "jfrtracer/spanevent", name = "SpanEvent", description = "An event triggered by span activation.", stacktrace = true, thread = true)
-	private static class SpanEvent extends TimedEvent {
-		@ValueDefinition(name = "TraceId", description = "The trace identifier for this event.")
+	@EventDefinition(path = "jfrtracer/scopeevent", name = "ScopeEvent", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
+	private static class ScopeEvent extends TimedEvent {
+		@ValueDefinition(name = "TraceId", description = "The trace identifier for this event")
 		private String traceId;
 
-		@ValueDefinition(name = "SpanId", description = "The span identifier for this event.")
+		@ValueDefinition(name = "SpanId", description = "The span identifier for this event")
 		private String spanId;
 
-		@ValueDefinition(name = "ParentId", description = "The parent span identifier for this event.")
+		@ValueDefinition(name = "ParentId", description = "The parent span identifier for this event")
 		private String parentId;
 
-		public SpanEvent(EventToken eventToken) {
+		public ScopeEvent(EventToken eventToken) {
 			super(eventToken);
 		}
 
@@ -75,16 +91,19 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 	static EventToken register(Class<? extends InstantEvent> clazz) {
 		try {
 			EventToken token = PRODUCER.addEvent(clazz);
-			Logger.getLogger(JfrEmitterImpl.class.getName()).log(Level.FINE, "Registered EventType " + clazz.getName());
+			Logger.getLogger(JfrScopeEmitterImpl.class.getName()).log(Level.FINE,
+					"Registered EventType " + clazz.getName());
 			return token;
 		} catch (InvalidEventDefinitionException | InvalidValueException e) {
-			Logger.getLogger(JfrEmitterImpl.class.getName()).log(Level.SEVERE, "Failed to register the event class "
-					+ clazz.getName() + ". Event will not be available. Please check your configuration.", e);
+			Logger.getLogger(JfrScopeEmitterImpl.class.getName()).log(Level.SEVERE,
+					"Failed to register the event class " + clazz.getName()
+							+ ". Event will not be available. Please check your configuration.",
+					e);
 		}
 		return null;
 	}
 
-	JfrEmitterImpl(Span span, ContextExtractor extractor) {
+	JfrScopeEmitterImpl(Span span, ContextExtractor extractor) {
 		super(span, extractor);
 	}
 
@@ -101,7 +120,7 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public void start() {
-		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
+		currentEvent = new ScopeEvent(SCOPE_EVENT_TOKEN);
 		if (extractor != null) {
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
@@ -112,9 +131,10 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 		}
 		currentEvent.begin();
 	}
-	
+
 	@Override
 	public String toString() {
-		return "JDK 7 & JDK 8 JFR Emitter for " + extractor.getSupportedTracerType() + "/" + extractor.getSupportedSpanType();
+		return "JDK 7 & JDK 8 JFR Scope Emitter for " + extractor.getSupportedTracerType() + "/"
+				+ extractor.getSupportedSpanType();
 	}
 }
