@@ -1,6 +1,7 @@
 package se.hirt.jmc.opentracing.extractors;
 
 import io.opentracing.Span;
+import io.opentracing.Tracer;
 import se.hirt.jmc.opentracing.ContextExtractor;
 
 public class JaegerContextExtractor implements ContextExtractor {
@@ -20,7 +21,12 @@ public class JaegerContextExtractor implements ContextExtractor {
 	}
 
 	@Override
-	public Class<? extends Span> getSupportedType() {
+	public Class<? extends Span> getSupportedSpanType() {
 		return io.jaegertracing.Span.class;
+	}
+
+	@Override
+	public Class<? extends Tracer> getSupportedTracerType() {
+		return io.jaegertracing.Tracer.class;
 	}
 }

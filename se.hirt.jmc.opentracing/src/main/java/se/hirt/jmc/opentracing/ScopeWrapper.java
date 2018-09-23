@@ -29,9 +29,9 @@ final class ScopeWrapper implements Scope {
 	private final Scope delegate;
 	private final JfrEmitter emitter;
 
-	ScopeWrapper(Scope delegate) {
+	ScopeWrapper(Scope delegate, ContextExtractor extractor) {
 		this.delegate = delegate;
-		emitter = EMITTER_FACTORY.create(delegate.span());
+		emitter = EMITTER_FACTORY.create(delegate.span(), extractor);
 		emitter.start();
 	}
 

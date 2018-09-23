@@ -85,7 +85,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	public Scope startActive(boolean finishSpanOnClose) {
 		Scope scope = delegate.startActive(finishSpanOnClose);
 		System.out.println(owner.toString(scope.span()));
-		return new ScopeWrapper(scope);
+		return new ScopeWrapper(scope, owner.getContextExtractor());
 	}
 
 	@Override
@@ -97,7 +97,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public Span start() {
 		Span span = delegate.start();
-		ContextExtractor extractor = owner.getRegistry().getExtractor(span.getClass());
+		ContextExtractor extractor = owner.getContextExtractor();
 		System.out.println(extractor.extractTraceId(span));
 		return new SpanWrapper(delegate.start());
 	}

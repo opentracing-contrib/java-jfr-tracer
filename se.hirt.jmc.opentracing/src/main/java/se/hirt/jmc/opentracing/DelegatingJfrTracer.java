@@ -16,6 +16,8 @@
  */
 package se.hirt.jmc.opentracing;
 
+import java.util.logging.Logger;
+
 import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
@@ -29,15 +31,40 @@ import se.hirt.jmc.opentracing.noop.NoOpTracer;
  */
 public final class DelegatingJfrTracer implements Tracer {
 	private final Tracer delegate;
-	private final ExtractorRegistry registry = ExtractorRegistry.createNewRegistry();
+	private final ContextExtractor extractor;
 
 	public DelegatingJfrTracer(Tracer delegate) {
-		this.delegate = delegate == null ? new NoOpTracer() : delegate;
+		this.delegate = initialize(delegate);
+		this.extractor = initializeExtractor(delegate);
+	}
+
+	private static ContextExtractor initializeExtractor(Tracer delegate) {
+		ContextExtractor extractor = ExtractorRegistry.createNewRegistry()
+				.getExtractorByTracerType(delegate.getClass());
+		if (extractor != null) {
+			return extractor;
+		} else {
+			Logger.getLogger(DelegatingJfrTracer.class.getName())
+					.warning("No compatible context extractor found for tracer of type " + delegate.getClass().getName()
+							+ ". The DelegatingJfrTracer will not work. Exiting process...");
+			System.exit(4711);
+		}
+		return null;
+	}
+
+	private static Tracer initialize(Tracer delegate) {
+		Logger.getLogger(DelegatingJfrTracer.class.getName())
+				.info("Using DelegatingJfrTracer to capture contextual information into JFR.");
+
+		if (delegate == null) {
+			Logger.getLogger(DelegatingJfrTracer.class.getName()).info("No delegate set - will only log to JFR.");
+		}
+		return delegate == null ? new NoOpTracer() : delegate;
 	}
 
 	@Override
 	public ScopeManager scopeManager() {
-		return new ScopeManagerWrapper(delegate.scopeManager());
+		return new ScopeManagerWrapper(delegate.scopeManager(), getContextExtractor());
 	}
 
 	@Override
@@ -61,12 +88,11 @@ public final class DelegatingJfrTracer implements Tracer {
 		return delegate.extract(format, carrier);
 	}
 
-	public ExtractorRegistry getRegistry() {
-		return registry;
+	public ContextExtractor getContextExtractor() {
+		return extractor;
 	}
 
 	public String toString(Span span) {
-		ContextExtractor extractor = registry.getExtractor(span.getClass());
 		return String.format("Trace id: %s, Span id: %s, Parent id: %s", extractor.extractTraceId(span),
 				extractor.extractSpanId(span), extractor.extractParentId(span));
 	}

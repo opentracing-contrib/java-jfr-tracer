@@ -1,6 +1,7 @@
 package se.hirt.jmc.opentracing;
 
 import io.opentracing.Span;
+import io.opentracing.Tracer;
 
 /**
  * Since the key context information is not readily available from the OpenTracing API, we sadly
@@ -27,5 +28,10 @@ public interface ContextExtractor {
 	/**
 	 * @return the span class that this context extractor supports.
 	 */
-	Class<? extends Span> getSupportedType();
+	Class<? extends Span> getSupportedSpanType();
+
+	/**
+	 * @return the tracer class that this context extractor supports.
+	 */
+	Class<? extends Tracer> getSupportedTracerType();
 }

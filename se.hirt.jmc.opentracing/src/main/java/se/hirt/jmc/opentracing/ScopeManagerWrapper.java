@@ -25,18 +25,20 @@ import io.opentracing.Span;
  */
 final class ScopeManagerWrapper implements ScopeManager {
 	private final ScopeManager delegate;
+	private final ContextExtractor extractor;
 
-	ScopeManagerWrapper(ScopeManager delegate) {
+	ScopeManagerWrapper(ScopeManager delegate, ContextExtractor extractor) {
 		this.delegate = delegate;
+		this.extractor = extractor;
 	}
 
 	@Override
 	public Scope activate(Span span, boolean finishSpanOnClose) {
-		return new ScopeWrapper(delegate.activate(span, finishSpanOnClose));
+		return new ScopeWrapper(delegate.activate(span, finishSpanOnClose), extractor);
 	}
 
 	@Override
 	public Scope active() {
-		return new ScopeWrapper(delegate.active());
+		return new ScopeWrapper(delegate.active(), extractor);
 	}
 }

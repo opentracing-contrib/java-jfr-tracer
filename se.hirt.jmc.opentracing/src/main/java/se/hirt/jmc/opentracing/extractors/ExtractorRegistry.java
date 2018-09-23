@@ -5,42 +5,31 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import io.opentracing.Span;
+import io.opentracing.Tracer;
 import se.hirt.jmc.opentracing.ContextExtractor;
 
 public class ExtractorRegistry {
-	private static Map<Class<? extends Span>, ContextExtractor> KNOWN_EXTRACTORS = new HashMap<Class<? extends Span>, ContextExtractor>();
-	private final static ExtractorRegistry INSTANCE = createNewRegistry();
+	private final Map<Class<? extends Span>, ContextExtractor> knownExtractorsBySpan = new HashMap<>();
+	private final Map<Class<? extends Tracer>, ContextExtractor> knownExtractorsByTracer = new HashMap<>();
 
-	private ContextExtractor currentExtractor = KNOWN_EXTRACTORS.get(io.jaegertracing.Span.class);
-	
-	static {
+	private ExtractorRegistry() {
 		ServiceLoader<ContextExtractor> loader = ServiceLoader.load(ContextExtractor.class,
 				ExtractorRegistry.class.getClassLoader());
 		for (ContextExtractor extractor : loader) {
-			KNOWN_EXTRACTORS.put(extractor.getSupportedType(), extractor);
+			knownExtractorsBySpan.put(extractor.getSupportedSpanType(), extractor);
+			knownExtractorsByTracer.put(extractor.getSupportedTracerType(), extractor);
 		}
-	}
-
-	public static ExtractorRegistry getInstance() {
-		return INSTANCE;
 	}
 
 	public static ExtractorRegistry createNewRegistry() {
 		return new ExtractorRegistry();
 	}
-	
-	private ExtractorRegistry() {
+
+	public ContextExtractor getExtractorBySpanType(Class<? extends Span> clazz) {
+		return knownExtractorsBySpan.get(clazz);
 	}
 
-	public ContextExtractor getExtractor(Class<? extends Span> clazz) {
-		if (currentExtractor.getSupportedType() != clazz) {
-			currentExtractor = KNOWN_EXTRACTORS.get(clazz);
-		}
-		return currentExtractor;
+	public ContextExtractor getExtractorByTracerType(Class<? extends Tracer> clazz) {
+		return knownExtractorsByTracer.get(clazz);
 	}
-
-	public ContextExtractor getCurrentExtractor() {
-		return currentExtractor;
-	}
-
 }

@@ -15,7 +15,6 @@ import com.oracle.jrockit.jfr.ValueDefinition;
 
 import io.opentracing.Span;
 import se.hirt.jmc.opentracing.ContextExtractor;
-import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
 
 /**
  * This is the JDK 7/8 implementation. For the JDK 9 and later implementation, see src/main/java9.
@@ -85,8 +84,8 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 		return null;
 	}
 
-	JfrEmitterImpl(Span span) {
-		super(span);
+	JfrEmitterImpl(Span span, ContextExtractor extractor) {
+		super(span, extractor);
 	}
 
 	@Override
@@ -102,7 +101,6 @@ final class JfrEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public void start() {
-		ContextExtractor extractor = ExtractorRegistry.getInstance().getCurrentExtractor();
 		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
 		if (extractor != null) {
 			currentEvent.traceId = extractor.extractTraceId(span);
