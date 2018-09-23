@@ -9,7 +9,7 @@ repositories {
 }
 
 jar {
-	baseName = 'se.hirt.jmc.opentracing'
+	baseName = 'se.hirt.jmc.jfr-tracer'
 	version = '0.0.1-SNAPSHOT'
 }
 
