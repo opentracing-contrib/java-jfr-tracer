@@ -35,7 +35,7 @@ abstract class AbstractJfrSpanEmitterImpl extends AbstractJfrEmitterImpl {
 			new LinkedBlockingQueue<Runnable>(50), new ThreadFactory() {
 				@Override
 				public Thread newThread(Runnable r) {
-					Thread thread = new Thread(r, "Span Events");
+					Thread thread = new Thread(r, "JfrTracer Span Events");
 					thread.setDaemon(true);
 					return thread;
 				}

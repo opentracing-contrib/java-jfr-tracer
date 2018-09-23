@@ -24,6 +24,7 @@ import jdk.jfr.Event;
 import jdk.jfr.Label;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
+import jdk.jfr.StackTrace;
 
 import io.opentracing.Span;
 import se.hirt.jmc.opentracing.ContextExtractor;
@@ -40,6 +41,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Label("Span Event")
 	@Description("Open tracing event corresponding to a span.")
 	@Category("Open Tracing")
+	@StackTrace(false)
 	private static class Jdk9SpanEvent extends Event {
 		@Label("Trace Id")
 		@Description("The trace id for the span")
