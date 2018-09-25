@@ -1,7 +1,9 @@
-
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 apply from: 'jdks.gradle'
+
+version = '0.0.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -10,7 +12,6 @@ repositories {
 
 jar {
 	baseName = 'se.hirt.jmc.jfr-tracer'
-	version = '0.0.1-SNAPSHOT'
 }
 
 sourceSets {
@@ -48,13 +49,13 @@ dependencies {
 }
 
 compileJava {
-   sourceCompatibility = 7
-   targetCompatibility = 7
+	sourceCompatibility = 7
+	targetCompatibility = 7
 }
 
 compileJava9Java {
-   sourceCompatibility = 9
-   targetCompatibility = 9
+	sourceCompatibility = 9
+	targetCompatibility = 9
 }
 
 jar {
@@ -66,13 +67,81 @@ jar {
 	)
 }
 
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compile
+	exclude '**Impl**'
+	// Just in case someone runs the build on JDK9+
+	failOnError false
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
-			groupId 'se.hirt.jmc'
-			artifactId 'jfr-tracer'
-			version= '0.0.1-SNAPSHOT'
+			artifact sourcesJar
+			artifact javadocJar
+			groupId = 'se.hirt.jmc'
+			artifactId = 'jfr-tracer'
+			
 			from components.java
+			
+			pom {
+				name = 'JFR Tracer'
+				description = 'An OpenTracing Tracer which records contextual information into the JDK Flight Recorder'
+				url = 'https://github.com/thegreystone/jfr-tracer'
+
+				licenses {
+					license {
+						name = 'GNU General Public Licese v3.0'
+						url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+ 					}
+				}
+
+				developers {
+					developer {
+						id = 'thegreystone'
+						name = 'Marcus Hirt'
+						email = 'marcus@hirt.se'
+					}
+				}
+
+				scm {
+					connection = 'scm:git:https://github.com/thegreystone/jfr-tracer.git'
+					developerConnection = 'scm:git:https://github.com/thegreystone/jfr-tracer.git'
+					url = 'https://github.com/thegreystone/jfr-tracer'
+				}
+			}
 		}
 	}
+
+	repositories {
+		maven {
+			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username ossrhUsername
+				password ossrhPassword
+			}
+		}
+ 	}
 }
+
+signing {
+	sign publishing.publications.mavenJava
+}
+
