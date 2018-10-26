@@ -30,7 +30,7 @@ GlobalTracer.register(
 
 ## Example
 An example app with OpenTracing enabled can be found here:
-[https://github.com/thegreystone/problematic-microservices]()
+[https://github.com/thegreystone/problematic-microservices](https://github.com/thegreystone/problematic-microservices)
 
 (Use the jfrtracer branch.)
 
