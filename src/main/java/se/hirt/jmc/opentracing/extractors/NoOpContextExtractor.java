@@ -29,7 +29,7 @@ import se.hirt.jmc.opentracing.noop.NoOpTracer.NoOpSpan;
  * @author Marcus Hirt
  */
 public class NoOpContextExtractor implements ContextExtractor {
-	
+
 	@Override
 	public String extractOperationName(Span span) {
 		return ((NoOpSpan) span).getOperationName();
@@ -57,7 +57,6 @@ public class NoOpContextExtractor implements ContextExtractor {
 
 	@Override
 	public Class<? extends Tracer> getSupportedTracerType() {
-		// TODO Auto-generated method stub
 		return NoOpTracer.class;
 	}
 }
