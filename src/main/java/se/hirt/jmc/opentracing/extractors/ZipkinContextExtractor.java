@@ -19,44 +19,48 @@ package se.hirt.jmc.opentracing.extractors;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import se.hirt.jmc.opentracing.ContextExtractor;
-import se.hirt.jmc.opentracing.noop.NoOpTracer;
-import se.hirt.jmc.opentracing.noop.NoOpTracer.NoOpSpan;
+import brave.opentracing.BraveSpan;
+import brave.opentracing.BraveTracer;
 
 /**
- * Extractor for the NoOpTracer.
+ * Extractor for the Open Zipkin/Brave tracer.
  * 
- * @see NoOpTracer
+ * @see ContextExtractor
  * @author Marcus Hirt
  */
-public class NoOpContextExtractor implements ContextExtractor {
+public class ZipkinContextExtractor implements ContextExtractor {
 
+	/*
+	 * Not easily extracted in Zipkin.
+	 */
 	@Override
 	public String extractOperationName(Span span) {
-		return ((NoOpSpan) span).getOperationName();
+		return "";
 	}
 
 	@Override
 	public String extractTraceId(Span span) {
-		return String.format("%x", ((NoOpSpan) span).getTraceId());
+		return ((BraveSpan) span).unwrap().context().traceIdString();
 	}
 
 	@Override
 	public String extractSpanId(Span span) {
-		return String.format("%x", ((NoOpSpan) span).getSpanId());
+		return String.valueOf(((BraveSpan) span).unwrap().context().spanId());
 	}
 
 	@Override
 	public String extractParentId(Span span) {
-		return String.format("%x", ((NoOpSpan) span).getParentId());
+		return String.valueOf(((BraveSpan) span).unwrap().context().parentId());
 	}
 
 	@Override
 	public Class<? extends Span> getSupportedSpanType() {
-		return NoOpSpan.class;
+		return BraveSpan.class;
 	}
 
 	@Override
 	public Class<? extends Tracer> getSupportedTracerType() {
-		return NoOpTracer.class;
+		return BraveTracer.class;
 	}
+
 }
