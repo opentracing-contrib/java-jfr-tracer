@@ -28,7 +28,7 @@ First add a dependency to it. For example, in Maven:
 	<dependency>
 		<groupId>se.hirt.jmc</groupId>
 		<artifactId>jfr-tracer</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</dependency>
 ```
 
@@ -42,8 +42,6 @@ GlobalTracer.register(
 ## Example
 An example app with OpenTracing enabled can be found here:
 [https://github.com/thegreystone/problematic-microservices](https://github.com/thegreystone/problematic-microservices)
-
-(Use the jfrtracer branch.)
 
 ## About
 This tracer was built for Code One 2018 as an example of using JFR and OpenTracing together to provide cross process, and when needed very deep, tracing capabilities, using open source technologies. 
