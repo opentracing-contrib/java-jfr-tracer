@@ -1,26 +1,6 @@
 # JFR Tracer
 This is a delegating tracer to be used with OpenTracing. It records span and scope information into the JDK Flight Recorder, enabling very deep tracing capabilities.
 
-## Building
-To build the JFR Tracer, and install it into the local maven repo, first ensure that you 
-have installed an Oracle JDK 7, and an Oracle JDK 9. These will be required to build the
-tracer. Once built, the tracer can be used with Oracle JDK 7+, and OpenJDK 11+.
-
-Ensure that the following two environment variables are set to the JAVA_HOME of the JDKs:
-
-```
-JAVA_7
-JAVA_9
-```
-
-Once that is done, simply run:
-
-```bash
-./gradlew publishToMavenLocal
-```
-
-Note that you will need to have an Oracle JDK 7 and an Oracle JDK 9 available. Parts of the code will be compiled using JDK 7 and parts using JDK 9. Note that the resulting MRJAR will run on Oracle JDK 7 and later, and OpenJDK 11 and later.
-
 ## Using the JFR Tracer
 First add a dependency to it. For example, in Maven:
 
@@ -42,6 +22,28 @@ GlobalTracer.register(
 ## Example
 An example app with OpenTracing enabled can be found here:
 [https://github.com/thegreystone/problematic-microservices](https://github.com/thegreystone/problematic-microservices)
+
+## Building
+To build the JFR Tracer, and install it into the local maven repo, first ensure that you 
+have installed an Oracle JDK 7, and an Oracle JDK 9. These will be required to build the
+tracer. Once built, the tracer can be used with Oracle JDK 7+, and OpenJDK 11+.
+
+Ensure that the following two environment variables are set to the JAVA_HOME of the JDKs:
+
+```
+JAVA_7
+JAVA_9
+```
+
+Once that is done, simply run:
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+Note that you will need to have an Oracle JDK 7 and an Oracle JDK 9 available. Parts of the code will be compiled using JDK 7 and parts using JDK 9. Note that the resulting MRJAR will run on Oracle JDK 7 and later, and OpenJDK 11 and later.
+
+
 
 ## About
 This tracer was built for Code One 2018 as an example of using JFR and OpenTracing together to provide cross process, and when needed very deep, tracing capabilities, using open source technologies. 
