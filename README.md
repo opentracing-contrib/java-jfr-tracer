@@ -12,12 +12,15 @@ First add a dependency to it. For example, in Maven:
 	</dependency>
 ```
 
-Next, in whatever code you used to set up the OpenTracing tracer, wrap your tracer in the JFR tracer:
+Next, in whatever code you use to set up the OpenTracing tracer, wrap your tracer in the JFR tracer:
 
 ```java
 GlobalTracer.register(
 	new DelegatingJfrTracer(yourFavTracer));
 ```
+
+## Supported Tracers
+The delegating JFR tracer currently supports Open Zipkin and Jaeger.
 
 ## Example
 An example app with OpenTracing enabled can be found here:
