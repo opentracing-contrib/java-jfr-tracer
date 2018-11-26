@@ -29,31 +29,31 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 public class JaegerContextExtractor implements ContextExtractor {	
 	@Override
 	public String extractOperationName(Span span) {
-		return ((io.jaegertracing.Span) span).getOperationName();
+		return ((io.jaegertracing.internal.JaegerSpan) span).getOperationName();
 	}
 
 	@Override
 	public String extractTraceId(Span span) {
-		return String.format("%x", ((io.jaegertracing.Span) span).context().getTraceId());
+		return String.format("%x", ((io.jaegertracing.internal.JaegerSpan) span).context().getTraceId());
 	}
 
 	@Override
 	public String extractSpanId(Span span) {
-		return String.format("%x", ((io.jaegertracing.Span) span).context().getSpanId());
+		return String.format("%x", ((io.jaegertracing.internal.JaegerSpan) span).context().getSpanId());
 	}
 
 	@Override
 	public String extractParentId(Span span) {
-		return String.format("%x", ((io.jaegertracing.Span) span).context().getParentId());
+		return String.format("%x", ((io.jaegertracing.internal.JaegerSpan) span).context().getParentId());
 	}
 
 	@Override
 	public Class<? extends Span> getSupportedSpanType() {
-		return io.jaegertracing.Span.class;
+		return io.jaegertracing.internal.JaegerSpan.class;
 	}
 
 	@Override
 	public Class<? extends Tracer> getSupportedTracerType() {
-		return io.jaegertracing.Tracer.class;
+		return io.jaegertracing.internal.JaegerTracer.class;
 	}
 }
