@@ -34,7 +34,7 @@ public class JaegerContextExtractor implements ContextExtractor {
 
 	@Override
 	public String extractTraceId(Span span) {
-		return String.format("%x", ((io.jaegertracing.internal.JaegerSpan) span).context().getTraceId());
+		return ((io.jaegertracing.internal.JaegerSpan) span).context().getTraceId();
 	}
 
 	@Override
