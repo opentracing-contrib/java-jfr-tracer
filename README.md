@@ -8,7 +8,7 @@ First add a dependency to it. For example, in Maven:
 	<dependency>
 		<groupId>se.hirt.jmc</groupId>
 		<artifactId>jfr-tracer</artifactId>
-		<version>0.0.2</version>
+		<version>0.0.3</version>
 	</dependency>
 ```
 
