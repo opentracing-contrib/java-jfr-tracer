@@ -20,7 +20,10 @@ GlobalTracer.register(
 ```
 
 ## Supported Tracers
-The delegating JFR tracer currently supports Open Zipkin and Jaeger.
+The JFR tracer currently supports Open Zipkin and Jaeger.
+
+## Supported Java Versions
+The JFR tracer supports running on Oracle JDK 7+ and OpenJDK 11+.
 
 ## Example
 An example app with OpenTracing enabled can be found here:
