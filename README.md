@@ -26,7 +26,7 @@ The JFR tracer currently supports Open Zipkin and Jaeger.
 The JFR tracer supports running on Oracle JDK 7+ and OpenJDK 11+.
 
 ## Example
-An example app with OpenTracing enabled can be found here:
+An example app with OpenTracing enabled, and which is using the JFR tracer, can be found here:
 [https://github.com/thegreystone/problematic-microservices](https://github.com/thegreystone/problematic-microservices)
 
 ## Building
