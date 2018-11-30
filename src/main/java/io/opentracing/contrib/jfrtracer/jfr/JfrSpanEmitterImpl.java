@@ -58,6 +58,12 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		@ValueDefinition(name = "ParentId", description = "The parent span identifier for this event")
 		private String parentId;
 
+		@ValueDefinition(name = "StartThread", description = "The thread initiating the span")
+		private Thread startThread;
+
+		@ValueDefinition(name = "EndThread", description = "The thread ending the span")
+		private Thread endThread;
+		
 		public SpanEvent(EventToken eventToken) {
 			super(eventToken);
 		}
@@ -75,6 +81,16 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		@SuppressWarnings("unused")
 		public String getParentId() {
 			return parentId;
+		}
+		
+		@SuppressWarnings("unused")
+		public Thread getStartThread() {
+			return startThread;
+		}
+
+		@SuppressWarnings("unused")
+		public Thread getEndThread() {
+			return endThread;
 		}
 	}
 
@@ -112,6 +128,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Override
 	public void close() throws Exception {
 		if (currentEvent != null) {
+			currentEvent.endThread = Thread.currentThread();
 			EXECUTOR.execute(new EndEventCommand(currentEvent));
 			currentEvent = null;
 		} else {
@@ -127,6 +144,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);
+			currentEvent.startThread = Thread.currentThread();
 		} else {
 			LOGGER.warning(
 					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");

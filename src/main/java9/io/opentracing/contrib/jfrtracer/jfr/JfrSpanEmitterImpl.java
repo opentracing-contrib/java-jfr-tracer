@@ -21,6 +21,8 @@ import jdk.jfr.Category;
 import jdk.jfr.Description;
 import jdk.jfr.StackTrace;
 
+import javax.management.DescriptorKey;
+
 import io.opentracing.Span;
 import io.opentracing.contrib.jfrtracer.ContextExtractor;
 import io.opentracing.contrib.jfrtracer.jfr.AbstractJfrSpanEmitterImpl;
@@ -51,6 +53,14 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		@Label("Parent Id")
 		@Description("The id of the parent span")
 		private String parentId;
+		
+		@Label("Start Thread")
+		@Description("The thread initiating the span")
+		private Thread startThread;
+		
+		@Label("End Thread")
+		@Description("The thread ending the span")
+		private Thread endThread;
 	}
 	
 	private static class EndEventCommand implements Runnable {
@@ -86,6 +96,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Override
 	public void close() throws Exception {
 		if (currentEvent != null) {
+			currentEvent.endThread = Thread.currentThread();
 			EXECUTOR.execute(new EndEventCommand(currentEvent));
 			currentEvent = null;
 		} else {
@@ -101,6 +112,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);
+			currentEvent.startThread = Thread.currentThread();
 		} else {
 			LOGGER.warning(
 					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");
