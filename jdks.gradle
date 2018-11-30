@@ -8,8 +8,7 @@ String compat(String src) {
 
 // We will always need to use the appropriate Java version to build the various 
 // components. This is since we want to run on JDK 7 and above. Since the JFR
-// APIs changed in JDK 9, and again in JDK 10, we will need to use these 
-// specific JDKs to build... 
+// APIs changed in JDK 9, we will need to use these specific JDKs to build... 
 project.afterEvaluate {
 	tasks.withType(JavaCompile) {
 		def version = compat(sourceCompatibility)
