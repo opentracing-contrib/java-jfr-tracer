@@ -33,8 +33,6 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 
 /**
  * This is the JDK 7/8 implementation. For the JDK 9 and later implementation, see src/main/java9.
- * 
- * @author Marcus Hirt
  */
 @SuppressWarnings("deprecation")
 final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {

@@ -25,7 +25,6 @@ import se.hirt.jmc.opentracing.noop.NoOpTracer.NoOpSpan;
  * Extractor for the NoOpTracer.
  * 
  * @see NoOpTracer
- * @author Marcus Hirt
  */
 public class NoOpContextExtractor implements ContextExtractor {
 

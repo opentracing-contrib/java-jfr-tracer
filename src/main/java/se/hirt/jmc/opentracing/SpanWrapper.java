@@ -24,8 +24,6 @@ import se.hirt.jmc.opentracing.jfr.JfrEmitterFactory;
 
 /**
  * Wrapper for {@link Span}.
- * 
- * @author Marcus Hirt
  */
 final class SpanWrapper implements Span {
 	static JfrEmitterFactory EMITTER_FACTORY = new JfrEmitterFactory();

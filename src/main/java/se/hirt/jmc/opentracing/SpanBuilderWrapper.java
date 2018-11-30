@@ -22,8 +22,6 @@ import io.opentracing.Tracer.SpanBuilder;
 
 /**
  * Wrapper for {@link SpanBuilder}.
- * 
- * @author Marcus Hirt
  */
 final class SpanBuilderWrapper implements SpanBuilder {
 	private final DelegatingJfrTracer owner;

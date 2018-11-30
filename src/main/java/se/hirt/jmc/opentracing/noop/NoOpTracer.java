@@ -29,8 +29,6 @@ import io.opentracing.propagation.Format;
 
 /**
  * A do nothing tracer that is used if there is no delegating tracer to delegate to.
- * 
- * @author Marcus Hirt
  */
 public final class NoOpTracer implements Tracer {
 	private static final Random RND = new Random();

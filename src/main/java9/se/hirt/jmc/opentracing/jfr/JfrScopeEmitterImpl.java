@@ -30,8 +30,6 @@ import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
- * 
- * @author Marcus Hirt
  */
 public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	private Jdk9ScopeEvent currentEvent;

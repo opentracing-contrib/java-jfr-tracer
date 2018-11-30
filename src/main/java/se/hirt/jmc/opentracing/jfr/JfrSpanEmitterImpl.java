@@ -29,8 +29,6 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 /**
  * This is the JDK 7/8 implementation for emitting Span events. For the JDK 9 and later
  * implementation, see src/main/java9.
- * 
- * @author Marcus Hirt
  */
 @SuppressWarnings("deprecation")
 final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {

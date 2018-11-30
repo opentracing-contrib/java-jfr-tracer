@@ -21,8 +21,6 @@ import io.opentracing.Tracer;
 /**
  * Since the key context information is not readily available from the OpenTracing API, we sadly
  * need to have vendor specific implementations provided for the various tracers out there.
- * 
- * @author Marcus Hirt
  */
 public interface ContextExtractor {
 	/**

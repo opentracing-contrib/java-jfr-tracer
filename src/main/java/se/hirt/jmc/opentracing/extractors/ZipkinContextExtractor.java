@@ -25,7 +25,6 @@ import brave.opentracing.BraveTracer;
  * Extractor for the Open Zipkin/Brave tracer.
  * 
  * @see ContextExtractor
- * @author Marcus Hirt
  */
 public class ZipkinContextExtractor implements ContextExtractor {
 

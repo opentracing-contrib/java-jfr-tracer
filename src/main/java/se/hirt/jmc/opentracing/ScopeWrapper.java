@@ -21,8 +21,6 @@ import se.hirt.jmc.opentracing.jfr.JfrEmitter;
 
 /**
  * Wrapper for {@link Scope}.
- * 
- * @author Marcus Hirt
  */
 final class ScopeWrapper implements Scope {
 	private final Scope delegate;

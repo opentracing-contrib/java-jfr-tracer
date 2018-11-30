@@ -25,8 +25,6 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 
 /**
  * Registry for the plugged in {@link ContextExtractor}s.
- * 
- * @author Marcus Hirt
  */
 public class ExtractorRegistry {
 	private final Map<Class<? extends Span>, ContextExtractor> knownExtractorsBySpan = new HashMap<>();

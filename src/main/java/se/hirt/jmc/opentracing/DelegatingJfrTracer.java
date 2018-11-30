@@ -36,8 +36,6 @@ import se.hirt.jmc.opentracing.noop.NoOpTracer;
  * <li>Span Id</li>
  * <li>Parent Id</li>
  * </ul>
- * 
- * @author Marcus Hirt
  */
 public final class DelegatingJfrTracer implements Tracer {
 	private final Tracer delegate;

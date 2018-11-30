@@ -31,8 +31,6 @@ import se.hirt.jmc.opentracing.extractors.ExtractorRegistry;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
- * 
- * @author Marcus Hirt
  */
 public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	private Jdk9SpanEvent currentEvent;

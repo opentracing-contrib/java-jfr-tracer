@@ -17,8 +17,6 @@ package se.hirt.jmc.opentracing.jfr;
 
 /**
  * Interface for something capable of emitting a JFR event.
- * 
- * @author Marcus Hirt
  */
 public interface JfrEmitter extends AutoCloseable {
 	void start();

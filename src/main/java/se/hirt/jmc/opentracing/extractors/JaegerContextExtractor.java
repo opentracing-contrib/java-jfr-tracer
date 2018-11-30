@@ -23,7 +23,6 @@ import se.hirt.jmc.opentracing.ContextExtractor;
  * Extractor for the Jaeger tracer.
  * 
  * @see ContextExtractor
- * @author Marcus Hirt
  */
 public class JaegerContextExtractor implements ContextExtractor {	
 	@Override

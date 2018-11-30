@@ -26,8 +26,6 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 
 /**
  * Abstract super class for span emitters.
- * 
- * @author Marcus Hirt
  */
 abstract class AbstractJfrSpanEmitterImpl extends AbstractJfrEmitterImpl {
 	protected final static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(1, 1, 2, TimeUnit.SECONDS,

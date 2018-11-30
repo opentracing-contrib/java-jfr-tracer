@@ -22,8 +22,6 @@ import se.hirt.jmc.opentracing.ContextExtractor;
 
 /**
  * Abstract super class for emitters.
- * 
- * @author Marcus Hirt
  */
 abstract class AbstractJfrEmitterImpl implements JfrEmitter {
 	static final Logger LOGGER = Logger.getLogger(JfrScopeEmitterImpl.class.getName());
