@@ -10,7 +10,7 @@ repositories {
 }
 
 jar {
-	baseName = 'se.hirt.jmc.jfr-tracer'
+	baseName = 'io.opentracing.contrib.jfr-tracer'
 }
 
 sourceSets {
@@ -94,7 +94,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			artifact sourcesJar
 			artifact javadocJar
-			groupId = 'se.hirt.jmc'
+			groupId = 'io.opentracing.contrib'
 			artifactId = 'jfr-tracer'
 			
 			from components.java
@@ -102,12 +102,12 @@ publishing {
 			pom {
 				name = 'JFR Tracer'
 				description = 'An OpenTracing Tracer which records contextual information into the JDK Flight Recorder'
-				url = 'https://github.com/thegreystone/jfr-tracer'
+				url = 'https://github.com/opentracing-contrib/java-jfr-tracer'
 
 				licenses {
 					license {
-						name = 'GNU General Public Licese v3.0'
-						url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+						name = 'Apache v2.0'
+						url = 'https://www.apache.org/licenses/LICENSE-2.0'
  					}
 				}
 
@@ -120,9 +120,9 @@ publishing {
 				}
 
 				scm {
-					connection = 'scm:git:https://github.com/thegreystone/jfr-tracer.git'
-					developerConnection = 'scm:git:https://github.com/thegreystone/jfr-tracer.git'
-					url = 'https://github.com/thegreystone/jfr-tracer'
+					connection = 'scm:git:https://github.com/opentracing-contrib/java-jfr-tracer.git'
+					developerConnection = 'scm:git:https://github.com/opentracing-contrib/java-jfr-tracer.git'
+					url = 'https://github.com/opentracing-contrib/java-jfr-tracer'
 				}
 			}
 		}
