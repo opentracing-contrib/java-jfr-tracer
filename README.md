@@ -2,7 +2,7 @@
 This is a delegating tracer to be used with OpenTracing. It records span and scope information into the JDK Flight Recorder, enabling very deep tracing capabilities.
 
 ## Using the JFR Tracer
-First add a dependency to it. For example, in Maven:
+First add a dependency to it. For example, in Maven (note that the coordinates will change to io.opentracing.contrib once we release 0.0.4):
 
 ```xml
 	<dependency>
