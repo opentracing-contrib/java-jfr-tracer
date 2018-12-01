@@ -94,7 +94,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 
 	@Override
 	public void close() throws Exception {
-		if (currentEvent != null) {
+		if (currentEvent != null && currentEvent.isEnabled()) {
 			currentEvent.endThread = Thread.currentThread();
 			EXECUTOR.execute(new EndEventCommand(currentEvent));
 			currentEvent = null;
@@ -106,11 +106,13 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Override
 	public void start(String operationName) {
 		currentEvent = new Jdk9SpanEvent();
-		currentEvent.operationName = operationName;
-		currentEvent.traceId = span.context().toTraceId();
-		currentEvent.spanId = span.context().toSpanId();
-		// currentEvent.parentId = span.context().toParentId();
-		currentEvent.startThread = Thread.currentThread();
+		if (currentEvent.isEnabled()) {
+			currentEvent.operationName = operationName;
+			currentEvent.traceId = span.context().toTraceId();
+			currentEvent.spanId = span.context().toSpanId();
+			// currentEvent.parentId = span.context().toParentId();
+			currentEvent.startThread = Thread.currentThread();
+		}
 		EXECUTOR.execute(new BeginEventCommand(currentEvent));
 	}
 
