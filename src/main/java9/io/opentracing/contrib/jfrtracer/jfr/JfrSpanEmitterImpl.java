@@ -24,7 +24,6 @@ import jdk.jfr.StackTrace;
 import javax.management.DescriptorKey;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
 import io.opentracing.contrib.jfrtracer.jfr.AbstractJfrSpanEmitterImpl;
 
 /**
@@ -108,9 +107,9 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	public void start(String operationName) {
 		currentEvent = new Jdk9SpanEvent();
 		currentEvent.operationName = operationName;
-		currentEvent.traceId = span.toTraceId();
-		currentEvent.spanId = span.toSpanId();
-		// currentEvent.parentId = span.toParentId();
+		currentEvent.traceId = span.context().toTraceId();
+		currentEvent.spanId = span.context().toSpanId();
+		// currentEvent.parentId = span.context().toParentId();
 		currentEvent.startThread = Thread.currentThread();
 		EXECUTOR.execute(new BeginEventCommand(currentEvent));
 	}

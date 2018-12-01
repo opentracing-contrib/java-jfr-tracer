@@ -126,9 +126,9 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	public void start(String operationName) {
 		currentEvent = new ScopeEvent(SCOPE_EVENT_TOKEN);
 		currentEvent.operationName = operationName;
-		currentEvent.traceId = span.toTraceId();
-		currentEvent.spanId = span.toSpanId();
-		// currentEvent.parentId = span.toParentId();
+		currentEvent.traceId = span.context().toTraceId();
+		currentEvent.spanId = span.context().toSpanId();
+		// currentEvent.parentId = span.context().toParentId();
 		currentEvent.begin();
 	}
 
