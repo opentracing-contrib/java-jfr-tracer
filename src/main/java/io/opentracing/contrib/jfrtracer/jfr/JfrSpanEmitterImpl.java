@@ -128,9 +128,11 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Override
 	public void close() throws Exception {
 		if (currentEvent != null) {
-			currentEvent.endThread = Thread.currentThread();
-			EXECUTOR.execute(new EndEventCommand(currentEvent));
-			currentEvent = null;
+			if (currentEvent.shouldWrite()) {
+				currentEvent.endThread = Thread.currentThread();
+				EXECUTOR.execute(new EndEventCommand(currentEvent));
+				currentEvent = null;
+			}
 		} else {
 			LOGGER.warning("Close without start discovered!");
 		}
@@ -139,7 +141,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Override
 	public void start(String operationName) {
 		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
-		if (extractor != null) {
+		if (extractor != null && currentEvent.getEventInfo().isEnabled()) {
 			currentEvent.operationName = operationName;
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
