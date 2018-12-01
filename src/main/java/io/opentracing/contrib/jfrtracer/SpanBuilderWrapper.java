@@ -93,7 +93,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Deprecated
 	public Span startManual() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.startManual(), operationName, owner.getContextExtractor());
+			spanWrapper = new SpanWrapper(delegate.startManual(), operationName);
 		}
 		return spanWrapper;
 	}
@@ -101,10 +101,9 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public Span start() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.start(), operationName, owner.getContextExtractor());
+			spanWrapper = new SpanWrapper(delegate.start(), operationName);
 			spanWrapper.start();
 		}
 		return spanWrapper;
 	}
-
 }

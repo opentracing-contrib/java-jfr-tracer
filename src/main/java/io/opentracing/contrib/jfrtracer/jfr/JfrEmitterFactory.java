@@ -16,7 +16,6 @@
 package io.opentracing.contrib.jfrtracer.jfr;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
 import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
 import io.opentracing.contrib.jfrtracer.jfr.JfrSpanEmitterImpl;
 
@@ -25,17 +24,16 @@ import io.opentracing.contrib.jfrtracer.jfr.JfrSpanEmitterImpl;
  */
 public class JfrEmitterFactory {
 	/**
-	 * Thread locally emitted events for scopes. Note that the calls to {@link JfrEmitter#start(String)}
-	 * and {@link JfrEmitter#close()} must be started and closed in the same thread.
+	 * Thread locally emitted events for scopes. Note that the calls to
+	 * {@link JfrEmitter#start(String)} and {@link JfrEmitter#close()} must be started and closed in
+	 * the same thread.
 	 * 
 	 * @param span
 	 *            the span containing the information to be recorded.
-	 * @param extractor
-	 *            the extractor to be used to extract the information from the span.
 	 * @return an emitter that can be used to emit the information to JFR
 	 */
-	public JfrEmitter createScopeEmitter(Span span, ContextExtractor extractor) {
-		return new JfrScopeEmitterImpl(span, extractor);
+	public JfrEmitter createScopeEmitter(Span span) {
+		return new JfrScopeEmitterImpl(span);
 	}
 
 	/**
@@ -44,11 +42,9 @@ public class JfrEmitterFactory {
 	 * 
 	 * @param span
 	 *            the span containing the information to be recorded.
-	 * @param extractor
-	 *            the extractor to be used to extract the information from the span.
 	 * @return an emitter that can be used to emit the information
 	 */
-	public JfrEmitter createSpanEmitter(Span span, ContextExtractor extractor) {
-		return new JfrSpanEmitterImpl(span, extractor);
+	public JfrEmitter createSpanEmitter(Span span) {
+		return new JfrSpanEmitterImpl(span);
 	}
 }

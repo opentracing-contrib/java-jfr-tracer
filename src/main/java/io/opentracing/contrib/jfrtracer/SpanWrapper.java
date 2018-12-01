@@ -33,13 +33,13 @@ final class SpanWrapper implements Span {
 	// If we don't want to support updates of the operation name, this could be final too...
 	private volatile String operationName;
 
-	SpanWrapper(Span delegate, ContextExtractor extractor) {
+	SpanWrapper(Span delegate) {
 		this.delegate = delegate;
-		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate, extractor);
+		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate);
 	}
 
-	public SpanWrapper(Span delegate, String operationName, ContextExtractor contextExtractor) {
-		this(delegate, contextExtractor);
+	public SpanWrapper(Span delegate, String operationName) {
+		this(delegate);
 		this.operationName = operationName;
 	}
 

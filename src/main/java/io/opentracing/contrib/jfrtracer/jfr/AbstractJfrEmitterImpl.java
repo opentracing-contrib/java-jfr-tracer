@@ -18,8 +18,6 @@ package io.opentracing.contrib.jfrtracer.jfr;
 import java.util.logging.Logger;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
-import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
 
 /**
  * Abstract super class for emitters.
@@ -27,10 +25,8 @@ import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
 abstract class AbstractJfrEmitterImpl implements JfrEmitter {
 	static final Logger LOGGER = Logger.getLogger(JfrScopeEmitterImpl.class.getName());
 	protected Span span;
-	protected ContextExtractor extractor;
 	
-	AbstractJfrEmitterImpl(Span span, ContextExtractor extractor) {
+	AbstractJfrEmitterImpl(Span span) {
 		this.span = span;
-		this.extractor = extractor;
 	}
 }

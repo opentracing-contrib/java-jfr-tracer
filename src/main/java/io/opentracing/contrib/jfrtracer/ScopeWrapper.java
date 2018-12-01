@@ -27,10 +27,10 @@ final class ScopeWrapper implements Scope {
 	private final JfrEmitter emitter;
 	private final SpanWrapper spanWrapper;
 
-	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate, ContextExtractor extractor) {
+	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate) {
 		this.spanWrapper = spanWrapper;
 		this.delegate = delegate;
-		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(delegate.span(), extractor);
+		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(delegate.span());
 		emitter.start(spanWrapper.getOperationName());
 	}
 

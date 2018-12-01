@@ -41,7 +41,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		@Label("Operation Name")
 		@Description("The operation name for the span")
 		private String operationName;
-		
+
 		@Label("Trace Id")
 		@Description("The trace id for the span")
 		private String traceId;
@@ -53,16 +53,16 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		@Label("Parent Id")
 		@Description("The id of the parent span")
 		private String parentId;
-		
+
 		@Label("Start Thread")
 		@Description("The thread initiating the span")
 		private Thread startThread;
-		
+
 		@Label("End Thread")
 		@Description("The thread ending the span")
 		private Thread endThread;
 	}
-	
+
 	private static class EndEventCommand implements Runnable {
 		private final Jdk9SpanEvent event;
 
@@ -89,8 +89,8 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		}
 	}
 
-	JfrSpanEmitterImpl(Span span, ContextExtractor extractor) {
-		super(span, extractor);
+	JfrSpanEmitterImpl(Span span) {
+		super(span);
 	}
 
 	@Override
@@ -107,21 +107,16 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@Override
 	public void start(String operationName) {
 		currentEvent = new Jdk9SpanEvent();
-		if (extractor != null) {
-			currentEvent.operationName = operationName;
-			currentEvent.traceId = extractor.extractTraceId(span);
-			currentEvent.spanId = extractor.extractSpanId(span);
-			currentEvent.parentId = extractor.extractParentId(span);
-			currentEvent.startThread = Thread.currentThread();
-		} else {
-			LOGGER.warning(
-					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");
-		}
+		currentEvent.operationName = operationName;
+		currentEvent.traceId = span.toTraceId();
+		currentEvent.spanId = span.toSpanId();
+		// currentEvent.parentId = span.toParentId();
+		currentEvent.startThread = Thread.currentThread();
 		EXECUTOR.execute(new BeginEventCommand(currentEvent));
 	}
 
 	@Override
 	public String toString() {
-		return "JDK 9+ JFR Emitter for " + extractor.getSupportedTracerType() + "/" + extractor.getSupportedSpanType();
+		return "JDK 9+ JFR Emitter";
 	}
 }

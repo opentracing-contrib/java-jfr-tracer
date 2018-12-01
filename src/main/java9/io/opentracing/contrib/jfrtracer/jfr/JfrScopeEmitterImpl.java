@@ -21,7 +21,6 @@ import jdk.jfr.Category;
 import jdk.jfr.Description;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
 import io.opentracing.contrib.jfrtracer.jfr.AbstractJfrEmitterImpl;
 
 /**
@@ -51,8 +50,8 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 		private String parentId;
 	}
 
-	JfrScopeEmitterImpl(Span span, ContextExtractor extractor) {
-		super(span, extractor);
+	JfrScopeEmitterImpl(Span span) {
+		super(span);
 	}
 
 	@Override
@@ -69,20 +68,15 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	@Override
 	public void start(String operationName) {
 		currentEvent = new Jdk9ScopeEvent();
-		if (extractor != null) {
-			currentEvent.operationName = operationName;
-			currentEvent.traceId = extractor.extractTraceId(span);
-			currentEvent.spanId = extractor.extractSpanId(span);
-			currentEvent.parentId = extractor.extractParentId(span);
-		} else {
-			LOGGER.warning(
-					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");
-		}
+		currentEvent.operationName = operationName;
+		currentEvent.traceId = span.toTraceId();
+		currentEvent.spanId = span.toSpanId();
+		// currentEvent.parentId = span.toParentId();
 		currentEvent.begin();
 	}
 
 	@Override
 	public String toString() {
-		return "JDK 9+ JFR Emitter for " + extractor.getSupportedTracerType() + "/" + extractor.getSupportedSpanType();
+		return "JDK 9+ JFR Emitter";
 	}
 }
