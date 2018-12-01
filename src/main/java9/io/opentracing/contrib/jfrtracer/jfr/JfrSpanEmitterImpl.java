@@ -105,10 +105,10 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	}
 
 	@Override
-	public void start() {
+	public void start(String operationName) {
 		currentEvent = new Jdk9SpanEvent();
 		if (extractor != null) {
-			currentEvent.operationName = extractor.extractOperationName(span);
+			currentEvent.operationName = operationName;
 			currentEvent.traceId = extractor.extractTraceId(span);
 			currentEvent.spanId = extractor.extractSpanId(span);
 			currentEvent.parentId = extractor.extractParentId(span);

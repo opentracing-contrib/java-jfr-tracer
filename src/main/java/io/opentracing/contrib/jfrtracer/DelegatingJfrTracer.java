@@ -84,7 +84,7 @@ public final class DelegatingJfrTracer implements Tracer {
 
 	@Override
 	public SpanBuilder buildSpan(String operationName) {
-		return new SpanBuilderWrapper(this, delegate.buildSpan(operationName));
+		return new SpanBuilderWrapper(this, operationName, delegate.buildSpan(operationName));
 	}
 
 	@Override

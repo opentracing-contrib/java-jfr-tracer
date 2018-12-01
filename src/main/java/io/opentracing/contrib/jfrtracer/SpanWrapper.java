@@ -30,10 +30,17 @@ final class SpanWrapper implements Span {
 
 	private final Span delegate;
 	private final JfrEmitter spanEmitter;
+	// If we don't want to support updates of the operation name, this could be final too...
+	private volatile String operationName;
 
 	SpanWrapper(Span delegate, ContextExtractor extractor) {
 		this.delegate = delegate;
 		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate, extractor);
+	}
+
+	public SpanWrapper(Span delegate, String operationName, ContextExtractor contextExtractor) {
+		this(delegate, contextExtractor);
+		this.operationName = operationName;
 	}
 
 	@Override
@@ -96,6 +103,7 @@ final class SpanWrapper implements Span {
 
 	@Override
 	public Span setOperationName(String operationName) {
+		this.operationName = operationName;
 		delegate.setOperationName(operationName);
 		return this;
 	}
@@ -127,6 +135,10 @@ final class SpanWrapper implements Span {
 	}
 
 	public void start() {
-		spanEmitter.start();
+		spanEmitter.start(operationName);
+	}
+
+	public String getOperationName() {
+		return operationName;
 	}
 }

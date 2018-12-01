@@ -28,14 +28,6 @@ import brave.opentracing.BraveTracer;
  */
 public class ZipkinContextExtractor implements ContextExtractor {
 
-	/*
-	 * Not easily extracted in Zipkin.
-	 */
-	@Override
-	public String extractOperationName(Span span) {
-		return "";
-	}
-
 	@Override
 	public String extractTraceId(Span span) {
 		return ((BraveSpan) span).unwrap().context().traceIdString();
