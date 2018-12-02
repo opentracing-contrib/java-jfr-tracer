@@ -3,8 +3,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply from: 'jdks.gradle'
 
-version = '0.0.4-SNAPSHOT'
-
 repositories {
 	mavenCentral()
 }
@@ -54,8 +52,8 @@ compileJava {
 }
 
 compileJava9Java {
+	options.compilerArgs.addAll(['--release', '11'])
 	sourceCompatibility = 9
-	targetCompatibility = 9
 }
 
 jar {

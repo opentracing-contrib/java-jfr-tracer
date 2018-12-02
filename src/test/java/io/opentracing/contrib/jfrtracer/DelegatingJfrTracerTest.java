@@ -17,12 +17,13 @@ package io.opentracing.contrib.jfrtracer;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import io.opentracing.contrib.jfrtracer.DelegatingJfrTracer;
-
 public class DelegatingJfrTracerTest {
+
 	@Test
+	@Ignore
 	public void testSomeLibraryMethod() {
 		DelegatingJfrTracer tracer = new DelegatingJfrTracer(null);
 		assertNotNull(tracer);
