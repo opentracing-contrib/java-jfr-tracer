@@ -8,9 +8,9 @@ repositories {
 }
 
 sourceSets {
-	java9 {
+	java11 {
 		java {
-			srcDirs = ['src/main/java9']
+			srcDirs = ['src/main/java11']
 		}
 	}
 }
@@ -19,8 +19,8 @@ dependencies {
 	compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
 	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.32.0'
 	compile group: 'io.opentracing.brave', name: 'brave-opentracing', version: '0.31.2'
-	java9Compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
-	java9Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
+	java11Compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
+	java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
 	testImplementation 'junit:junit:4.12'
 }
 
@@ -30,15 +30,15 @@ compileJava {
 	targetCompatibility = 1.7
 }
 
-compileJava9Java {
+compileJava11Java {
 	options.compilerArgs.addAll(['--release', '11', '-Xlint:all'])
-	sourceCompatibility = 9
-	targetCompatibility = 9
+	sourceCompatibility = 11
+	targetCompatibility = 11
 }
 
 jar {
-	into('META-INF/versions/9') {
-		from sourceSets.java9.output
+	into('META-INF/versions/11') {
+		from sourceSets.java11.output
 	}
 	manifest.attributes(
 		'Multi-Release': 'true', 
