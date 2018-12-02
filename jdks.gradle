@@ -14,7 +14,7 @@ project.afterEvaluate {
 		def version = compat(sourceCompatibility)
 		def jdkHome = project.ext.has("JAVA_${version}") ? project.ext.get("JAVA_${version}") : System.getenv("JAVA_${version}")
 		if (!jdkHome) {
-			println "Warning: Please set path to JDK ${version} using environment variable JAVA_${version}"
+			println "Warning: Please set path to JDK ${sourceCompatibility} using Gradle property or environment variable JAVA_${version}"
 			println "Falling back to current JDK"
 		} else {
 			options.fork = true

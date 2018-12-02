@@ -7,32 +7,10 @@ repositories {
 	mavenCentral()
 }
 
-jar {
-	baseName = 'io.opentracing.contrib.jfr-tracer'
-}
-
 sourceSets {
-	main {
-		java {
-			srcDirs = ['src/main/java']
-		}
-		resources {
-			srcDirs = ['src/main/resources']
-		}
-	}
-	
 	java9 {
 		java {
 			srcDirs = ['src/main/java9']
-		}
-	}
-	
-	test {
-		java {
-			srcDirs = ['src/test/java']
-		}
-		resources {
-			srcDirs = ['src/test/resources']
 		}
 	}
 }
@@ -42,18 +20,20 @@ dependencies {
 	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.32.0'
 	compile group: 'io.opentracing.brave', name: 'brave-opentracing', version: '0.31.2'
 	java9Compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
-    java9Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
+	java9Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
 	testImplementation 'junit:junit:4.12'
 }
 
 compileJava {
-	sourceCompatibility = 7
-	targetCompatibility = 7
+	options.compilerArgs.addAll(['-Xlint:all,-deprecation'])
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
 }
 
 compileJava9Java {
-	options.compilerArgs.addAll(['--release', '11'])
+	options.compilerArgs.addAll(['--release', '11', '-Xlint:all'])
 	sourceCompatibility = 9
+	targetCompatibility = 9
 }
 
 jar {
@@ -68,9 +48,7 @@ jar {
 javadoc {
 	source = sourceSets.main.allJava
 	classpath = configurations.compile
-	exclude '**Impl**'
-	// Just in case someone runs the build on JDK9+
-	failOnError false
+	include '**DelegatingJfrTracer**'
 }
 
 task javadocJar(type: Jar) {
@@ -114,6 +92,11 @@ publishing {
 						id = 'thegreystone'
 						name = 'Marcus Hirt'
 						email = 'marcus@hirt.se'
+					}
+					developer {
+						id = 'sfriberg'
+						name = 'Staffan Friberg'
+						email = 'sfriberg@kth.se'
 					}
 				}
 
