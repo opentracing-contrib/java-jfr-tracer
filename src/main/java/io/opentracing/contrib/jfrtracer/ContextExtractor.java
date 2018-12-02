@@ -23,15 +23,6 @@ import io.opentracing.Tracer;
  * need to have vendor specific implementations provided for the various tracers out there.
  */
 public interface ContextExtractor {
-	/**
-	 * Extracts the operation name from the span.
-	 * 
-	 * @param span
-	 *            the Span to extract the operation name from.
-	 * @return the operation name, or null if the operation name cannot be derived from a span for
-	 *         this tracer.
-	 */
-	String extractOperationName(Span span);
 
 	/**
 	 * Extracts the vendor specific trace id from the span. If your tracer does not have the concept

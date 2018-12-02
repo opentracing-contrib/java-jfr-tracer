@@ -19,7 +19,7 @@ package io.opentracing.contrib.jfrtracer.jfr;
  * Interface for something capable of emitting a JFR event.
  */
 public interface JfrEmitter extends AutoCloseable {
-	void start();
+	void start(String operationName);
 
 	@Override
 	public void close();	

@@ -26,11 +26,14 @@ import io.opentracing.Tracer.SpanBuilder;
 final class SpanBuilderWrapper implements SpanBuilder {
 	private final DelegatingJfrTracer owner;
 	private final SpanBuilder delegate;
+	private final String operationName;
+
 	private SpanWrapper spanWrapper;
 
-	SpanBuilderWrapper(DelegatingJfrTracer owner, SpanBuilder delegate) {
+	SpanBuilderWrapper(DelegatingJfrTracer owner, String operationName, SpanBuilder delegate) {
 		this.owner = owner;
 		this.delegate = delegate;
+		this.operationName = operationName;
 	}
 
 	@Override
@@ -90,7 +93,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Deprecated
 	public Span startManual() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.startManual(), owner.getContextExtractor());
+			spanWrapper = new SpanWrapper(delegate.startManual(), operationName, owner.getContextExtractor());
 		}
 		return spanWrapper;
 	}
@@ -98,7 +101,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public Span start() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.start(), owner.getContextExtractor());
+			spanWrapper = new SpanWrapper(delegate.start(), operationName, owner.getContextExtractor());
 			spanWrapper.start();
 		}
 		return spanWrapper;

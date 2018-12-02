@@ -25,10 +25,6 @@ import io.opentracing.contrib.jfrtracer.ContextExtractor;
  * @see ContextExtractor
  */
 public class JaegerContextExtractor implements ContextExtractor {	
-	@Override
-	public String extractOperationName(Span span) {
-		return ((io.jaegertracing.internal.JaegerSpan) span).getOperationName();
-	}
 
 	@Override
 	public String extractTraceId(Span span) {

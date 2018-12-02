@@ -25,7 +25,7 @@ import io.opentracing.contrib.jfrtracer.jfr.JfrSpanEmitterImpl;
  */
 public class JfrEmitterFactory {
 	/**
-	 * Thread locally emitted events for scopes. Note that the calls to {@link JfrEmitter#start()}
+	 * Thread locally emitted events for scopes. Note that the calls to {@link JfrEmitter#start(String)}
 	 * and {@link JfrEmitter#close()} must be started and closed in the same thread.
 	 * 
 	 * @param span

@@ -27,12 +27,6 @@ import io.opentracing.contrib.jfrtracer.noop.NoOpTracer.NoOpSpan;
  * @see NoOpTracer
  */
 public class NoOpContextExtractor implements ContextExtractor {
-
-	@Override
-	public String extractOperationName(Span span) {
-		return ((NoOpSpan) span).getOperationName();
-	}
-
 	@Override
 	public String extractTraceId(Span span) {
 		return String.format("%x", ((NoOpSpan) span).getTraceId());
