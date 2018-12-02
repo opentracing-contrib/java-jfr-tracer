@@ -21,7 +21,7 @@ import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import io.opentracing.contrib.jfrtracer.noop.NoOpTracer;
+import io.opentracing.noop.NoopTracerFactory;
 import io.opentracing.propagation.Format;
 
 /**
@@ -52,7 +52,7 @@ public final class DelegatingJfrTracer implements Tracer {
 		if (delegate == null) {
 			Logger.getLogger(DelegatingJfrTracer.class.getName()).info("No delegate set - will only log to JFR.");
 		}
-		return delegate == null ? new NoOpTracer() : delegate;
+		return delegate == null ? NoopTracerFactory.create() : delegate;
 	}
 
 	@Override
