@@ -31,7 +31,7 @@ final class ScopeWrapper implements Scope {
 		this.spanWrapper = spanWrapper;
 		this.delegate = delegate;
 		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(delegate.span(), extractor);
-		emitter.start();
+		emitter.start(spanWrapper.getOperationName());
 	}
 
 	@Override
