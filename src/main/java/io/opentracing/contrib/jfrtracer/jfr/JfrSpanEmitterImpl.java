@@ -15,11 +15,8 @@
  */
 package io.opentracing.contrib.jfrtracer.jfr;
 
-import java.net.URI;
-
 import com.oracle.jrockit.jfr.EventDefinition;
 import com.oracle.jrockit.jfr.EventToken;
-import com.oracle.jrockit.jfr.Producer;
 import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
 
@@ -32,14 +29,10 @@ import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
  */
 @SuppressWarnings("deprecation")
 final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
-	private static final Producer PRODUCER;
 	private static final EventToken SPAN_EVENT_TOKEN;
 	private SpanEvent currentEvent;
 
 	static {
-		URI producerURI = URI.create("http://hirt.se/jfr-tracer");
-		PRODUCER = new Producer("jfr-tracer", "Events produced by the OpenTracing jfr-tracer.", producerURI);
-		PRODUCER.register();
 		SPAN_EVENT_TOKEN = JfrScopeEmitterImpl.register(SpanEvent.class);
 	}
 

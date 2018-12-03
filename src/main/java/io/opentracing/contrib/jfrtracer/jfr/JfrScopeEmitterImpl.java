@@ -40,7 +40,7 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	private ScopeEvent currentEvent;
 
 	static {
-		URI producerURI = URI.create("http://hirt.se/jfr-tracer");
+		URI producerURI = URI.create("http://opentracing.io/jfr-tracer");
 		PRODUCER = new Producer("jfr-tracer", "Events produced by the OpenTracing jfr-tracer.", producerURI);
 		PRODUCER.register();
 		SCOPE_EVENT_TOKEN = register(ScopeEvent.class);
