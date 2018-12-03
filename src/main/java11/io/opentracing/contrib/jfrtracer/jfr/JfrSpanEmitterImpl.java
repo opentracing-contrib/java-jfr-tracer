@@ -19,20 +19,24 @@ import jdk.jfr.Event;
 import jdk.jfr.Label;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
+import jdk.jfr.StackTrace;
+
+import javax.management.DescriptorKey;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.jfr.AbstractJfrEmitterImpl;
+import io.opentracing.contrib.jfrtracer.jfr.AbstractJfrSpanEmitterImpl;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
  */
-public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
-	private Jdk9ScopeEvent currentEvent;
+public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
+	private Jdk9SpanEvent currentEvent;
 
-	@Label("Scope Event")
-	@Description("Open tracing event corresponding to an activation scope")
+	@Label("Span Event")
+	@Description("Open tracing event corresponding to a span.")
 	@Category("Open Tracing")
-	private static class Jdk9ScopeEvent extends Event {
+	@StackTrace(false)
+	private static class Jdk9SpanEvent extends Event {
 		@Label("Operation Name")
 		@Description("The operation name for the span")
 		private String operationName;
@@ -48,17 +52,51 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 		@Label("Parent Id")
 		@Description("The id of the parent span")
 		private String parentId;
+
+		@Label("Start Thread")
+		@Description("The thread initiating the span")
+		private Thread startThread;
+
+		@Label("End Thread")
+		@Description("The thread ending the span")
+		private Thread endThread;
 	}
 
-	JfrScopeEmitterImpl(Span span) {
+	private static class EndEventCommand implements Runnable {
+		private final Jdk9SpanEvent event;
+
+		public EndEventCommand(Jdk9SpanEvent event) {
+			this.event = event;
+		}
+
+		@Override
+		public void run() {
+			event.commit();
+		}
+	}
+
+	private static class BeginEventCommand implements Runnable {
+		private final Jdk9SpanEvent event;
+
+		public BeginEventCommand(Jdk9SpanEvent event) {
+			this.event = event;
+		}
+
+		@Override
+		public void run() {
+			event.begin();
+		}
+	}
+
+	JfrSpanEmitterImpl(Span span) {
 		super(span);
 	}
 
 	@Override
-	public void close() throws Exception {
-		if (currentEvent != null) {
-			currentEvent.end();
-			currentEvent.commit();
+	public void close() {
+		if (currentEvent != null && currentEvent.isEnabled()) {
+			currentEvent.endThread = Thread.currentThread();
+			EXECUTOR.execute(new EndEventCommand(currentEvent));
 			currentEvent = null;
 		} else {
 			LOGGER.warning("Close without start discovered!");
@@ -67,14 +105,15 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public void start(String operationName) {
-		currentEvent = new Jdk9ScopeEvent();
+		currentEvent = new Jdk9SpanEvent();
 		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
 			currentEvent.traceId = span.context().toTraceId();
 			currentEvent.spanId = span.context().toSpanId();
 			// currentEvent.parentId = span.context().toParentId();
+			currentEvent.startThread = Thread.currentThread();
 		}
-		currentEvent.begin();
+		EXECUTOR.execute(new BeginEventCommand(currentEvent));
 	}
 
 	@Override

@@ -1,2 +1,1 @@
 rootProject.name = 'jfr-tracer'
-enableFeaturePreview('STABLE_PUBLISHING')

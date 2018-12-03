@@ -20,4 +20,7 @@ package io.opentracing.contrib.jfrtracer.jfr;
  */
 public interface JfrEmitter extends AutoCloseable {
 	void start(String operationName);
+
+	@Override
+	public void close();	
 }

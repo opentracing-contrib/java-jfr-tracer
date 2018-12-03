@@ -112,7 +112,7 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		if (currentEvent != null) {
 			currentEvent.end();
 			currentEvent.commit();
