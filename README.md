@@ -23,7 +23,7 @@ GlobalTracer.register(
 The JFR tracer supports all tracers that support OpenTracing 0.32.0 or later.
 
 ## Supported Java Versions
-The JFR tracer supports running on Oracle JDK 7+ and OpenJDK 11+.
+The JFR tracer supports running on Oracle JDK 7+ (except Oracle JDK 9 and 10) and OpenJDK 11+.
 
 ## Example
 An example app with OpenTracing enabled, and which is using the JFR tracer, can be found here:
@@ -31,8 +31,8 @@ An example app with OpenTracing enabled, and which is using the JFR tracer, can 
 
 ## Building
 To build the JFR Tracer, and install it into the local maven repo, first ensure that you 
-have installed an Oracle JDK 7, and an Oracle JDK 9. These will be required to build the
-tracer. Once built, the tracer can be used with Oracle JDK 7+, and OpenJDK 11+.
+have installed an Oracle JDK 7, and an Open JDK 11. These will be required to build the
+tracer. Once built, the tracer can be used with Oracle JDK 7+ (except Oracle JDK 9 and 10), and OpenJDK 11+.
 
 Ensure that the following two environment variables are set to the JAVA_HOME of the JDKs:
 
