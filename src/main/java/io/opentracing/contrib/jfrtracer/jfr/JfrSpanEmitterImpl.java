@@ -126,7 +126,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		if (currentEvent != null) {
 			if (currentEvent.shouldWrite()) {
 				currentEvent.endThread = Thread.currentThread();
