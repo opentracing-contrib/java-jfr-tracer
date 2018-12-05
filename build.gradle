@@ -108,6 +108,13 @@ publishing {
 			}
 		}
 	}
+}
+
+def ossrhUsername = project.findProperty('ossrhUsername') ?: ''
+def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
+
+if(ossrhUsername?.trim() && ossrhPassword?.trim()){
+	apply plugin: 'signing'
 
 	repositories {
 		maven {
@@ -119,10 +126,9 @@ publishing {
 				password ossrhPassword
 			}
 		}
- 	}
-}
+	}
 
-signing {
-	sign publishing.publications.mavenJava
+	signing {
+		sign publishing.publications.mavenJava
+	}
 }
-
