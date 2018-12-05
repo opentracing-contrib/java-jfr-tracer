@@ -15,7 +15,7 @@
  */
 package io.opentracing.contrib.jfrtracer.jfr;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -29,7 +29,7 @@ import io.opentracing.contrib.jfrtracer.ContextExtractor;
  */
 abstract class AbstractJfrSpanEmitterImpl extends AbstractJfrEmitterImpl {
 	protected final static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(1, 1, 2, TimeUnit.SECONDS,
-			new LinkedBlockingQueue<Runnable>(50), new ThreadFactory() {
+			new ArrayBlockingQueue<Runnable>(50), new ThreadFactory() {
 				@Override
 				public Thread newThread(Runnable r) {
 					Thread thread = new Thread(r, "JfrTracer Span Events");
