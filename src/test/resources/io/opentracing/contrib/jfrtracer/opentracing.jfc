@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration version="1.0" name="" description="" provider="OpenTracing">
+
+  <producer uri="http://opentracing.io/">
+
+    <event path="OpenTracing/Span">
+      <setting name="enabled">true</setting>
+      <setting name="stackTrace">false</setting>
+    </event>
+    <event path="OpenTracing/Scope">
+      <setting name="enabled">true</setting>
+      <setting name="stackTrace">true</setting>
+    </event>
+
+  </producer>
+
+</configuration>

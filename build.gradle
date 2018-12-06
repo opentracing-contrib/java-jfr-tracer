@@ -11,17 +11,29 @@ sourceSets {
 	java11 {
 		java {
 			srcDirs = ['src/main/java11']
+			compileClasspath += main.output + main.compileClasspath
+			runtimeClasspath += main.output + main.runtimeClasspath
+		}
+	}
+	testJava11 {
+		java {
+			srcDirs = ['src/test/java11']
+			compileClasspath += java11.output + main.output + test.compileClasspath
+			runtimeClasspath += java11.output + main.output + test.runtimeClasspath
 		}
 	}
 }
 
 dependencies {
-	compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
-	compile group: 'io.jaegertracing', name: 'jaeger-core', version: '0.32.0'
-	compile group: 'io.opentracing.brave', name: 'brave-opentracing', version: '0.31.2'
-	java11Compile group: 'io.opentracing', name: 'opentracing-api', version: '0.31.0'
-	java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
-	testImplementation 'junit:junit:4.12'
+	compile 'io.opentracing:opentracing-api:0.31.0'
+	compile 'org.slf4j:slf4j-api:1.7.25'
+	testCompile 'io.opentracing:opentracing-mock:0.31.0'
+	testCompile 'io.jaegertracing:jaeger-core:0.32.0'
+	testCompile 'io.opentracing.brave:brave-opentracing:0.31.2'
+	testCompile 'io.opentracing.contrib:opentracing-concurrent:0.2.0'
+	testCompile 'org.awaitility:awaitility:3.1.3'
+	testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+	testCompile 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
 compileJava {
@@ -30,11 +42,44 @@ compileJava {
 	targetCompatibility = 1.7
 }
 
+compileTestJava {
+	options.compilerArgs.addAll(['-Xlint:all,-deprecation'])
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8	
+}
+
+test {
+	useJUnitPlatform()
+	executable = "${JAVA_8}/bin/java"
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
 compileJava11Java {
 	options.compilerArgs.addAll(['--release', '11', '-Xlint:all'])
 	sourceCompatibility = 11
 	targetCompatibility = 11
 }
+
+compileTestJava11Java {
+	options.compilerArgs.addAll(['--release', '11', '-Xlint:all'])
+	sourceCompatibility = 11
+	targetCompatibility = 11
+}
+
+task testJava11(type: Test) {
+	dependsOn testJava11Classes
+	testClassesDirs = sourceSets.testJava11.output.classesDirs
+	classpath = sourceSets.testJava11.runtimeClasspath
+	useJUnitPlatform()
+	executable = "${JAVA_11}/bin/java"
+	testLogging {
+		events "passed", "skipped", "failed"
+	}	
+}
+
+test.dependsOn testJava11
 
 jar {
 	into('META-INF/versions/11') {
