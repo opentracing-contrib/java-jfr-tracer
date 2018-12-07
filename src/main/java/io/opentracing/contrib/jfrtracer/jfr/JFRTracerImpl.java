@@ -6,6 +6,7 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
+import io.opentracing.tag.Tag;
 
 import static io.opentracing.contrib.jfrtracer.jfr.JFRSpan.createJFRSpan;
 
@@ -30,6 +31,11 @@ public class JFRTracerImpl implements Tracer {
 	}
 
 	@Override
+	public Scope activateSpan(Span span) {
+		return scopeManager.activate(span, true);
+	}
+
+	@Override
 	public SpanBuilder buildSpan(String operationName) {
 		SpanBuilder spanBuilder = tracer.buildSpan(operationName);
 		return new JFRSpanBuilder(operationName, spanBuilder);
@@ -49,6 +55,7 @@ public class JFRTracerImpl implements Tracer {
 
 		private final SpanBuilder spanBuilder;
 		private final String operationName;
+		private String parentSpanId;
 
 		JFRSpanBuilder(String operationName, SpanBuilder spanBuilder) {
 			this.operationName = operationName;
@@ -57,11 +64,13 @@ public class JFRTracerImpl implements Tracer {
 
 		@Override
 		public SpanBuilder asChildOf(SpanContext parent) {
+			this.parentSpanId = parent.toSpanId();
 			return spanBuilder.asChildOf(parent);
 		}
 
 		@Override
 		public SpanBuilder asChildOf(Span parent) {
+			this.parentSpanId = parent.context().toSpanId();
 			return spanBuilder.asChildOf(parent);
 		}
 
@@ -91,11 +100,17 @@ public class JFRTracerImpl implements Tracer {
 		}
 
 		@Override
+		public <T> SpanBuilder withTag(Tag<T> tag, T value) {
+			return spanBuilder.withTag(tag, value);
+		}
+
+		@Override
 		public SpanBuilder withStartTimestamp(long microseconds) {
 			return spanBuilder.withStartTimestamp(microseconds);
 		}
 
 		@Override
+		@Deprecated
 		public Scope startActive(boolean finishSpanOnClose) {
 			return scopeManager.activate(start(), finishSpanOnClose);
 		}
@@ -104,13 +119,20 @@ public class JFRTracerImpl implements Tracer {
 		@Deprecated
 		public Span startManual() {
 			Span span = spanBuilder.startManual();
-			return createJFRSpan(tracer, span, operationName);
+			return createJFRSpan(tracer, span, operationName, getParentSpanId());
 		}
 
 		@Override
 		public Span start() {
 			Span span = spanBuilder.start();
-			return createJFRSpan(tracer, span, operationName);
+			return createJFRSpan(tracer, span, operationName, getParentSpanId());
+		}
+
+		private String getParentSpanId() {
+			Span activeSpan = tracer.activeSpan();
+			return parentSpanId != null ? parentSpanId
+					: activeSpan != null ? activeSpan.context().toSpanId()
+							: null;
 		}
 	}
 }

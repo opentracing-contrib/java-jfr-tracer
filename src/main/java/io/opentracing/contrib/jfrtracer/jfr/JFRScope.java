@@ -4,8 +4,7 @@ import com.oracle.jrockit.jfr.ContentType;
 import com.oracle.jrockit.jfr.EventDefinition;
 import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
-import io.opentracing.Scope;
-import io.opentracing.Span;
+import io.opentracing.*;
 
 @SuppressWarnings("deprecation")
 @EventDefinition(path = "OpenTracing/Scope", name = "Open Tracing Scope", description = "Open Tracing scope exposed as a JFR event", stacktrace = true, thread = true)
@@ -29,7 +28,7 @@ public class JFRScope extends TimedEvent implements Scope {
 	@ValueDefinition(name = "Operation Name", description = "Operation name of the span")
 	private final String name;
 
-	JFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
+	private JFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
 		this.scope = scope;
 		this.manager = manager;
 		this.parent = manager.active();
@@ -74,7 +73,14 @@ public class JFRScope extends TimedEvent implements Scope {
 	}
 
 	@Override
+	@Deprecated
 	public Span span() {
 		return span;
+	}
+
+	static JFRScope createJFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
+		JFRScope jfrScope = new JFRScope(manager, scope, span, finishSpanOnClose);
+		jfrScope.begin();
+		return jfrScope;
 	}
 }

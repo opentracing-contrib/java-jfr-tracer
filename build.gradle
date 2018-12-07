@@ -25,9 +25,9 @@ sourceSets {
 }
 
 dependencies {
-	compile 'io.opentracing:opentracing-api:0.31.0'
+	compile 'io.opentracing:opentracing-api:0.32.0-RC1'
 	compile 'org.slf4j:slf4j-api:1.7.25'
-	testCompile 'io.opentracing:opentracing-mock:0.31.0'
+	testCompile 'io.opentracing:opentracing-mock:0.32.0-RC1'
 	testCompile 'io.jaegertracing:jaeger-core:0.32.0'
 	testCompile 'io.opentracing.brave:brave-opentracing:0.31.2'
 	testCompile 'io.opentracing.contrib:opentracing-concurrent:0.2.0'
@@ -51,6 +51,7 @@ compileTestJava {
 test {
 	useJUnitPlatform()
 	executable = "${JAVA_8}/bin/java"
+	forkEvery = 1
 	testLogging {
 		events "passed", "skipped", "failed"
 	}

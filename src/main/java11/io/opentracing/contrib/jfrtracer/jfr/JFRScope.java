@@ -33,7 +33,7 @@ public class JFRScope extends jdk.jfr.Event implements Scope {
 	@Description("Operation name of the span")
 	private final String name;
 
-	JFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
+	private JFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
 		this.scope = scope;
 		this.manager = manager;
 		this.parent = manager.active();
@@ -78,7 +78,14 @@ public class JFRScope extends jdk.jfr.Event implements Scope {
 	}
 
 	@Override
+	@Deprecated
 	public Span span() {
 		return span;
+	}
+
+	static JFRScope createJFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
+		JFRScope jfrScope = new JFRScope(manager, scope, span, finishSpanOnClose);
+		jfrScope.begin();
+		return jfrScope;
 	}
 }

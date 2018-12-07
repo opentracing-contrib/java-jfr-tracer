@@ -10,10 +10,12 @@ import io.jaegertracing.Configuration.ReporterConfiguration;
 import io.jaegertracing.Configuration.SamplerConfiguration;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.jfrtracer.jfr.JFRScope;
 import io.opentracing.contrib.jfrtracer.jfr.JFRSpan;
 import jdk.jfr.Recording;
 import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,6 +32,7 @@ import static io.jaegertracing.Configuration.JAEGER_SAMPLER_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled("Skip until Jaeger and Brave supportds 0.32.0")
 public class ImplementationsJFRTest {
 
 	@Test
@@ -86,12 +89,13 @@ public class ImplementationsJFRTest {
 
 			try (Recording recording = new Recording()) {
 				recording.enable(JFRSpan.class);
+				recording.enable(JFRScope.class);
 				recording.start();
 
 				// Generate span
 				Span start = tracer.buildSpan("outer span").start();
-				tracer.scopeManager().activate(start, false);
-				tracer.buildSpan("inner span").startActive(true).close();
+				tracer.scopeManager().activate(start);
+				tracer.activateSpan(tracer.buildSpan("inner span").start()).close();
 				tracer.scopeManager().active().close();
 				start.finish();
 

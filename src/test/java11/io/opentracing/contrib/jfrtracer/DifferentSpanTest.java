@@ -1,8 +1,11 @@
 package io.opentracing.contrib.jfrtracer;
 
+import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.concurrent.TracedExecutorService;
+import io.opentracing.contrib.jfrtracer.JFRTracer;
+import io.opentracing.contrib.jfrtracer.jfr.JFRScope;
 import io.opentracing.contrib.jfrtracer.jfr.JFRSpan;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
@@ -38,15 +41,16 @@ public class DifferentSpanTest {
 
 			try (Recording recording = new Recording()) {
 				recording.enable(JFRSpan.class);
+				recording.enable(JFRScope.class);
 				recording.start();
 
 				// Generate spans
-				Span span = tracer.buildSpan("test span").start();
+				Scope scope = tracer.activateSpan(tracer.buildSpan("test span").start());
 				TracedExecutorService executor = new TracedExecutorService(Executors.newSingleThreadExecutor(), tracer);
 				executor.submit(() -> {
-					tracer.buildSpan("executor span").start().finish();
+					tracer.activateSpan(tracer.buildSpan("executor span").start()).close();
 				}).get(5, TimeUnit.SECONDS);
-				span.finish();
+				scope.close();
 
 				recording.dump(output);
 			}
@@ -56,7 +60,6 @@ public class DifferentSpanTest {
 
 			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
 			List<RecordedEvent> events = RecordingFile.readAllEvents(output);
-			assertEquals(finishedSpans.size(), events.size());
 			events.stream()
 					.forEach(e -> {
 						MockSpan finishedSpan = finishedSpans.get(e.getString("name"));
@@ -64,6 +67,9 @@ public class DifferentSpanTest {
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
 						assertEquals(finishedSpan.operationName(), e.getString("name"));
+						if ("executor span".equals(e.getString("name"))) {
+							assertNotNull(e.getString("parentSpanId"));
+						}
 					});
 
 		} finally {

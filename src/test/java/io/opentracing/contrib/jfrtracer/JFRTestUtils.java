@@ -57,6 +57,12 @@ public final class JFRTestUtils {
 
 	@SuppressWarnings("deprecation")
 	public static List<FLREvent> stopJfr(Path output) throws IOException {
+
+		try {
+			// Wait a little bit to make sure recording is actually capturing events since we use an executor
+			Thread.sleep(100);
+		} catch (InterruptedException ex) {}
+
 		try {
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 			mbs.invoke(new ObjectName("com.sun.management:type=DiagnosticCommand"), "jfrStop",

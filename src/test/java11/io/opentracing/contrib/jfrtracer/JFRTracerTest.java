@@ -46,6 +46,7 @@ public class JFRTracerTest {
 
 			try (Recording recording = new Recording()) {
 				recording.enable(JFRSpan.class);
+				recording.enable(JFRScope.class);
 				recording.start();
 
 				// Generate span
@@ -67,6 +68,7 @@ public class JFRTracerTest {
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
 						assertEquals(finishedSpan.operationName(), e.getString("name"));
+						assertEquals(JFRSpan.class.getName(), e.getEventType().getName());
 					});
 
 		} finally {
@@ -82,7 +84,7 @@ public class JFRTracerTest {
 
 		// Generate span
 		assertNull(tracer.scopeManager().active());
-		tracer.buildSpan("test span").startActive(true).close();
+		tracer.activateSpan(tracer.buildSpan("test span").start()).close();
 
 		// Validate span was created and recorded in JFR
 		assertEquals(1, mockTracer.finishedSpans().size());
@@ -98,11 +100,12 @@ public class JFRTracerTest {
 
 		Recording recording = new Recording();
 		recording.enable(JFRSpan.class);
+		recording.enable(JFRScope.class);
 		recording.start();
 
 		// Generate span
 		assertNull(tracer.scopeManager().active());
-		try (Scope scope = tracer.buildSpan("outer span").startActive(true)) {
+		try (Scope scope = tracer.activateSpan(tracer.buildSpan("outer span").start())) {
 			Scope activeScopeOuter = tracer.scopeManager().active();
 			assertTrue(activeScopeOuter instanceof JFRScope);
 			assertNotNull(activeScopeOuter);
@@ -111,14 +114,14 @@ public class JFRTracerTest {
 				System.out.println(FlightRecorder.getFlightRecorder().getRecordings().size());
 			}
 			await().atMost(20, TimeUnit.SECONDS).until(() -> FlightRecorder.getFlightRecorder().getRecordings().isEmpty());
-			try (Scope inner = tracer.buildSpan("inner span").startActive(true)) {
+			try (Scope inner = tracer.activateSpan(tracer.buildSpan("inner span").start())) {
 				Scope activeScopeInner = tracer.scopeManager().active();
 				assertNotNull(activeScopeInner);
 				assertFalse(activeScopeInner instanceof JFRScope);
 				assertNotEquals(activeScopeOuter, activeScopeInner);
 			}
 		}
-		try (Scope scope = tracer.buildSpan("separate span").startActive(true)) {
+		try (Scope scope = tracer.activateSpan(tracer.buildSpan("separate span").start())) {
 			Scope activeScope = tracer.scopeManager().active();
 			assertNotNull(activeScope);
 			assertFalse(activeScope instanceof JFRScope);

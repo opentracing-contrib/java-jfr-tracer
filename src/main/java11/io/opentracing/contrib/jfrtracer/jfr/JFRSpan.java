@@ -3,28 +3,21 @@ package io.opentracing.contrib.jfrtracer.jfr;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import io.opentracing.propagation.Format;
-import io.opentracing.propagation.TextMap;
+import io.opentracing.tag.Tag;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
 import jdk.jfr.FlightRecorder;
 import jdk.jfr.Label;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import static java.util.Objects.isNull;
 
 @Category("OpenTracing")
 @Label("OpenTracing JFR Event")
 @Description("Open Tracing spans exposed as a JFR event")
-public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
+public class JFRSpan extends jdk.jfr.Event implements Span {
 
-	private final static Logger LOG = LoggerFactory.getLogger(JFRSpan.class);
 	private static FlightRecorder jfr;
 
 	private final Span span;
@@ -39,7 +32,7 @@ public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
 
 	@Label("Parent Span ID")
 	@Description("ID of the parent span. Null if root span")
-	private String parentSpanId;
+	private final String parentSpanId;
 
 	@Label("Operation Name")
 	@Description("Operation name of the span")
@@ -53,10 +46,13 @@ public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
 	@Description("Thread finishing the span")
 	private Thread finishThread;
 
-	private JFRSpan(Span span, String name) {
+	private JFRSpan(Span span, String name, String parentSpanId) {
 		this.name = name;
 		this.startThread = Thread.currentThread();
 		this.span = span;
+		this.spanId = span.context().toSpanId();
+		this.traceId = span.context().toTraceId();
+		this.parentSpanId = parentSpanId;
 	}
 
 	public String getTraceId() {
@@ -88,44 +84,6 @@ public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
 	}
 
 	@Override
-	public Iterator<Entry<String, String>> iterator() {
-		return Collections.emptyIterator();
-	}
-
-	/**
-	 * Supports injection with MockTracer, uber-trace-id, and B3 headers
-	 *
-	 * @param key
-	 * @param value
-	 */
-	@Override
-	public void put(String key, String value) {
-		switch (key) {
-			case "X-B3-TraceId":
-			case "traceid":
-				this.traceId = value;
-				break;
-			case "X-B3-SpanId":
-			case "spanid":
-				this.spanId = value;
-				break;
-			case "X-B3-ParentSpanId":
-				this.parentSpanId = value;
-				break;
-			case "X-B3-Sampled":
-				break;
-			case "uber-trace-id":
-				String[] values = value.split(":");
-				this.traceId = values[0];
-				this.spanId = values[1];
-				this.parentSpanId = values[2].equals("0") ? null : values[2];
-				break;
-			default:
-				LOG.warn("Unsupported injection key: " + key);
-		}
-	}
-
-	@Override
 	public SpanContext context() {
 		return span.context();
 	}
@@ -143,6 +101,11 @@ public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
 	@Override
 	public Span setTag(String key, Number value) {
 		return span.setTag(key, value);
+	}
+
+	@Override
+	public <T> Span setTag(Tag<T> tag, T value) {
+		return span.setTag(tag, value);
 	}
 
 	@Override
@@ -190,18 +153,18 @@ public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
 	@Override
 	public void finish(long finishMicros) {
 		finishJFR();
-		span.finish();
+		span.finish(finishMicros);
 	}
 
 	void finishJFR() {
 		if (shouldCommit()) {
-			this.finishThread = Thread.currentThread();
+			finishThread = Thread.currentThread();
 			end();
 			commit();
 		}
 	}
 
-	static Span createJFRSpan(Tracer tracer, Span span, String operationName) {
+	static Span createJFRSpan(Tracer tracer, Span span, String operationName, String parentSpanId) {
 		if (FlightRecorder.isAvailable() && FlightRecorder.isInitialized()) {
 
 			// Avoid synchronization
@@ -210,8 +173,7 @@ public class JFRSpan extends jdk.jfr.Event implements Span, TextMap {
 			}
 
 			if (!jfr.getRecordings().isEmpty()) {
-				JFRSpan jfrSpan = new JFRSpan(span, operationName);
-				tracer.inject(span.context(), Format.Builtin.TEXT_MAP, jfrSpan);
+				JFRSpan jfrSpan = new JFRSpan(span, operationName, parentSpanId);
 				jfrSpan.begin();
 				return jfrSpan;
 			}
