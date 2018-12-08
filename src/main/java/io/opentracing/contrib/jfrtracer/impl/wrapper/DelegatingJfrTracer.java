@@ -83,7 +83,6 @@ public final class DelegatingJfrTracer implements Tracer {
 	}
 
 	public String toString(Span span) {
-		// TODO: get parent...
 		return String.format("Trace id: %s, Span id: %s", span.context().toTraceId(), span.context().toSpanId());
 	}
 

@@ -44,6 +44,9 @@ final class ScopeWrapper implements Scope {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (finishOnClose) {
+			spanWrapper.finish();
+		}
 	}
 
 	@Override

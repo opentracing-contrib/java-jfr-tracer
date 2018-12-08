@@ -138,7 +138,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 			currentEvent.startThread = Thread.currentThread();
 			currentEvent.traceId = span.context().toTraceId();
 			currentEvent.spanId = span.context().toSpanId();
-		// currentEvent.parentId = span.toParentId();
+			// currentEvent.parentId = span.toParentId();
 		}
 		EXECUTOR.execute(new BeginEventCommand(currentEvent));
 	}

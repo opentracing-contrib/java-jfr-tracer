@@ -115,8 +115,7 @@ final class SpanWrapper implements Span {
 		try {
 			spanEmitter.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Ignore any JFR related problems at this point
 		}
 	}
 
@@ -126,8 +125,7 @@ final class SpanWrapper implements Span {
 		try {
 			spanEmitter.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Ignore any JFR related problems at this point
 		}
 	}
 
