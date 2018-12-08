@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.util.logging.Logger;
 
 import io.opentracing.Span;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrScopeEmitterImpl;
 
 /**
  * Abstract super class for emitters.

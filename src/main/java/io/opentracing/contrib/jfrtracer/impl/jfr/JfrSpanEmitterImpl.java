@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import com.oracle.jrockit.jfr.EventDefinition;
 import com.oracle.jrockit.jfr.EventToken;
@@ -21,7 +21,7 @@ import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrScopeEmitterImpl;
 
 /**
  * This is the JDK 7/8 implementation for emitting Span events. For the JDK 9 and later

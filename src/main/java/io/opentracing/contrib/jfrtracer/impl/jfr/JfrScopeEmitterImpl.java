@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.net.URI;
 import java.util.logging.Level;
@@ -33,7 +33,7 @@ import io.opentracing.Span;
 /**
  * This is the JDK 7/8 implementation. For the JDK 9 and later implementation, see src/main/java9.
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation"})
 final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	private static final Producer PRODUCER;
 	private static final EventToken SCOPE_EVENT_TOKEN;

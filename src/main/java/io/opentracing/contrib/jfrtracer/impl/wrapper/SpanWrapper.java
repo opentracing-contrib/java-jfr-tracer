@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer;
+package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
 import java.util.Map;
 
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
-import io.opentracing.contrib.jfrtracer.jfr.JfrEmitter;
-import io.opentracing.contrib.jfrtracer.jfr.JfrEmitterFactory;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrEmitter;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrEmitterFactory;
 import io.opentracing.tag.Tag;
 
 /**

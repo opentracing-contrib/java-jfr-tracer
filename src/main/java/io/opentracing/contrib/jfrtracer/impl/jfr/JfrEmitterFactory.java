@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
-import io.opentracing.contrib.jfrtracer.jfr.JfrSpanEmitterImpl;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrScopeEmitterImpl;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrSpanEmitterImpl;
 
 /**
  * For creating JfrEmitters.
