@@ -82,12 +82,8 @@ public final class DelegatingJfrTracer implements Tracer {
 		return delegate.extract(format, carrier);
 	}
 
-	public String toString(Span span) {
-		return String.format("Trace id: %s, Span id: %s", span.context().toTraceId(), span.context().toSpanId());
-	}
-
 	@Override
 	public Scope activateSpan(Span span) {
 		return scopeManager.activate(span);
-	}
+	}	
 }

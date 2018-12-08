@@ -39,7 +39,7 @@ final class SpanWrapper implements Span {
 		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate);
 	}
 
-	public SpanWrapper(Span delegate, String operationName) {
+	SpanWrapper(Span delegate, String operationName) {
 		this(delegate);
 		this.operationName = operationName;
 	}
@@ -112,38 +112,38 @@ final class SpanWrapper implements Span {
 	@Override
 	public void finish() {
 		delegate.finish();
-		try {
-			spanEmitter.close();
-		} catch (Exception e) {
-			// Ignore any JFR related problems at this point
-		}
+		closeEmitter();
 	}
 
 	@Override
 	public void finish(long finishMicros) {
 		delegate.finish(finishMicros);
-		try {
-			spanEmitter.close();
-		} catch (Exception e) {
-			// Ignore any JFR related problems at this point
-		}
-	}
-
-	public Span getDelegate() {
-		return delegate;
-	}
-
-	public void start() {
-		spanEmitter.start(operationName);
-	}
-
-	public String getOperationName() {
-		return operationName;
+		closeEmitter();
 	}
 
 	@Override
 	public <T> Span setTag(Tag<T> key, T value) {
 		delegate.setTag(key, value);		
 		return this;
+	}
+
+	Span getDelegate() {
+		return delegate;
+	}
+
+	void start() {
+		spanEmitter.start(operationName);
+	}
+
+	String getOperationName() {
+		return operationName;
+	}
+
+	void closeEmitter() {
+		try {
+			spanEmitter.close();
+		} catch (Exception e) {
+			// Ignore any JFR related problems at this point
+		}
 	}
 }

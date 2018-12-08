@@ -39,13 +39,9 @@ final class ScopeWrapper implements Scope {
 	@Override
 	public void close() {
 		delegate.close();
-		try {
-			emitter.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		closeEmitter();
 		if (finishOnClose) {
-			spanWrapper.finish();
+			spanWrapper.closeEmitter();
 		}
 	}
 
@@ -54,7 +50,11 @@ final class ScopeWrapper implements Scope {
 		return spanWrapper;
 	}
 	
-	public boolean isFinishOnClose() {
-		return finishOnClose;
+	private void closeEmitter() {
+		try {
+			emitter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
