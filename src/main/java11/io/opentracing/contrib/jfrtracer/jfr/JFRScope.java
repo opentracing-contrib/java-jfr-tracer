@@ -31,7 +31,7 @@ public class JFRScope extends jdk.jfr.Event implements Scope {
 
 	@Label("Operation Name")
 	@Description("Operation name of the span")
-	private final String name;
+	private final String operationName;
 
 	private JFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
 		this.scope = scope;
@@ -44,7 +44,7 @@ public class JFRScope extends jdk.jfr.Event implements Scope {
 		this.traceId = span.getTraceId();
 		this.spanId = span.getSpanId();
 		this.parentSpanId = span.getParentSpanId();
-		this.name = span.getName();
+		this.operationName = span.getOperationName();
 	}
 
 	public String getTraceId() {
@@ -59,8 +59,8 @@ public class JFRScope extends jdk.jfr.Event implements Scope {
 		return parentSpanId;
 	}
 
-	public String getName() {
-		return name;
+	public String getOperationName() {
+		return operationName;
 	}
 
 	@Override

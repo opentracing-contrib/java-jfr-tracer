@@ -58,7 +58,7 @@ public class JFRSpan extends TimedEvent implements Span {
 	private String parentSpanId;
 
 	@ValueDefinition(name = "Operation Name", description = "Operation name of the span")
-	private String name;
+	private String operationName;
 
 	@ValueDefinition(name = "Start Thread", description = "Thread starting the span")
 	private final Thread startThread;
@@ -66,8 +66,8 @@ public class JFRSpan extends TimedEvent implements Span {
 	@ValueDefinition(name = "Finish Thread", description = "Thread finishing the span")
 	private Thread finishThread;
 
-	private JFRSpan(Span span, String name, String parentSpanId) {
-		this.name = name;
+	private JFRSpan(Span span, String operationName, String parentSpanId) {
+		this.operationName = operationName;
 		this.startThread = Thread.currentThread();
 		this.span = span;
 		this.spanId = span.context().toSpanId();
@@ -87,8 +87,8 @@ public class JFRSpan extends TimedEvent implements Span {
 		return parentSpanId;
 	}
 
-	public String getName() {
-		return name;
+	public String getOperationName() {
+		return operationName;
 	}
 
 	public Thread getStartThread() {
@@ -169,7 +169,7 @@ public class JFRSpan extends TimedEvent implements Span {
 
 	@Override
 	public Span setOperationName(String operationName) {
-		this.name = operationName;
+		this.operationName = operationName;
 		span.setOperationName(operationName);
 		return this;
 	}

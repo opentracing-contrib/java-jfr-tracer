@@ -36,7 +36,7 @@ public class JFRSpan extends jdk.jfr.Event implements Span {
 
 	@Label("Operation Name")
 	@Description("Operation name of the span")
-	private String name;
+	private String operationName;
 
 	@Label("Start Thread")
 	@Description("Thread starting the span")
@@ -46,8 +46,8 @@ public class JFRSpan extends jdk.jfr.Event implements Span {
 	@Description("Thread finishing the span")
 	private Thread finishThread;
 
-	private JFRSpan(Span span, String name, String parentSpanId) {
-		this.name = name;
+	private JFRSpan(Span span, String operationName, String parentSpanId) {
+		this.operationName = operationName;
 		this.startThread = Thread.currentThread();
 		this.span = span;
 		this.spanId = span.context().toSpanId();
@@ -67,8 +67,8 @@ public class JFRSpan extends jdk.jfr.Event implements Span {
 		return parentSpanId;
 	}
 
-	public String getName() {
-		return name;
+	public String getOperationName() {
+		return operationName;
 	}
 
 	public Thread getStartThread() {
@@ -149,7 +149,7 @@ public class JFRSpan extends jdk.jfr.Event implements Span {
 
 	@Override
 	public Span setOperationName(String operationName) {
-		this.name = operationName;
+		this.operationName = operationName;
 		span.setOperationName(operationName);
 		return this;
 	}

@@ -62,12 +62,12 @@ public class DifferentSpanTest {
 			List<RecordedEvent> events = RecordingFile.readAllEvents(output);
 			events.stream()
 					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("name"));
+						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
 						assertNotNull(finishedSpan);
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("name"));
-						if ("executor span".equals(e.getString("name"))) {
+						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
+						if ("executor span".equals(e.getString("operationName"))) {
 							assertNotNull(e.getString("parentSpanId"));
 						}
 					});
@@ -107,11 +107,11 @@ public class DifferentSpanTest {
 			assertEquals(finishedSpans.size(), events.size());
 			events.stream()
 					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("name"));
+						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
 						assertNotNull(finishedSpan);
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("name"));
+						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
 						assertNotEquals(Thread.currentThread().getName(), e.getThread().getJavaName());
 					});
 

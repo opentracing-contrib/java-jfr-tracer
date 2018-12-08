@@ -63,11 +63,11 @@ public class JFRTracerTest {
 			assertEquals(finishedSpans.size(), events.size());
 			events.stream()
 					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("name"));
+						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
 						assertNotNull(finishedSpan);
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("name"));
+						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
 						assertEquals(JFRSpan.class.getName(), e.getEventType().getName());
 					});
 

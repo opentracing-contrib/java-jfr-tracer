@@ -63,11 +63,11 @@ public class DifferentSpanTest {
 			assertEquals(finishedSpans.size(), events.size());
 			events.stream()
 					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getValue("name").toString());
+						MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
 						assertNotNull(finishedSpan);
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getValue("name"));
+						assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
 					});
 
 		} finally {
@@ -108,11 +108,11 @@ public class DifferentSpanTest {
 			assertEquals(finishedSpans.size(), events.size());
 			events.stream()
 					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getValue("name").toString());
+						MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
 						assertNotNull(finishedSpan);
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
 						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getValue("name"));
+						assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
 						assertNotEquals(expectedStartThread, e.getThread());
 						assertNotEquals(expectedFinishThread, e.getThread());
 						assertEquals(expectedStartThread, e.getValue("startThread"));

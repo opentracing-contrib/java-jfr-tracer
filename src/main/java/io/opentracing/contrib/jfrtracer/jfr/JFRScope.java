@@ -26,7 +26,7 @@ public class JFRScope extends TimedEvent implements Scope {
 	private final String parentSpanId;
 
 	@ValueDefinition(name = "Operation Name", description = "Operation name of the span")
-	private final String name;
+	private final String operationName;
 
 	private JFRScope(JFRScopeManager manager, Scope scope, JFRSpan span, boolean finishSpanOnClose) {
 		this.scope = scope;
@@ -39,7 +39,7 @@ public class JFRScope extends TimedEvent implements Scope {
 		this.traceId = span.getTraceId();
 		this.spanId = span.getSpanId();
 		this.parentSpanId = span.getParentSpanId();
-		this.name = span.getName();
+		this.operationName = span.getOperationName();
 	}
 
 	public String getTraceId() {
@@ -54,8 +54,8 @@ public class JFRScope extends TimedEvent implements Scope {
 		return parentSpanId;
 	}
 
-	public String getName() {
-		return name;
+	public String getOperationName() {
+		return operationName;
 	}
 
 	@Override
