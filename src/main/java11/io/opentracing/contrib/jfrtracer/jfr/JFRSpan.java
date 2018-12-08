@@ -90,47 +90,56 @@ public class JFRSpan extends jdk.jfr.Event implements Span {
 
 	@Override
 	public Span setTag(String key, String value) {
-		return span.setTag(key, value);
+		span.setTag(key, value);
+		return this;
 	}
 
 	@Override
 	public Span setTag(String key, boolean value) {
-		return span.setTag(key, value);
+		span.setTag(key, value);
+		return this;
 	}
 
 	@Override
 	public Span setTag(String key, Number value) {
-		return span.setTag(key, value);
+		span.setTag(key, value);
+		return this;
 	}
 
 	@Override
 	public <T> Span setTag(Tag<T> tag, T value) {
-		return span.setTag(tag, value);
+		span.setTag(tag, value);
+		return this;
 	}
 
 	@Override
 	public Span log(Map<String, ?> fields) {
-		return span.log(fields);
+		span.log(fields);
+		return this;
 	}
 
 	@Override
 	public Span log(long timestampMicroseconds, Map<String, ?> fields) {
-		return span.log(timestampMicroseconds, fields);
+		span.log(timestampMicroseconds, fields);
+		return this;
 	}
 
 	@Override
 	public Span log(String event) {
-		return span.log(event);
+		span.log(event);
+		return this;
 	}
 
 	@Override
 	public Span log(long timestampMicroseconds, String event) {
-		return span.log(timestampMicroseconds, event);
+		span.log(timestampMicroseconds, event);
+		return this;
 	}
 
 	@Override
 	public Span setBaggageItem(String key, String value) {
-		return span.setBaggageItem(key, value);
+		span.setBaggageItem(key, value);
+		return this;
 	}
 
 	@Override
@@ -141,7 +150,8 @@ public class JFRSpan extends jdk.jfr.Event implements Span {
 	@Override
 	public Span setOperationName(String operationName) {
 		this.name = operationName;
-		return span.setOperationName(operationName);
+		span.setOperationName(operationName);
+		return this;
 	}
 
 	@Override

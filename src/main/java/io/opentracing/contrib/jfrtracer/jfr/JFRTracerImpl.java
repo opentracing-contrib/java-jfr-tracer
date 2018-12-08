@@ -65,48 +65,57 @@ public class JFRTracerImpl implements Tracer {
 		@Override
 		public SpanBuilder asChildOf(SpanContext parent) {
 			this.parentSpanId = parent.toSpanId();
-			return spanBuilder.asChildOf(parent);
+			spanBuilder.asChildOf(parent);
+			return this;
 		}
 
 		@Override
 		public SpanBuilder asChildOf(Span parent) {
 			this.parentSpanId = parent.context().toSpanId();
-			return spanBuilder.asChildOf(parent);
+			spanBuilder.asChildOf(parent);
+			return this;
 		}
 
 		@Override
 		public SpanBuilder addReference(String referenceType, SpanContext referencedContext) {
-			return spanBuilder.addReference(referenceType, referencedContext);
+			spanBuilder.addReference(referenceType, referencedContext);
+			return this;
 		}
 
 		@Override
 		public SpanBuilder ignoreActiveSpan() {
-			return spanBuilder.ignoreActiveSpan();
+			spanBuilder.ignoreActiveSpan();
+			return this;
 		}
 
 		@Override
 		public SpanBuilder withTag(String key, String value) {
-			return spanBuilder.withTag(key, value);
+			spanBuilder.withTag(key, value);
+			return this;
 		}
 
 		@Override
 		public SpanBuilder withTag(String key, boolean value) {
-			return spanBuilder.withTag(key, value);
+			spanBuilder.withTag(key, value);
+			return this;
 		}
 
 		@Override
 		public SpanBuilder withTag(String key, Number value) {
-			return spanBuilder.withTag(key, value);
+			spanBuilder.withTag(key, value);
+			return this;
 		}
 
 		@Override
 		public <T> SpanBuilder withTag(Tag<T> tag, T value) {
-			return spanBuilder.withTag(tag, value);
+			spanBuilder.withTag(tag, value);
+			return this;
 		}
 
 		@Override
 		public SpanBuilder withStartTimestamp(long microseconds) {
-			return spanBuilder.withStartTimestamp(microseconds);
+			spanBuilder.withStartTimestamp(microseconds);
+			return this;
 		}
 
 		@Override
