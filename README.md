@@ -47,7 +47,7 @@ Once that is done, simply run:
 ./gradlew publishToMavenLocal
 ```
 
-Note that you will need to have an Oracle JDK 8 and an Oracle JDK 9+ (an OpenJDK 11 will work too) available. Parts of the code will be compiled using JDK 7 and parts using JDK 9+. Note that the resulting MRJAR will run on Oracle JDK 8 and later, and OpenJDK 11 and later.
+Note that you will need to have an Oracle JDK 8 and an OpenJDK (or Oracle JDK) JDK 11 available. Parts of the code will be compiled using JDK 8 and parts using JDK 11. Note that the resulting MRJAR will run on Oracle JDK 8 and later, and OpenJDK (or Oracle JDK) 11 and later.
 
 
 ## About
