@@ -16,7 +16,7 @@ Next, in whatever code you use to set up the OpenTracing tracer, wrap your trace
 
 ```java
 GlobalTracer.register(
-	new DelegatingJfrTracer(yourFavTracer));
+	WrapperFactory.wrap(yourFavTracer));
 ```
 
 ## Supported Tracers
