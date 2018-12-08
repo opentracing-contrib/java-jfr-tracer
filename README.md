@@ -2,13 +2,13 @@
 This is a delegating tracer to be used with OpenTracing. It records span and scope information into the JDK Flight Recorder, enabling very deep tracing capabilities.
 
 ## Using the JFR Tracer
-First add a dependency to it. For example, in Maven (note that the coordinates will change to io.opentracing.contrib once we release 0.0.4):
+First add a dependency to it. For example, in Maven (note that this version has not been released yet, we're waiting for opentracing v0.32.0 to come on line):
 
 ```xml
 	<dependency>
-		<groupId>se.hirt.jmc</groupId>
-		<artifactId>jfr-tracer</artifactId>
-		<version>0.0.3</version>
+		<groupId>io.opentracing.contrib</groupId>
+		<artifactId>opentracing-jfr-tracer</artifactId>
+		<version>0.0.4</version>
 	</dependency>
 ```
 
@@ -48,7 +48,6 @@ Once that is done, simply run:
 ```
 
 Note that you will need to have an Oracle JDK 8 and an Oracle JDK 9+ (an OpenJDK 11 will work too) available. Parts of the code will be compiled using JDK 7 and parts using JDK 9+. Note that the resulting MRJAR will run on Oracle JDK 8 and later, and OpenJDK 11 and later.
-
 
 
 ## About
