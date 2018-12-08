@@ -28,6 +28,9 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	private final DelegatingJfrTracer owner;
 	private final SpanBuilder delegate;
 	private final String operationName;
+	// Not sure how likely it is that these builders get passed around,
+	// but assumption is the mother of all...
+	private volatile String parentId;
 
 	private SpanWrapper spanWrapper;
 
@@ -40,12 +43,14 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public SpanBuilder asChildOf(SpanContext parent) {
 		delegate.asChildOf(parent);
+		parentId = parent.toSpanId();
 		return this;
 	}
 
 	@Override
 	public SpanBuilder asChildOf(Span parent) {
 		delegate.asChildOf(parent);
+		parentId = parent.context().toSpanId();
 		return this;
 	}
 
@@ -95,7 +100,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Deprecated
 	public Span startManual() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.startManual(), operationName);
+			spanWrapper = new SpanWrapper(parentId, delegate.startManual(), operationName);
 		}
 		return spanWrapper;
 	}
@@ -103,7 +108,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public Span start() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.start(), operationName);
+			spanWrapper = new SpanWrapper(parentId, delegate.start(), operationName);
 			spanWrapper.start();
 		}
 		return spanWrapper;

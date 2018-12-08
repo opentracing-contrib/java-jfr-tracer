@@ -61,13 +61,13 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	}
 
 	@Override
-	public void start(String operationName) {
+	public void start(String parentId, String operationName) {
 		currentEvent = new Jdk9ScopeEvent();
 		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
+			currentEvent.parentId = parentId;
 			currentEvent.traceId = span.context().toTraceId();
 			currentEvent.spanId = span.context().toSpanId();
-			// currentEvent.parentId = span.context().toParentId();
 		}
 		currentEvent.begin();
 	}

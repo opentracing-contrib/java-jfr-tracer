@@ -29,19 +29,20 @@ import io.opentracing.tag.Tag;
 final class SpanWrapper implements Span {
 	static JfrEmitterFactory EMITTER_FACTORY = new JfrEmitterFactory();
 
+	private final String parentId;
 	private final Span delegate;
 	private final JfrEmitter spanEmitter;
-	// If we don't want to support updates of the operation name, this could be final too...
+	// If we don't want to support updates of the operation name, this could be
+	// final too...
+	// If we want to ignore the fact that this could be updated in a separate
+	// thread, we could make it non-volatile...
 	private volatile String operationName;
 
-	SpanWrapper(Span delegate) {
+	SpanWrapper(String parentId, Span delegate, String operationName) {
 		this.delegate = delegate;
-		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate);
-	}
-
-	SpanWrapper(Span delegate, String operationName) {
-		this(delegate);
+		this.parentId = parentId;
 		this.operationName = operationName;
+		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate);
 	}
 
 	@Override
@@ -123,7 +124,7 @@ final class SpanWrapper implements Span {
 
 	@Override
 	public <T> Span setTag(Tag<T> key, T value) {
-		delegate.setTag(key, value);		
+		delegate.setTag(key, value);
 		return this;
 	}
 
@@ -132,11 +133,15 @@ final class SpanWrapper implements Span {
 	}
 
 	void start() {
-		spanEmitter.start(operationName);
+		spanEmitter.start(parentId, operationName);
 	}
 
 	String getOperationName() {
 		return operationName;
+	}
+
+	String getParentId() {
+		return parentId;
 	}
 
 	void closeEmitter() {

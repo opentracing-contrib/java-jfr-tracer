@@ -35,7 +35,8 @@ final class ScopeManagerWrapper implements ScopeManager {
 	public Scope activate(Span span, boolean finishSpanOnClose) {
 		ScopeWrapper wrapper;
 		if (!(span instanceof SpanWrapper)) {
-			SpanWrapper spanWrapper = new SpanWrapper(span);
+			// This should be rather unlikely...
+			SpanWrapper spanWrapper = new SpanWrapper("", span, "");
 			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(span, finishSpanOnClose), finishSpanOnClose); 
 		} else {
 			SpanWrapper spanWrapper = (SpanWrapper) span;
