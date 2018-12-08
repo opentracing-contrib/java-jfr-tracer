@@ -48,16 +48,16 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@EventDefinition(path = "jfrtracer/scopeevent", name = "ScopeEvent", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
 	private static class ScopeEvent extends TimedEvent {
-		@ValueDefinition(name = "OperationName", description = "The operationName for the span active in this scope")
+		@ValueDefinition(name = "OperationName")
 		private String operationName;
 
-		@ValueDefinition(name = "TraceId", description = "The trace identifier for this event")
+		@ValueDefinition(name = "TraceId")
 		private String traceId;
 
-		@ValueDefinition(name = "SpanId", description = "The span identifier for this event")
+		@ValueDefinition(name = "SpanId")
 		private String spanId;
 
-		@ValueDefinition(name = "ParentId", description = "The parent span identifier for this event")
+		@ValueDefinition(name = "ParentId")
 		private String parentId;
 
 		public ScopeEvent(EventToken eventToken) {

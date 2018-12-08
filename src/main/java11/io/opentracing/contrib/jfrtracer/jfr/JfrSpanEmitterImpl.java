@@ -38,19 +38,15 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	@StackTrace(false)
 	private static class Jdk9SpanEvent extends Event {
 		@Label("Operation Name")
-		@Description("The operation name for the span")
 		private String operationName;
 
 		@Label("Trace Id")
-		@Description("The trace id for the span")
 		private String traceId;
 
 		@Label("Span Id")
-		@Description("The id of the parent span")
 		private String spanId;
 
 		@Label("Parent Id")
-		@Description("The id of the parent span")
 		private String parentId;
 
 		@Label("Start Thread")
