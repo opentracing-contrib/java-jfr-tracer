@@ -26,12 +26,14 @@ final class ScopeWrapper implements Scope {
 	private final Scope delegate;
 	private final JfrEmitter emitter;
 	private final SpanWrapper spanWrapper;
+	private final boolean finishOnClose;
 
-	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate) {
+	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate, boolean finishOnClose) {
 		this.spanWrapper = spanWrapper;
 		this.delegate = delegate;
-		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(delegate.span());
+		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(spanWrapper);
 		emitter.start(spanWrapper.getOperationName());
+		this.finishOnClose = finishOnClose;
 	}
 
 	@Override
@@ -47,5 +49,9 @@ final class ScopeWrapper implements Scope {
 	@Override
 	public Span span() {
 		return spanWrapper;
+	}
+	
+	public boolean isFinishOnClose() {
+		return finishOnClose;
 	}
 }

@@ -17,6 +17,7 @@ package io.opentracing.contrib.jfrtracer;
 
 import java.util.logging.Logger;
 
+import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
@@ -60,6 +61,7 @@ public final class DelegatingJfrTracer implements Tracer {
 		return scopeManager;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Span activeSpan() {
 		return scopeManager.active().span();
@@ -82,6 +84,11 @@ public final class DelegatingJfrTracer implements Tracer {
 
 	public String toString(Span span) {
 		// TODO: get parent...
-		return String.format("Trace id: %s, Span id: %s", span.toTraceId(), span.toSpanId());
+		return String.format("Trace id: %s, Span id: %s", span.context().toTraceId(), span.context().toSpanId());
+	}
+
+	@Override
+	public Scope activateSpan(Span span) {
+		return scopeManager.activate(span);
 	}
 }

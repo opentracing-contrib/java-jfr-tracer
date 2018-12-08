@@ -21,6 +21,7 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.contrib.jfrtracer.jfr.JfrEmitter;
 import io.opentracing.contrib.jfrtracer.jfr.JfrEmitterFactory;
+import io.opentracing.tag.Tag;
 
 /**
  * Wrapper for {@link Span}.
@@ -140,5 +141,11 @@ final class SpanWrapper implements Span {
 
 	public String getOperationName() {
 		return operationName;
+	}
+
+	@Override
+	public <T> Span setTag(Tag<T> key, T value) {
+		delegate.setTag(key, value);		
+		return this;
 	}
 }

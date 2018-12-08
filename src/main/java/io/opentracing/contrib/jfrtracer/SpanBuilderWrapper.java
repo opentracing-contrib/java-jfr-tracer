@@ -19,6 +19,7 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer.SpanBuilder;
+import io.opentracing.tag.Tag;
 
 /**
  * Wrapper for {@link SpanBuilder}.
@@ -84,6 +85,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Scope startActive(boolean finishSpanOnClose) {
 		return owner.scopeManager().activate(start(), finishSpanOnClose);
@@ -105,5 +107,11 @@ final class SpanBuilderWrapper implements SpanBuilder {
 			spanWrapper.start();
 		}
 		return spanWrapper;
+	}
+
+	@Override
+	public <T> SpanBuilder withTag(Tag<T> key, T value) {
+		delegate.withTag(key, value);
+		return this;
 	}
 }
