@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer;
+package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer.SpanBuilder;
+import io.opentracing.tag.Tag;
 
 /**
  * Wrapper for {@link SpanBuilder}.
@@ -84,6 +85,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Scope startActive(boolean finishSpanOnClose) {
 		return owner.scopeManager().activate(start(), finishSpanOnClose);
@@ -93,7 +95,7 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Deprecated
 	public Span startManual() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.startManual(), operationName, owner.getContextExtractor());
+			spanWrapper = new SpanWrapper(delegate.startManual(), operationName);
 		}
 		return spanWrapper;
 	}
@@ -101,10 +103,15 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public Span start() {
 		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(delegate.start(), operationName, owner.getContextExtractor());
+			spanWrapper = new SpanWrapper(delegate.start(), operationName);
 			spanWrapper.start();
 		}
 		return spanWrapper;
 	}
 
+	@Override
+	public <T> SpanBuilder withTag(Tag<T> key, T value) {
+		delegate.withTag(key, value);
+		return this;
+	}
 }

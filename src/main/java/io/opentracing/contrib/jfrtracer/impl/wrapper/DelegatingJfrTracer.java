@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer;
+package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
 import java.util.logging.Logger;
 
+import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import io.opentracing.contrib.jfrtracer.extractors.ExtractorRegistry;
-import io.opentracing.contrib.jfrtracer.noop.NoOpTracer;
+import io.opentracing.noop.NoopTracerFactory;
 import io.opentracing.propagation.Format;
 
 /**
@@ -39,27 +39,11 @@ import io.opentracing.propagation.Format;
  */
 public final class DelegatingJfrTracer implements Tracer {
 	private final Tracer delegate;
-	private final ContextExtractor extractor;
 	private final ScopeManagerWrapper scopeManager;
 
 	public DelegatingJfrTracer(Tracer delegate) {
 		this.delegate = initialize(delegate);
-		this.extractor = initializeExtractor(delegate);
-		this.scopeManager = new ScopeManagerWrapper(delegate.scopeManager(), extractor);
-	}
-
-	private static ContextExtractor initializeExtractor(Tracer delegate) {
-		ContextExtractor extractor = ExtractorRegistry.createNewRegistry()
-				.getExtractorByTracerType(delegate.getClass());
-		if (extractor != null) {
-			return extractor;
-		} else {
-			Logger.getLogger(DelegatingJfrTracer.class.getName())
-					.warning("No compatible context extractor found for tracer of type " + delegate.getClass().getName()
-							+ ". The DelegatingJfrTracer will not work. Exiting process...");
-			System.exit(4711);
-		}
-		return null;
+		this.scopeManager = new ScopeManagerWrapper(delegate.scopeManager());
 	}
 
 	private static Tracer initialize(Tracer delegate) {
@@ -69,7 +53,7 @@ public final class DelegatingJfrTracer implements Tracer {
 		if (delegate == null) {
 			Logger.getLogger(DelegatingJfrTracer.class.getName()).info("No delegate set - will only log to JFR.");
 		}
-		return delegate == null ? new NoOpTracer() : delegate;
+		return delegate == null ? NoopTracerFactory.create() : delegate;
 	}
 
 	@Override
@@ -77,6 +61,7 @@ public final class DelegatingJfrTracer implements Tracer {
 		return scopeManager;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Span activeSpan() {
 		return scopeManager.active().span();
@@ -97,12 +82,13 @@ public final class DelegatingJfrTracer implements Tracer {
 		return delegate.extract(format, carrier);
 	}
 
-	public ContextExtractor getContextExtractor() {
-		return extractor;
+	public String toString(Span span) {
+		// TODO: get parent...
+		return String.format("Trace id: %s, Span id: %s", span.context().toTraceId(), span.context().toSpanId());
 	}
 
-	public String toString(Span span) {
-		return String.format("Trace id: %s, Span id: %s, Parent id: %s", extractor.extractTraceId(span),
-				extractor.extractSpanId(span), extractor.extractParentId(span));
+	@Override
+	public Scope activateSpan(Span span) {
+		return scopeManager.activate(span);
 	}
 }

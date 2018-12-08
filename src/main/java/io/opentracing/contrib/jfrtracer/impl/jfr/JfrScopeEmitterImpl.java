@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.net.URI;
 import java.util.logging.Level;
@@ -29,13 +29,11 @@ import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
-import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
 
 /**
  * This is the JDK 7/8 implementation. For the JDK 9 and later implementation, see src/main/java9.
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation"})
 final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	private static final Producer PRODUCER;
 	private static final EventToken SCOPE_EVENT_TOKEN;
@@ -109,8 +107,8 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 		return null;
 	}
 
-	JfrScopeEmitterImpl(Span span, ContextExtractor extractor) {
-		super(span, extractor);
+	JfrScopeEmitterImpl(Span span) {
+		super(span);
 	}
 
 	@Override
@@ -127,21 +125,15 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	@Override
 	public void start(String operationName) {
 		currentEvent = new ScopeEvent(SCOPE_EVENT_TOKEN);
-		if (extractor != null) {
-			currentEvent.operationName = operationName;
-			currentEvent.traceId = extractor.extractTraceId(span);
-			currentEvent.spanId = extractor.extractSpanId(span);
-			currentEvent.parentId = extractor.extractParentId(span);
-		} else {
-			LOGGER.warning(
-					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");
-		}
+		currentEvent.operationName = operationName;
+		currentEvent.traceId = span.context().toTraceId();
+		currentEvent.spanId = span.context().toSpanId();
+		// currentEvent.parentId = span.context().toParentId();
 		currentEvent.begin();
 	}
 
 	@Override
 	public String toString() {
-		return "JDK 7 & JDK 8 JFR Scope Emitter for " + extractor.getSupportedTracerType() + "/"
-				+ extractor.getSupportedSpanType();
+		return "JDK 7 & JDK 8 JFR Scope Emitter";
 	}
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer;
+package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
 import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
@@ -24,23 +24,22 @@ import io.opentracing.Span;
  */
 final class ScopeManagerWrapper implements ScopeManager {
 	private final ScopeManager delegate;
-	private final ContextExtractor extractor;
 	private final ThreadLocal<ScopeWrapper> activeScope = new ThreadLocal<>();
-
-	ScopeManagerWrapper(ScopeManager delegate, ContextExtractor extractor) {
+	
+	ScopeManagerWrapper(ScopeManager delegate) {
 		this.delegate = delegate;
-		this.extractor = extractor;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Scope activate(Span span, boolean finishSpanOnClose) {
 		ScopeWrapper wrapper;
 		if (!(span instanceof SpanWrapper)) {
-			SpanWrapper spanWrapper = new SpanWrapper(span, extractor);
-			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(span, finishSpanOnClose), extractor); 
+			SpanWrapper spanWrapper = new SpanWrapper(span);
+			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(span, finishSpanOnClose), finishSpanOnClose); 
 		} else {
 			SpanWrapper spanWrapper = (SpanWrapper) span;
-			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), extractor);
+			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), finishSpanOnClose);
 		}
 		activeScope.set(wrapper);
 		return wrapper;
@@ -49,5 +48,15 @@ final class ScopeManagerWrapper implements ScopeManager {
 	@Override
 	public Scope active() {
 		return activeScope.get();
+	}
+
+	@Override
+	public Scope activate(Span arg) {
+		return activate(arg, false);
+	}
+
+	@Override
+	public Span activeSpan() {
+		return delegate.activeSpan();
 	}
 }

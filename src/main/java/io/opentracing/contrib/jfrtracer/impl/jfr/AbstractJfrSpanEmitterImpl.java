@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -22,7 +22,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
 
 /**
  * Abstract super class for span emitters.
@@ -44,7 +43,7 @@ abstract class AbstractJfrSpanEmitterImpl extends AbstractJfrEmitterImpl {
 				}
 			});
 
-	AbstractJfrSpanEmitterImpl(Span span, ContextExtractor extractor) {
-		super(span, extractor);
+	AbstractJfrSpanEmitterImpl(Span span) {
+		super(span);
 	}
 }

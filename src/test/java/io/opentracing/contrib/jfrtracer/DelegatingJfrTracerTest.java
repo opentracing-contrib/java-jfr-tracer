@@ -20,6 +20,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import io.opentracing.contrib.jfrtracer.impl.wrapper.DelegatingJfrTracer;
+
 public class DelegatingJfrTracerTest {
 
 	@Test

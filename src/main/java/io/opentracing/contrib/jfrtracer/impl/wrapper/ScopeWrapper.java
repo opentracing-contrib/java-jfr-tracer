@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer;
+package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
 import io.opentracing.Scope;
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.jfr.JfrEmitter;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrEmitter;
 
 /**
  * Wrapper for {@link Scope}.
@@ -26,12 +26,14 @@ final class ScopeWrapper implements Scope {
 	private final Scope delegate;
 	private final JfrEmitter emitter;
 	private final SpanWrapper spanWrapper;
+	private final boolean finishOnClose;
 
-	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate, ContextExtractor extractor) {
+	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate, boolean finishOnClose) {
 		this.spanWrapper = spanWrapper;
 		this.delegate = delegate;
-		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(delegate.span(), extractor);
+		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(spanWrapper);
 		emitter.start(spanWrapper.getOperationName());
+		this.finishOnClose = finishOnClose;
 	}
 
 	@Override
@@ -47,5 +49,9 @@ final class ScopeWrapper implements Scope {
 	@Override
 	public Span span() {
 		return spanWrapper;
+	}
+	
+	public boolean isFinishOnClose() {
+		return finishOnClose;
 	}
 }

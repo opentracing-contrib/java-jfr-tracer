@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
-
-import java.util.logging.Logger;
-
-import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
-import io.opentracing.contrib.jfrtracer.jfr.JfrScopeEmitterImpl;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 /**
- * Abstract super class for emitters.
+ * Interface for something capable of emitting a JFR event.
  */
-abstract class AbstractJfrEmitterImpl implements JfrEmitter {
-	static final Logger LOGGER = Logger.getLogger(JfrScopeEmitterImpl.class.getName());
-	protected Span span;
-	protected ContextExtractor extractor;
-	
-	AbstractJfrEmitterImpl(Span span, ContextExtractor extractor) {
-		this.span = span;
-		this.extractor = extractor;
-	}
+public interface JfrEmitter extends AutoCloseable {
+	void start(String operationName);
+
+	@Override
+	public void close();	
 }

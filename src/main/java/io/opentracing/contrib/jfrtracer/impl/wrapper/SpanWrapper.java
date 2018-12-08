@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer;
+package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
 import java.util.Map;
 
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
-import io.opentracing.contrib.jfrtracer.jfr.JfrEmitter;
-import io.opentracing.contrib.jfrtracer.jfr.JfrEmitterFactory;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrEmitter;
+import io.opentracing.contrib.jfrtracer.impl.jfr.JfrEmitterFactory;
+import io.opentracing.tag.Tag;
 
 /**
  * Wrapper for {@link Span}.
@@ -33,13 +34,13 @@ final class SpanWrapper implements Span {
 	// If we don't want to support updates of the operation name, this could be final too...
 	private volatile String operationName;
 
-	SpanWrapper(Span delegate, ContextExtractor extractor) {
+	SpanWrapper(Span delegate) {
 		this.delegate = delegate;
-		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate, extractor);
+		spanEmitter = EMITTER_FACTORY.createSpanEmitter(delegate);
 	}
 
-	public SpanWrapper(Span delegate, String operationName, ContextExtractor contextExtractor) {
-		this(delegate, contextExtractor);
+	public SpanWrapper(Span delegate, String operationName) {
+		this(delegate);
 		this.operationName = operationName;
 	}
 
@@ -140,5 +141,11 @@ final class SpanWrapper implements Span {
 
 	public String getOperationName() {
 		return operationName;
+	}
+
+	@Override
+	public <T> Span setTag(Tag<T> key, T value) {
+		delegate.setTag(key, value);		
+		return this;
 	}
 }

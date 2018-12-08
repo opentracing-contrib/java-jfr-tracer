@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.opentracing.contrib.jfrtracer.jfr;
+package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import jdk.jfr.Event;
 import jdk.jfr.Label;
@@ -21,8 +21,6 @@ import jdk.jfr.Category;
 import jdk.jfr.Description;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.ContextExtractor;
-import io.opentracing.contrib.jfrtracer.jfr.AbstractJfrEmitterImpl;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
@@ -47,8 +45,8 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 		private String parentId;
 	}
 
-	JfrScopeEmitterImpl(Span span, ContextExtractor extractor) {
-		super(span, extractor);
+	JfrScopeEmitterImpl(Span span) {
+		super(span);
 	}
 
 	@Override
@@ -65,20 +63,17 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	@Override
 	public void start(String operationName) {
 		currentEvent = new Jdk9ScopeEvent();
-		if (extractor != null && currentEvent.isEnabled()) {
+		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
-			currentEvent.traceId = extractor.extractTraceId(span);
-			currentEvent.spanId = extractor.extractSpanId(span);
-			currentEvent.parentId = extractor.extractParentId(span);
-		} else {
-			LOGGER.warning(
-					"Trying to create event when no valid extractor is available. Create an extractor for your particular open tracing tracer implementation, and register it with the ExtractorRegistry.");
+			currentEvent.traceId = span.context().toTraceId();
+			currentEvent.spanId = span.context().toSpanId();
+			// currentEvent.parentId = span.context().toParentId();
 		}
 		currentEvent.begin();
 	}
 
 	@Override
 	public String toString() {
-		return "JDK 9+ JFR Emitter for " + extractor.getSupportedTracerType() + "/" + extractor.getSupportedSpanType();
+		return "JDK 9+ JFR Emitter";
 	}
 }
