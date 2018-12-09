@@ -15,15 +15,15 @@
  */
 package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
-import java.util.logging.Logger;
-
 import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import io.opentracing.noop.NoopTracerFactory;
 import io.opentracing.propagation.Format;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A tracer that records context information into the JDK Flight Recorder, making it possible to
@@ -37,23 +37,14 @@ import io.opentracing.propagation.Format;
  * <li>Parent Id</li>
  * </ul>
  */
-public final class DelegatingJfrTracer implements Tracer {
+public final class TracerWrapper implements Tracer {
+
 	private final Tracer delegate;
 	private final ScopeManagerWrapper scopeManager;
 
-	public DelegatingJfrTracer(Tracer delegate) {
-		this.delegate = initialize(delegate);
+	public TracerWrapper(Tracer delegate) {
+		this.delegate = requireNonNull(delegate);
 		this.scopeManager = new ScopeManagerWrapper(delegate.scopeManager());
-	}
-
-	private static Tracer initialize(Tracer delegate) {
-		Logger.getLogger(DelegatingJfrTracer.class.getName())
-				.info("Using DelegatingJfrTracer to capture contextual information into JFR.");
-
-		if (delegate == null) {
-			Logger.getLogger(DelegatingJfrTracer.class.getName()).info("No delegate set - will only log to JFR.");
-		}
-		return delegate == null ? NoopTracerFactory.create() : delegate;
 	}
 
 	@Override
@@ -61,10 +52,11 @@ public final class DelegatingJfrTracer implements Tracer {
 		return scopeManager;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public Span activeSpan() {
-		return scopeManager.active().span();
+		Scope active = scopeManager.active();
+		return isNull(active) ? null : active.span();
 	}
 
 	@Override
@@ -83,7 +75,8 @@ public final class DelegatingJfrTracer implements Tracer {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public Scope activateSpan(Span span) {
-		return scopeManager.activate(span);
+		return scopeManager.activate(span, true);
 	}	
 }

@@ -30,17 +30,17 @@ final class ScopeManagerWrapper implements ScopeManager {
 		this.delegate = delegate;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public Scope activate(Span span, boolean finishSpanOnClose) {
 		ScopeWrapper wrapper;
 		if (!(span instanceof SpanWrapper)) {
 			// This should be rather unlikely...
 			SpanWrapper spanWrapper = new SpanWrapper("", span, "");
-			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(span, finishSpanOnClose), finishSpanOnClose); 
+			wrapper = new ScopeWrapper(this, spanWrapper, delegate.activate(span, finishSpanOnClose), finishSpanOnClose); 
 		} else {
 			SpanWrapper spanWrapper = (SpanWrapper) span;
-			wrapper = new ScopeWrapper(spanWrapper, delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), finishSpanOnClose);
+			wrapper = new ScopeWrapper(this, spanWrapper, delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), finishSpanOnClose);
 		}
 		activeScope.set(wrapper);
 		return wrapper;
@@ -51,13 +51,20 @@ final class ScopeManagerWrapper implements ScopeManager {
 		return activeScope.get();
 	}
 
+	void setActive(ScopeWrapper scope) {
+		activeScope.set(scope);
+	}
+
 	@Override
+	@SuppressWarnings("deprecation")
 	public Scope activate(Span arg) {
 		return activate(arg, false);
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public Span activeSpan() {
-		return delegate.activeSpan();
+		Scope scope = active();
+		return scope == null ? null : scope.span();
 	}
 }

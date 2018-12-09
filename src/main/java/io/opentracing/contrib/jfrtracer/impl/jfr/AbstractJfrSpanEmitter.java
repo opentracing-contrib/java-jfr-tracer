@@ -16,8 +16,6 @@
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,24 +24,21 @@ import io.opentracing.Span;
 /**
  * Abstract super class for span emitters.
  */
-abstract class AbstractJfrSpanEmitterImpl extends AbstractJfrEmitterImpl {
-	protected final static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(1, 1, 2, TimeUnit.SECONDS,
-			new ArrayBlockingQueue<Runnable>(50), new ThreadFactory() {
-				@Override
-				public Thread newThread(Runnable r) {
-					Thread thread = new Thread(r, "JfrTracer Span Events");
-					thread.setDaemon(true);
-					return thread;
-				}
-			}, new RejectedExecutionHandler() {
-				@Override
-				public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
-					// Seems very unlikely to happen, but just to be sure...
-					LOGGER.warning("Span Event queue full - dropped span event");
-				}
+abstract class AbstractJfrSpanEmitter extends AbstractJfrEmitter {
+
+	protected final static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(1, 1, Long.MAX_VALUE, TimeUnit.NANOSECONDS,
+			new ArrayBlockingQueue<Runnable>(50),
+			(r) -> {
+				Thread thread = new Thread(r, "JfrTracer Span Events");
+				thread.setDaemon(true);
+				return thread;
+			},
+			(r, e) -> {
+				// Seems very unlikely to happen, but just to be sure...
+				LOGGER.warning("Span Event queue full - dropped span event");
 			});
 
-	AbstractJfrSpanEmitterImpl(Span span) {
+	AbstractJfrSpanEmitter(Span span) {
 		super(span);
 	}
 }

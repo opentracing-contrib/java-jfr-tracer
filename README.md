@@ -31,7 +31,7 @@ An example app with OpenTracing enabled, and which is using the JFR tracer, can 
 
 ## Building
 To build the JFR Tracer, and install it into the local maven repo, first ensure that you 
-have installed an Oracle JDK 7, and an Open JDK 11. These will be required to build the
+have installed an Oracle JDK 8, and an Open JDK 11. These will be required to build the
 tracer. Once built, the tracer can be used with Oracle JDK 8+ (except Oracle JDK 9 and 10), and OpenJDK 11+.
 
 Ensure that the following two environment variables are set to the JAVA_HOME of the JDKs:

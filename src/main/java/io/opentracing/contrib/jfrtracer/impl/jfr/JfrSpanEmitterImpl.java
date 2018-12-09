@@ -21,42 +21,76 @@ import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.impl.jfr.JfrScopeEmitterImpl;
 
 /**
- * This is the JDK 7/8 implementation for emitting Span events. For the JDK 9 and later
- * implementation, see src/main/java9.
+ * This is the JDK 8 implementation for emitting Span events. For the JDK 11 and later
+ * implementation, see src/main/java11.
  */
 @SuppressWarnings("deprecation")
-final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
+final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
+
 	private static final EventToken SPAN_EVENT_TOKEN;
-	private SpanEvent currentEvent;
 
 	static {
 		SPAN_EVENT_TOKEN = JfrScopeEmitterImpl.register(SpanEvent.class);
 	}
 
-	@EventDefinition(path = "jfrtracer/spanevent", name = "SpanEvent", description = "And event representing an OpenTracing span", stacktrace = false, thread = true)
-	private static class SpanEvent extends TimedEvent {
-		@ValueDefinition(name = "OperationName")
+	private SpanEvent currentEvent;
+
+	JfrSpanEmitterImpl(Span span) {
+		super(span);
+	}
+
+	@Override
+	public void start(String parentId, String operationName) {
+		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
+		if (currentEvent.getEventInfo().isEnabled()) {
+			currentEvent.operationName = operationName;
+			currentEvent.traceId = span.context().toTraceId();
+			currentEvent.spanId = span.context().toSpanId();
+			currentEvent.parentId = parentId;
+			currentEvent.startThread = Thread.currentThread();
+		}
+		EXECUTOR.execute(new BeginEventCommand(currentEvent));
+	}
+
+	@Override
+	public void close() {
+		if (currentEvent != null) {
+			currentEvent.endThread = Thread.currentThread();
+			EXECUTOR.execute(new EndEventCommand(currentEvent));
+			currentEvent = null;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "JDK 8 JFR Span Emitter";
+	}
+
+	// Must be public for JFR to access it
+	@EventDefinition(path = "opentracing/spanevent", name = "SpanEvent", description = "And event representing an OpenTracing span", stacktrace = false, thread = true)
+	public static class SpanEvent extends TimedEvent {
+
+		@ValueDefinition(name = "Operation Name")
 		private String operationName;
-		
-		@ValueDefinition(name = "TraceId")
+
+		@ValueDefinition(name = "Trace Id")
 		private String traceId;
 
-		@ValueDefinition(name = "SpanId")
+		@ValueDefinition(name = "Span Id")
 		private String spanId;
 
-		@ValueDefinition(name = "ParentId")
+		@ValueDefinition(name = "Parent Id")
 		private String parentId;
 
-		@ValueDefinition(name = "StartThread", description = "The thread initiating the span")
+		@ValueDefinition(name = "Start Thread", description = "The thread initiating the span")
 		private Thread startThread;
 
-		@ValueDefinition(name = "EndThread", description = "The thread ending the span")
+		@ValueDefinition(name = "End Thread", description = "The thread ending the span")
 		private Thread endThread;
 
-		public SpanEvent(EventToken eventToken) {
+		SpanEvent(EventToken eventToken) {
 			super(eventToken);
 		}
 
@@ -84,26 +118,35 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		public Thread getEndThread() {
 			return endThread;
 		}
+
+		@SuppressWarnings("unused")
+		public String getOperationName() {
+			return operationName;
+		}
 	}
 
 	private static class EndEventCommand implements Runnable {
+
 		private final SpanEvent event;
 
-		public EndEventCommand(SpanEvent event) {
+		EndEventCommand(SpanEvent event) {
 			this.event = event;
 		}
 
 		@Override
 		public void run() {
-			event.end();
-			event.commit();
+			if (event.shouldWrite()) {
+				event.end();
+				event.commit();
+			}
 		}
 	}
 
 	private static class BeginEventCommand implements Runnable {
+
 		private final SpanEvent event;
 
-		public BeginEventCommand(SpanEvent event) {
+		BeginEventCommand(SpanEvent event) {
 			this.event = event;
 		}
 
@@ -111,40 +154,5 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 		public void run() {
 			event.begin();
 		}
-	}
-
-	JfrSpanEmitterImpl(Span span) {
-		super(span);
-	}
-
-	@Override
-	public void close() {
-		if (currentEvent != null) {
-			if (currentEvent.shouldWrite()) {
-				currentEvent.endThread = Thread.currentThread();
-				EXECUTOR.execute(new EndEventCommand(currentEvent));
-				currentEvent = null;
-			}
-		} else {
-			LOGGER.warning("Close without start discovered!");
-		}
-	}
-
-	@Override
-	public void start(String parentId, String operationName) {
-		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
-		if (currentEvent.getEventInfo().isEnabled()) {
-			currentEvent.operationName = operationName;
-			currentEvent.parentId = parentId;
-			currentEvent.startThread = Thread.currentThread();
-			currentEvent.traceId = span.context().toTraceId();
-			currentEvent.spanId = span.context().toSpanId();
-		}
-		EXECUTOR.execute(new BeginEventCommand(currentEvent));
-	}
-
-	@Override
-	public String toString() {
-		return "JDK 7 & JDK 8 JFR Span Emitter";
 	}
 }
