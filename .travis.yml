@@ -1,0 +1,22 @@
+env:
+  global:
+    - TIMEOUT=5000
+    - JAVA_8=oraclejdk8
+    - JAVA_9=oraclejdk9
+    - JAVA_11=openjdk11
+addons:
+  hosts:
+    - localhost
+language: java
+install: true
+
+script:
+  - ./gradlew build
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+  - openjdk11
+
+branches:
+  only:
+    - feature/add-travis
