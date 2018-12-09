@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>jfr-tracer</name>
+	<name>opentracing-jfr-tracer</name>
 	<comment>Provides a OpenTracing tracer which records information to JFR</comment>
 	<projects>
 	</projects>
