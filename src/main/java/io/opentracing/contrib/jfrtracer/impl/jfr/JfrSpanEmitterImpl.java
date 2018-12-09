@@ -23,8 +23,8 @@ import com.oracle.jrockit.jfr.ValueDefinition;
 import io.opentracing.Span;
 
 /**
- * This is the JDK 7/8 implementation for emitting Span events. For the JDK 9 and later implementation, see
- * src/main/java9.
+ * This is the JDK 8 implementation for emitting Span events. For the JDK 11 and later
+ * implementation, see src/main/java11.
  */
 @SuppressWarnings("deprecation")
 final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
