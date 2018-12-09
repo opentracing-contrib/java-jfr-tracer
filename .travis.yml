@@ -1,8 +1,8 @@
 env:
-  - JAVA_7=openjdk7
-  - JAVA_8=oraclejdk8
-  - JAVA_9=oraclejdk9
-  - JAVA_11=openjdk11
+  - ORG_GRADLE_PROJECT_JAVA_7=openjdk7
+  - ORG_GRADLE_PROJECT_JAVA_8=oraclejdk8
+  - ORG_GRADLE_PROJECT_JAVA_9=oraclejdk9
+  - ORG_GRADLE_PROJECT_JAVA_11=openjdk11
   global:
     - TIMEOUT=5000
 addons:
