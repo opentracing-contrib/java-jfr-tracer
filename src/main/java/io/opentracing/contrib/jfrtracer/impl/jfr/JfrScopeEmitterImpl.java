@@ -31,13 +31,13 @@ import com.oracle.jrockit.jfr.ValueDefinition;
 import io.opentracing.Span;
 
 /**
- * This is the JDK 7/8 implementation. For the JDK 9 and later implementation, see src/main/java9.
+ * This is the JDK 8 implementation. For the JDK 11 and later implementation, see src/main/java11.
  */
 @SuppressWarnings({"deprecation"})
-final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
+final class JfrScopeEmitterImpl extends AbstractJfrEmitter {
+
 	private static final Producer PRODUCER;
 	private static final EventToken SCOPE_EVENT_TOKEN;
-	private ScopeEvent currentEvent;
 
 	static {
 		URI producerURI = URI.create("http://opentracing.io/jfr-tracer");
@@ -46,66 +46,7 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 		SCOPE_EVENT_TOKEN = register(ScopeEvent.class);
 	}
 
-	@EventDefinition(path = "jfrtracer/scopeevent", name = "ScopeEvent", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
-	private static class ScopeEvent extends TimedEvent {
-		@ValueDefinition(name = "OperationName")
-		private String operationName;
-
-		@ValueDefinition(name = "TraceId")
-		private String traceId;
-
-		@ValueDefinition(name = "SpanId")
-		private String spanId;
-
-		@ValueDefinition(name = "ParentId")
-		private String parentId;
-
-		public ScopeEvent(EventToken eventToken) {
-			super(eventToken);
-		}
-
-		@SuppressWarnings("unused")
-		public String getOperationName() {
-			return operationName;
-		}
-		
-		@SuppressWarnings("unused")
-		public String getTraceId() {
-			return traceId;
-		}
-
-		@SuppressWarnings("unused")
-		public String getSpanId() {
-			return spanId;
-		}
-
-		@SuppressWarnings("unused")
-		public String getParentId() {
-			return parentId;
-		}
-	}
-
-	/**
-	 * Helper method to register an event class with the jfr-tracer producer.
-	 *
-	 * @param clazz
-	 *            the event class to register.
-	 * @return the token associated with the event class.
-	 */
-	static EventToken register(Class<? extends InstantEvent> clazz) {
-		try {
-			EventToken token = PRODUCER.addEvent(clazz);
-			Logger.getLogger(JfrScopeEmitterImpl.class.getName()).log(Level.FINE,
-					"Registered EventType " + clazz.getName());
-			return token;
-		} catch (InvalidEventDefinitionException | InvalidValueException e) {
-			Logger.getLogger(JfrScopeEmitterImpl.class.getName()).log(Level.SEVERE,
-					"Failed to register the event class " + clazz.getName()
-							+ ". Event will not be available. Please check your configuration.",
-					e);
-		}
-		return null;
-	}
+	private ScopeEvent currentEvent;
 
 	JfrScopeEmitterImpl(Span span) {
 		super(span);
@@ -114,11 +55,11 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	@Override
 	public void close() {
 		if (currentEvent != null) {
-			currentEvent.end();
-			currentEvent.commit();
+			if (currentEvent.shouldWrite()) {
+				currentEvent.end();
+				currentEvent.commit();
+			}
 			currentEvent = null;
-		} else {
-			LOGGER.warning("Close without start discovered!");
 		}
 	}
 
@@ -134,6 +75,66 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public String toString() {
-		return "JDK 7 & JDK 8 JFR Scope Emitter";
+		return "JDK 8 JFR Scope Emitter";
+	}
+
+	/**
+	 * Helper method to register an event class with the jfr-tracer producer.
+	 *
+	 * @param clazz the event class to register.
+	 * @return the token associated with the event class.
+	 */
+	static EventToken register(Class<? extends InstantEvent> clazz) {
+		try {
+			EventToken token = PRODUCER.addEvent(clazz);
+			LOGGER.fine("Registered EventType " + clazz.getName());
+			return token;
+		} catch (InvalidEventDefinitionException | InvalidValueException e) {
+			LOGGER.log(Level.SEVERE,
+					"Failed to register the event class " + clazz.getName()
+					+ ". Event will not be available. Please check your configuration.",
+					e);
+		}
+		return null;
+	}
+
+	@EventDefinition(path = "opentracing/scopeevent", name = "ScopeEvent", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
+	public static class ScopeEvent extends TimedEvent {
+
+		@ValueDefinition(name = "Operation Name")
+		private String operationName;
+
+		@ValueDefinition(name = "Trace Id")
+		private String traceId;
+
+		@ValueDefinition(name = "Span Id")
+		private String spanId;
+
+		@ValueDefinition(name = "Parent Id")
+		private String parentId;
+
+		ScopeEvent(EventToken eventToken) {
+			super(eventToken);
+		}
+
+		@SuppressWarnings("unused")
+		public String getOperationName() {
+			return operationName;
+		}
+
+		@SuppressWarnings("unused")
+		public String getTraceId() {
+			return traceId;
+		}
+
+		@SuppressWarnings("unused")
+		public String getSpanId() {
+			return spanId;
+		}
+
+		@SuppressWarnings("unused")
+		public String getParentId() {
+			return parentId;
+		}
 	}
 }

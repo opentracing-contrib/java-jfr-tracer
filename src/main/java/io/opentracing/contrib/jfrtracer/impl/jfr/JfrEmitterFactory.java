@@ -16,8 +16,6 @@
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.impl.jfr.JfrScopeEmitterImpl;
-import io.opentracing.contrib.jfrtracer.impl.jfr.JfrSpanEmitterImpl;
 
 /**
  * For creating JfrEmitters.

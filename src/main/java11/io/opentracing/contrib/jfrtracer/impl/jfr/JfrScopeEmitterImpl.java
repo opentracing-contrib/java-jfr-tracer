@@ -25,13 +25,15 @@ import io.opentracing.Span;
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
  */
-public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
-	private Jdk9ScopeEvent currentEvent;
+public class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 
+	private ScopeEvent currentEvent;
+
+	@Category("Open Tracing")
 	@Label("Scope Event")
 	@Description("Open tracing event corresponding to an activation scope")
-	@Category("Open Tracing")
-	private static class Jdk9ScopeEvent extends Event {
+	private static class ScopeEvent extends Event {
+
 		@Label("Operation Name")
 		private String operationName;
 
@@ -52,17 +54,17 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 	@Override
 	public void close() {
 		if (currentEvent != null) {
-			currentEvent.end();
-			currentEvent.commit();
+			if (currentEvent.shouldCommit()) {
+				currentEvent.end();
+				currentEvent.commit();
+			}
 			currentEvent = null;
-		} else {
-			LOGGER.warning("Close without start discovered!");
 		}
 	}
 
 	@Override
 	public void start(String parentId, String operationName) {
-		currentEvent = new Jdk9ScopeEvent();
+		currentEvent = new ScopeEvent();
 		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
 			currentEvent.parentId = parentId;
@@ -74,6 +76,6 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitterImpl {
 
 	@Override
 	public String toString() {
-		return "JDK 9+ JFR Emitter";
+		return "JDK 11 JFR Emitter";
 	}
 }

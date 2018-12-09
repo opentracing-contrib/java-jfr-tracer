@@ -19,42 +19,54 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.contrib.jfrtracer.impl.jfr.JfrEmitter;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 /**
  * Wrapper for {@link Scope}.
  */
 final class ScopeWrapper implements Scope {
+
+	private static final Logger LOG = Logger.getLogger(ScopeWrapper.class.getName());
+
+	private final ScopeManagerWrapper scopeManagerWrapper;
 	private final Scope delegate;
 	private final JfrEmitter emitter;
 	private final SpanWrapper spanWrapper;
-	private final boolean finishOnClose;
+	private final boolean finishSpanOnClose;
+	private final ScopeWrapper parentScope;
 
-	ScopeWrapper(SpanWrapper spanWrapper, Scope delegate, boolean finishOnClose) {
+	ScopeWrapper(ScopeManagerWrapper scopeManagerWrapper, SpanWrapper spanWrapper, Scope delegate, boolean finishSpanOnClose) {
+		this.scopeManagerWrapper = scopeManagerWrapper;
+		this.parentScope = (ScopeWrapper) scopeManagerWrapper.active();
 		this.spanWrapper = spanWrapper;
 		this.delegate = delegate;
 		emitter = SpanWrapper.EMITTER_FACTORY.createScopeEmitter(spanWrapper);
 		emitter.start(spanWrapper.getParentId(), spanWrapper.getOperationName());
-		this.finishOnClose = finishOnClose;
+		this.finishSpanOnClose = finishSpanOnClose;
 	}
 
 	@Override
 	public void close() {
 		delegate.close();
 		closeEmitter();
-		if (finishOnClose) {
+		if (finishSpanOnClose) {
 			spanWrapper.closeEmitter();
 		}
+		scopeManagerWrapper.setActive(parentScope);
 	}
 
 	@Override
+	@Deprecated
 	public Span span() {
 		return spanWrapper;
 	}
-	
+
 	private void closeEmitter() {
 		try {
 			emitter.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "Error closing JFR Span", ex);
 		}
 	}
 }

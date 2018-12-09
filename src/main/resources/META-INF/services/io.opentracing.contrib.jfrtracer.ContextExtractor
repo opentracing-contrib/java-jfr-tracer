@@ -1,3 +1,0 @@
-io.opentracing.contrib.jfrtracer.extractors.JaegerContextExtractor
-io.opentracing.contrib.jfrtracer.extractors.ZipkinContextExtractor
-io.opentracing.contrib.jfrtracer.extractors.NoOpContextExtractor

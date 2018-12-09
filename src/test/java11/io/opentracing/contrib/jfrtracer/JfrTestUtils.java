@@ -15,19 +15,16 @@
  */
 package io.opentracing.contrib.jfrtracer;
 
-import static org.junit.Assert.assertNotNull;
+import jdk.jfr.Recording;
 
-import org.junit.Ignore;
-import org.junit.Test;
+public final class JfrTestUtils {
 
-import io.opentracing.contrib.jfrtracer.impl.wrapper.DelegatingJfrTracer;
+	private JfrTestUtils() {
+	}
 
-public class DelegatingJfrTracerTest {
-
-	@Test
-	@Ignore
-	public void testSomeLibraryMethod() {
-		DelegatingJfrTracer tracer = new DelegatingJfrTracer(null);
-		assertNotNull(tracer);
+	public static Recording startJFR() {
+		Recording recording = new Recording();
+		recording.start();
+		return recording;
 	}
 }

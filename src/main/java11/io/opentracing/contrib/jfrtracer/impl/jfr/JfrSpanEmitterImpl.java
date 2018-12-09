@@ -21,21 +21,21 @@ import jdk.jfr.Category;
 import jdk.jfr.Description;
 import jdk.jfr.StackTrace;
 
-import javax.management.DescriptorKey;
-
 import io.opentracing.Span;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
  */
-public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
-	private Jdk9SpanEvent currentEvent;
+public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
+
+	private volatile SpanEvent currentEvent;
 
 	@Label("Span Event")
 	@Description("Open tracing event corresponding to a span.")
 	@Category("Open Tracing")
 	@StackTrace(false)
-	private static class Jdk9SpanEvent extends Event {
+	private static class SpanEvent extends Event {
+
 		@Label("Operation Name")
 		private String operationName;
 
@@ -58,22 +58,27 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 	}
 
 	private static class EndEventCommand implements Runnable {
-		private final Jdk9SpanEvent event;
 
-		public EndEventCommand(Jdk9SpanEvent event) {
+		private final SpanEvent event;
+
+		EndEventCommand(SpanEvent event) {
 			this.event = event;
 		}
 
 		@Override
 		public void run() {
-			event.commit();
+			if (event.shouldCommit()) {
+				event.end();
+				event.commit();
+			}
 		}
 	}
 
 	private static class BeginEventCommand implements Runnable {
-		private final Jdk9SpanEvent event;
 
-		public BeginEventCommand(Jdk9SpanEvent event) {
+		private final SpanEvent event;
+
+		BeginEventCommand(SpanEvent event) {
 			this.event = event;
 		}
 
@@ -89,18 +94,16 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 
 	@Override
 	public void close() {
-		if (currentEvent != null && currentEvent.isEnabled()) {
+		if (currentEvent != null) {
 			currentEvent.endThread = Thread.currentThread();
 			EXECUTOR.execute(new EndEventCommand(currentEvent));
 			currentEvent = null;
-		} else {
-			LOGGER.warning("Close without start discovered!");
 		}
 	}
 
 	@Override
 	public void start(String parentId, String operationName) {
-		currentEvent = new Jdk9SpanEvent();
+		currentEvent = new SpanEvent();
 		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
 			currentEvent.parentId = parentId;
@@ -113,6 +116,6 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitterImpl {
 
 	@Override
 	public String toString() {
-		return "JDK 9+ JFR Emitter";
+		return "JDK 11 JFR Emitter";
 	}
 }

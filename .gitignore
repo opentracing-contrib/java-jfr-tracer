@@ -3,3 +3,7 @@
 /build/
 *.bak
 /.nb-gradle/
+nbproject/
+nb-configuration.xml
+nbactions.xml
+.attach_pid*

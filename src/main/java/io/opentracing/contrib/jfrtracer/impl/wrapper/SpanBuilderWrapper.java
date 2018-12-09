@@ -25,16 +25,15 @@ import io.opentracing.tag.Tag;
  * Wrapper for {@link SpanBuilder}.
  */
 final class SpanBuilderWrapper implements SpanBuilder {
-	private final DelegatingJfrTracer owner;
+
+	private final TracerWrapper owner;
 	private final SpanBuilder delegate;
 	private final String operationName;
 	// Not sure how likely it is that these builders get passed around,
 	// but assumption is the mother of all...
 	private volatile String parentId;
 
-	private SpanWrapper spanWrapper;
-
-	SpanBuilderWrapper(DelegatingJfrTracer owner, String operationName, SpanBuilder delegate) {
+	SpanBuilderWrapper(TracerWrapper owner, String operationName, SpanBuilder delegate) {
 		this.owner = owner;
 		this.delegate = delegate;
 		this.operationName = operationName;
@@ -85,13 +84,19 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	}
 
 	@Override
+	public <T> SpanBuilder withTag(Tag<T> key, T value) {
+		delegate.withTag(key, value);
+		return this;
+	}
+
+	@Override
 	public SpanBuilder withStartTimestamp(long microseconds) {
 		delegate.withStartTimestamp(microseconds);
 		return this;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public Scope startActive(boolean finishSpanOnClose) {
 		return owner.scopeManager().activate(start(), finishSpanOnClose);
 	}
@@ -99,24 +104,20 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	@Deprecated
 	public Span startManual() {
-		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(parentId, delegate.startManual(), operationName);
-		}
-		return spanWrapper;
+		return new SpanWrapper(getParentSpanId(), delegate.startManual(), operationName);
 	}
 
 	@Override
 	public Span start() {
-		if (spanWrapper == null) {
-			spanWrapper = new SpanWrapper(parentId, delegate.start(), operationName);
-			spanWrapper.start();
-		}
+		SpanWrapper spanWrapper = new SpanWrapper(getParentSpanId(), delegate.start(), operationName);
+		spanWrapper.start();
 		return spanWrapper;
 	}
 
-	@Override
-	public <T> SpanBuilder withTag(Tag<T> key, T value) {
-		delegate.withTag(key, value);
-		return this;
+	private String getParentSpanId() {
+		Span activeSpan = owner.scopeManager().activeSpan();
+		return parentId != null ? parentId
+				: activeSpan != null ? activeSpan.context().toSpanId()
+						: null;
 	}
 }
