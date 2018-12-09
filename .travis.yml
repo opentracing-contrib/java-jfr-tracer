@@ -1,6 +1,7 @@
 env:
   global:
     - TIMEOUT=5000
+  - ORG_GRADLE_PROJECT_JAVA_8=oraclejdk8
 addons:
   hosts:
     - localhost
