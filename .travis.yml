@@ -9,13 +9,14 @@ before_install:
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 matrix:
   include:
+    - env: JDK='Oracle JDK 8'
+      jdk: oraclejdk8
     - env: JDK='OpenJDK 11'
       install: . ./install-jdk.sh -F 11 -L GPL
-jdk:
-  - oraclejdk8
 script:
   - export JAVA_8=$JAVA_HOME
   - export JAVA_11=/home/travis/jdk-11.0.1
+  - echo $JAVA_HOME
   - ./gradlew build
 branches:
   only:
