@@ -59,8 +59,9 @@ compileTestJava {
 }
 
 test {
+	def RESOLVED_8 = project.hasProperty('JAVA_8') ? project.getProperty('JAVA_8') :  System.env.JAVA_8
 	useJUnitPlatform()
-	executable = "${JAVA_8}/bin/java"
+	executable = "${RESOLVED_8}/bin/java"
 	forkEvery = 1
 	testLogging {
 		events "passed", "skipped", "failed"
@@ -80,11 +81,12 @@ compileTestJava11Java {
 }
 
 task testJava11(type: Test) {
+	def RESOLVED_11 = project.hasProperty('JAVA_11') ? project.getProperty('JAVA_11') :  System.env.JAVA_11
 	dependsOn testJava11Classes
 	testClassesDirs = sourceSets.testJava11.output.classesDirs
 	classpath = sourceSets.testJava11.runtimeClasspath
 	useJUnitPlatform()
-	executable = "${JAVA_11}/bin/java"
+	executable = "${RESOLVED_11}/bin/java"
 	testLogging {
 		events "passed", "skipped", "failed"
 	}	
