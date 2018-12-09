@@ -1,19 +1,23 @@
-env:
-  - ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME ORG_GRADLE_PROJECT_JAVA_11=/home/travis/openjdk11
-addons:
-  hosts:
-    - localhost
+sudo: false
+dist: trusty
 language: java
-install: true
+
 before_install:
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-jdk:
-  - oraclejdk8
+
+matrix:
+  include:
+    # 8
+    - env: JDK='Oracle JDK 8'
+      jdk: oraclejdk8
+    - env: JDK='OpenJDK 8'
+      jdk: openjdk8
+    # 11
+    - env: JDK='OpenJDK 11'
+      jdk: openjdk11
+      install: . ./install-jdk.sh -F 11 -L GPL
+      
 script:
-  - export JAVA_8=$JAVA_HOME
-  - install-jdk.sh -F 11
-  - export JAVA_11=$JAVA_HOME
-  - ./gradlew build
-branches:
-  only:
-    - feature/add-travis
+  - echo PATH = ${PATH}
+  - echo JAVA_HOME = ${JAVA_HOME}
+  - java -version
