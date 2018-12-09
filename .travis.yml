@@ -5,13 +5,13 @@ addons:
     - localhost
 language: java
 install: true
+jdk:
+  - oraclejdk8
 script:
   - export JAVA_8=$JAVA_HOME
   - export JAVA_11=$HOME/opejdk11
   - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_11
   - ./gradlew build
-jdk:
-  - oraclejdk8
 branches:
   only:
     - feature/add-travis
