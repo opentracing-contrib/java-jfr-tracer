@@ -1,5 +1,5 @@
 env:
-  - ORG_GRADLE_PROJECT_JAVA_8=openjdk8 ORG_GRADLE_PROJECT_JAVA_11=openjdk11
+  - ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle ORG_GRADLE_PROJECT_JAVA_11=/usr/lib/jvm/java-11-oracle
 addons:
   hosts:
     - localhost
