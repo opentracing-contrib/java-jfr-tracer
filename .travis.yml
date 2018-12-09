@@ -8,7 +8,7 @@ install: true
 script:
   - ./gradlew build
 jdk:
-  - oraclejdk8
+  - oraclejdk8 oraclejdk11
 branches:
   only:
     - feature/add-travis
