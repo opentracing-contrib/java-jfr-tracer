@@ -5,9 +5,11 @@ env:
   - ORG_GRADLE_PROJECT_JAVA_11=openjdk11
   global:
     - TIMEOUT=5000
+      
 addons:
   hosts:
     - localhost
+
 language: java
 install: true
 
