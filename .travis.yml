@@ -5,12 +5,14 @@ addons:
     - localhost
 language: java
 install: true
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 jdk:
   - oraclejdk8
 script:
   - export JAVA_8=$JAVA_HOME
-  - export JAVA_11=/home/travis/openjdk11
-  - install-jdk.sh --install openjdk11 --target $JAVA_11
+  - install-jdk.sh -F 11
+  - export JAVA_11=$JAVA_HOME
   - ./gradlew build
 branches:
   only:
