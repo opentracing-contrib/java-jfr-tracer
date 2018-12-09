@@ -1,14 +1,17 @@
 env:
-  - ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle ORG_GRADLE_PROJECT_JAVA_11=/usr/lib/jvm/java-11-oracle
+  - ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME ORG_GRADLE_PROJECT_JAVA_11=openjdk11
 addons:
   hosts:
     - localhost
 language: java
 install: true
 script:
+  - export JAVA_8=$JAVA_HOME
+  - export JAVA_11=$HOME/opejdk11
+  - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_11
   - ./gradlew build
 jdk:
-  - oraclejdk8 oraclejdk11
+  - oraclejdk8
 branches:
   only:
     - feature/add-travis
