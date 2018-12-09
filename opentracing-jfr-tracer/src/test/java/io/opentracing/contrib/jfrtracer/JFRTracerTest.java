@@ -37,7 +37,8 @@ public class JFRTracerTest {
 	/**
 	 * Test JFR gets the generated span
 	 *
-	 * @throws java.io.IOException on error
+	 * @throws java.io.IOException
+	 *             on error
 	 */
 	@Test
 	public void basicEvent() throws IOException {
@@ -59,16 +60,16 @@ public class JFRTracerTest {
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
+			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+					.collect(Collectors.toMap(e -> e.operationName(), e -> e));
 			assertEquals(finishedSpans.size(), events.size());
-			events.stream()
-					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
-						assertNotNull(finishedSpan);
-						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
-						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
-					});
+			events.stream().forEach(e -> {
+				MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
+				assertNotNull(finishedSpan);
+				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
+				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
+				assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
+			});
 
 		} finally {
 //			Files.delete(output);

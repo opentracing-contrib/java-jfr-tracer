@@ -25,7 +25,7 @@ import io.opentracing.Span;
 final class ScopeManagerWrapper implements ScopeManager {
 	private final ScopeManager delegate;
 	private final ThreadLocal<ScopeWrapper> activeScope = new ThreadLocal<>();
-	
+
 	ScopeManagerWrapper(ScopeManager delegate) {
 		this.delegate = delegate;
 	}
@@ -37,10 +37,12 @@ final class ScopeManagerWrapper implements ScopeManager {
 		if (!(span instanceof SpanWrapper)) {
 			// This should be rather unlikely...
 			SpanWrapper spanWrapper = new SpanWrapper("", span, "");
-			wrapper = new ScopeWrapper(this, spanWrapper, delegate.activate(span, finishSpanOnClose), finishSpanOnClose); 
+			wrapper = new ScopeWrapper(this, spanWrapper, delegate.activate(span, finishSpanOnClose),
+					finishSpanOnClose);
 		} else {
 			SpanWrapper spanWrapper = (SpanWrapper) span;
-			wrapper = new ScopeWrapper(this, spanWrapper, delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), finishSpanOnClose);
+			wrapper = new ScopeWrapper(this, spanWrapper,
+					delegate.activate(spanWrapper.getDelegate(), finishSpanOnClose), finishSpanOnClose);
 		}
 		activeScope.set(wrapper);
 		return wrapper;

@@ -36,7 +36,8 @@ final class ScopeWrapper implements Scope {
 	private final boolean finishSpanOnClose;
 	private final ScopeWrapper parentScope;
 
-	ScopeWrapper(ScopeManagerWrapper scopeManagerWrapper, SpanWrapper spanWrapper, Scope delegate, boolean finishSpanOnClose) {
+	ScopeWrapper(ScopeManagerWrapper scopeManagerWrapper, SpanWrapper spanWrapper, Scope delegate,
+			boolean finishSpanOnClose) {
 		this.scopeManagerWrapper = scopeManagerWrapper;
 		this.parentScope = (ScopeWrapper) scopeManagerWrapper.active();
 		this.spanWrapper = spanWrapper;

@@ -22,8 +22,10 @@ public interface JfrEmitter extends AutoCloseable {
 	/**
 	 * Emits an event with the associated operation name.
 	 * 
-	 * @param parentId      the id of the parent span.
-	 * @param operationName the operation to emit.
+	 * @param parentId
+	 *            the id of the parent span.
+	 * @param operationName
+	 *            the operation to emit.
 	 */
 	void start(String parentId, String operationName);
 

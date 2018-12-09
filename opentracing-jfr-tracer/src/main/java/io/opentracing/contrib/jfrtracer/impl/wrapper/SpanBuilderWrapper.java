@@ -116,8 +116,6 @@ final class SpanBuilderWrapper implements SpanBuilder {
 
 	private String getParentSpanId() {
 		Span activeSpan = owner.scopeManager().activeSpan();
-		return parentId != null ? parentId
-				: activeSpan != null ? activeSpan.context().toSpanId()
-						: null;
+		return parentId != null ? parentId : activeSpan != null ? activeSpan.context().toSpanId() : null;
 	}
 }

@@ -33,12 +33,14 @@ public final class JfrTracerFactory {
 	}
 
 	/**
-	 * Wraps a tracer in a tracer which will provide contextual JFR events The tracer will be small and the overhead
-	 * small.
+	 * Wraps a tracer in a tracer which will provide contextual JFR events The tracer will be small
+	 * and the overhead small.
 	 *
-	 * @param delegate the tracer responsible for the normal open tracing work. This can, for example, be your usual
-	 * Jaeger or Zipkin tracer.
-	 * @return the wrapped tracer to use. You would normally register this tracer as your global tracer.
+	 * @param delegate
+	 *            the tracer responsible for the normal open tracing work. This can, for example, be
+	 *            your usual Jaeger or Zipkin tracer.
+	 * @return the wrapped tracer to use. You would normally register this tracer as your global
+	 *         tracer.
 	 */
 	public static Tracer create(Tracer delegate) {
 

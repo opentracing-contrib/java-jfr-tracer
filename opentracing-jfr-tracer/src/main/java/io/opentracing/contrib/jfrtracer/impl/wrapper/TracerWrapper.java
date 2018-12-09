@@ -78,5 +78,5 @@ public final class TracerWrapper implements Tracer {
 	@SuppressWarnings("deprecation")
 	public Scope activateSpan(Span span) {
 		return scopeManager.activate(span, true);
-	}	
+	}
 }

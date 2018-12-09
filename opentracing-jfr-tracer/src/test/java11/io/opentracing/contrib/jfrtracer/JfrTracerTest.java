@@ -46,7 +46,8 @@ public class JfrTracerTest {
 	/**
 	 * Test JFR gets the generated span
 	 *
-	 * @throws java.io.IOException on error
+	 * @throws java.io.IOException
+	 *             on error
 	 */
 	@Test
 	public void basicEvent() throws IOException {
@@ -67,18 +68,18 @@ public class JfrTracerTest {
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
+			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+					.collect(Collectors.toMap(e -> e.operationName(), e -> e));
 			List<RecordedEvent> events = RecordingFile.readAllEvents(output);
 			assertEquals(finishedSpans.size(), events.size());
-			events.stream()
-					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
-						assertNotNull(finishedSpan);
-						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
-						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
-						assertTrue(e.getEventType().getName().contains("SpanEvent"));
-					});
+			events.stream().forEach(e -> {
+				MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
+				assertNotNull(finishedSpan);
+				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
+				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
+				assertEquals(finishedSpan.operationName(), e.getString("operationName"));
+				assertTrue(e.getEventType().getName().contains("SpanEvent"));
+			});
 
 		} finally {
 			Files.delete(output);
@@ -118,7 +119,8 @@ public class JfrTracerTest {
 			while (!FlightRecorder.getFlightRecorder().getRecordings().isEmpty()) {
 				System.out.println(FlightRecorder.getFlightRecorder().getRecordings().size());
 			}
-			await().atMost(20, TimeUnit.SECONDS).until(() -> FlightRecorder.getFlightRecorder().getRecordings().isEmpty());
+			await().atMost(20, TimeUnit.SECONDS)
+					.until(() -> FlightRecorder.getFlightRecorder().getRecordings().isEmpty());
 			try (Scope inner = tracer.activateSpan(tracer.buildSpan("inner span").start())) {
 				Scope activeScopeInner = tracer.scopeManager().active();
 				assertNotNull(activeScopeInner);

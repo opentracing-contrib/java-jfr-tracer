@@ -26,14 +26,12 @@ import io.opentracing.Span;
  */
 abstract class AbstractJfrSpanEmitter extends AbstractJfrEmitter {
 
-	protected final static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(1, 1, Long.MAX_VALUE, TimeUnit.NANOSECONDS,
-			new ArrayBlockingQueue<Runnable>(50),
-			(r) -> {
+	protected final static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(1, 1, Long.MAX_VALUE,
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(50), (r) -> {
 				Thread thread = new Thread(r, "JfrTracer Span Events");
 				thread.setDaemon(true);
 				return thread;
-			},
-			(r, e) -> {
+			}, (r, e) -> {
 				// Seems very unlikely to happen, but just to be sure...
 				LOGGER.warning("Span Event queue full - dropped span event");
 			});

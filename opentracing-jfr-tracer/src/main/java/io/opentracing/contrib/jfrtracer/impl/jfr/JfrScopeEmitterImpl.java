@@ -81,7 +81,8 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 	/**
 	 * Helper method to register an event class with the jfr-tracer producer.
 	 *
-	 * @param clazz the event class to register.
+	 * @param clazz
+	 *            the event class to register.
 	 * @return the token associated with the event class.
 	 */
 	static EventToken register(Class<? extends InstantEvent> clazz) {
@@ -90,10 +91,8 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 			LOGGER.fine("Registered EventType " + clazz.getName());
 			return token;
 		} catch (InvalidEventDefinitionException | InvalidValueException e) {
-			LOGGER.log(Level.SEVERE,
-					"Failed to register the event class " + clazz.getName()
-					+ ". Event will not be available. Please check your configuration.",
-					e);
+			LOGGER.log(Level.SEVERE, "Failed to register the event class " + clazz.getName()
+					+ ". Event will not be available. Please check your configuration.", e);
 		}
 		return null;
 	}

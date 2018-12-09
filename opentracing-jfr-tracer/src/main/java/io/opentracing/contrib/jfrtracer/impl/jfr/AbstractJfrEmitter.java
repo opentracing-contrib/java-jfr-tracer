@@ -25,7 +25,7 @@ import io.opentracing.Span;
 abstract class AbstractJfrEmitter implements JfrEmitter {
 	static final Logger LOGGER = Logger.getLogger(JfrScopeEmitterImpl.class.getName());
 	protected Span span;
-	
+
 	AbstractJfrEmitter(Span span) {
 		this.span = span;
 	}

@@ -44,7 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DifferentSpanTest {
 
 	@Test
-	public void spansInMultipleThreads() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+	public void spansInMultipleThreads()
+			throws IOException, InterruptedException, ExecutionException, TimeoutException {
 		Path output = Files.createTempFile("test-recording", ".jfr");
 		try {
 			// Setup tracers
@@ -67,19 +68,19 @@ public class DifferentSpanTest {
 			// Validate span was created and recorded in JFR
 			assertEquals(2, mockTracer.finishedSpans().size());
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
+			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+					.collect(Collectors.toMap(e -> e.operationName(), e -> e));
 			List<RecordedEvent> events = RecordingFile.readAllEvents(output);
-			events.stream()
-					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
-						assertNotNull(finishedSpan);
-						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
-						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
-						if ("executor span".equals(e.getString("operationName"))) {
-							assertNotNull(e.getString("parentId"));
-						}
-					});
+			events.stream().forEach(e -> {
+				MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
+				assertNotNull(finishedSpan);
+				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
+				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
+				assertEquals(finishedSpan.operationName(), e.getString("operationName"));
+				if ("executor span".equals(e.getString("operationName"))) {
+					assertNotNull(e.getString("parentId"));
+				}
+			});
 
 		} finally {
 			Files.delete(output);
@@ -87,7 +88,8 @@ public class DifferentSpanTest {
 	}
 
 	@Test
-	public void passingSpanBetweenThreads() throws IOException, InterruptedException, TimeoutException, ExecutionException {
+	public void passingSpanBetweenThreads()
+			throws IOException, InterruptedException, TimeoutException, ExecutionException {
 		Path output = Files.createTempFile("test-recording", ".jfr");
 		try {
 			// Setup tracers
@@ -109,18 +111,18 @@ public class DifferentSpanTest {
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
+			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+					.collect(Collectors.toMap(e -> e.operationName(), e -> e));
 			List<RecordedEvent> events = RecordingFile.readAllEvents(output);
 			assertEquals(finishedSpans.size(), events.size());
-			events.stream()
-					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
-						assertNotNull(finishedSpan);
-						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
-						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
-						assertNotEquals(Thread.currentThread().getName(), e.getThread().getJavaName());
-					});
+			events.stream().forEach(e -> {
+				MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
+				assertNotNull(finishedSpan);
+				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
+				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
+				assertEquals(finishedSpan.operationName(), e.getString("operationName"));
+				assertNotEquals(Thread.currentThread().getName(), e.getThread().getJavaName());
+			});
 
 		} finally {
 			Files.delete(output);

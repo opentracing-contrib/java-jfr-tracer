@@ -55,11 +55,8 @@ public class ImplementationsJFRTest {
 		System.setProperty(JAEGER_AGENT_PORT, "6831");
 		System.setProperty(JAEGER_PROPAGATION, "B3");
 
-		Tracer jaegerTracer = new io.jaegertracing.Configuration("test")
-				.withSampler(SamplerConfiguration.fromEnv())
-				.withCodec(CodecConfiguration.fromEnv())
-				.withReporter(ReporterConfiguration.fromEnv())
-				.getTracer();
+		Tracer jaegerTracer = new io.jaegertracing.Configuration("test").withSampler(SamplerConfiguration.fromEnv())
+				.withCodec(CodecConfiguration.fromEnv()).withReporter(ReporterConfiguration.fromEnv()).getTracer();
 		innerTest(jaegerTracer);
 	}
 
@@ -71,11 +68,8 @@ public class ImplementationsJFRTest {
 		System.setProperty(JAEGER_AGENT_PORT, "6831");
 		System.setProperty(JAEGER_PROPAGATION, "JAEGER");
 
-		Tracer jaegerTracer = new io.jaegertracing.Configuration("test")
-				.withSampler(SamplerConfiguration.fromEnv())
-				.withCodec(CodecConfiguration.fromEnv())
-				.withReporter(ReporterConfiguration.fromEnv())
-				.getTracer();
+		Tracer jaegerTracer = new io.jaegertracing.Configuration("test").withSampler(SamplerConfiguration.fromEnv())
+				.withCodec(CodecConfiguration.fromEnv()).withReporter(ReporterConfiguration.fromEnv()).getTracer();
 		innerTest(jaegerTracer);
 	}
 
@@ -83,13 +77,10 @@ public class ImplementationsJFRTest {
 	public void brave() throws IOException {
 
 		Factory propagationFactory = ExtraFieldPropagation.newFactoryBuilder(B3Propagation.FACTORY)
-				.addPrefixedFields("baggage-", Arrays.asList("country-code", "user-id"))
-				.build();
+				.addPrefixedFields("baggage-", Arrays.asList("country-code", "user-id")).build();
 
-		Tracing braveTracing = Tracing.newBuilder()
-				.localServiceName("my-service")
-				.propagationFactory(propagationFactory)
-				.build();
+		Tracing braveTracing = Tracing.newBuilder().localServiceName("my-service")
+				.propagationFactory(propagationFactory).build();
 		innerTest(BraveTracer.create(braveTracing));
 	}
 
@@ -118,15 +109,14 @@ public class ImplementationsJFRTest {
 
 			// Validate span was created and recorded in JFR
 			assertEquals(4, events.size());
-			events.stream()
-					.forEach(e -> {
-						assertNotNull(e.getValue("operationName"));
-						if (e.getValue("operationName").equals("inner span")) {
-							assertNotNull(e.getValue("parentSpanId"));
-						}
-						assertNotNull(e.getValue("traceId"));
-						assertNotNull(e.getValue("spanId"));
-					});
+			events.stream().forEach(e -> {
+				assertNotNull(e.getValue("operationName"));
+				if (e.getValue("operationName").equals("inner span")) {
+					assertNotNull(e.getValue("parentSpanId"));
+				}
+				assertNotNull(e.getValue("traceId"));
+				assertNotNull(e.getValue("spanId"));
+			});
 
 		} finally {
 			Files.delete(output);
