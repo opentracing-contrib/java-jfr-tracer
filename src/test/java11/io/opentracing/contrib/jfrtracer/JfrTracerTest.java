@@ -51,6 +51,7 @@ public class JfrTracerTest {
 	@Test
 	public void basicEvent() throws IOException {
 		Path output = Files.createTempFile("test-recording", ".jfr");
+		System.out.println("FILE: " + output);
 		try {
 			// Setup tracers
 			MockTracer mockTracer = new MockTracer();
@@ -60,6 +61,7 @@ public class JfrTracerTest {
 
 				// Generate span
 				tracer.buildSpan("test span").start().finish();
+				System.out.println("SPAN: " + tracer);
 
 				recording.dump(output);
 			}
