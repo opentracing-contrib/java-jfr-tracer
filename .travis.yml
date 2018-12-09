@@ -10,6 +10,7 @@ jdk:
 script:
   - export JAVA_8=$JAVA_HOME
   - export JAVA_11=/home/travis/openjdk11
+  - install-jdk.sh --install openjdk11 --target $JAVA_11
   - ./gradlew build
 branches:
   only:
