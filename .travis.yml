@@ -3,7 +3,7 @@ env:
 addons:
   apt:
     packages:
-      - oraclejdk11
+      - openjdk-11-jdk
   hosts:
     - localhost
 language: java
