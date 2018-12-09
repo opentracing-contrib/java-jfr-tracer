@@ -1,5 +1,5 @@
 env:
-  - ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
+  - ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
 addons:
   hosts:
     - localhost
@@ -9,12 +9,11 @@ before_install:
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 matrix:
   include:
-    - env: JDK='Oracle JDK 8'
-      jdk: oraclejdk8
     - env: JDK='OpenJDK 11'
       install: . ./install-jdk.sh -F 11 -L GPL
+jdk: oraclejdk8
 script:
-  - export JAVA_8=$JAVA_HOME
+  - export JAVA_8=/usr/lib/jvm/java-8-oracle
   - export JAVA_11=/home/travis/jdk-11.0.1
   - echo $JAVA_HOME
   - ./gradlew build
