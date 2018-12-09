@@ -1,9 +1,10 @@
 env:
+  - JAVA_7=openjdk7
+  - JAVA_8=oraclejdk8
+  - JAVA_9=oraclejdk9
+  - JAVA_11=openjdk11
   global:
     - TIMEOUT=5000
-    - JAVA_8=oraclejdk8
-    - JAVA_9=oraclejdk9
-    - JAVA_11=openjdk11
 addons:
   hosts:
     - localhost
