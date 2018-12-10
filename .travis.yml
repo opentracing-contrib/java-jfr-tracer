@@ -18,7 +18,7 @@ script:
   - echo $JAVA_HOME
   - echo $ORG_GRADLE_PROJECT_JAVA_8
   - echo $ORG_GRADLE_PROJECT_JAVA_11
-  - sudo ./gradlew build
+  - sudo ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME
 branches:
   only:
     - feature/add-travis
