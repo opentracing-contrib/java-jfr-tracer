@@ -56,12 +56,6 @@ public class JFRTracerTest {
             // Stop recording
             List<FLREvent> events = JFRTestUtils.stopJfr(output);
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             // Validate span was created and recorded in JFR
             int mockTracerSpansSize = mockTracer.finishedSpans().size();
             assertEquals(1, mockTracerSpansSize);
@@ -82,7 +76,7 @@ public class JFRTracerTest {
             }
 
         } finally {
-            //Files.delete(output);
+            Files.delete(output);
         }
     }
 

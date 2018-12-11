@@ -67,20 +67,23 @@ public class JfrTracerTest {
 			}
 
 			// Validate span was created and recorded in JFR
-			assertEquals(1, mockTracer.finishedSpans().size());
+			int mockTracerSpansSize = mockTracer.finishedSpans().size();
+			assertEquals(1, mockTracerSpansSize);
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
+			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+					.collect(Collectors.toMap(MockSpan::operationName, e -> e));
 			List<RecordedEvent> events = RecordingFile.readAllEvents(output);
-			assertEquals(finishedSpans.size(), events.size());
-			events.stream()
-					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
-						assertNotNull(finishedSpan);
-						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
-						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getString("operationName"));
-						assertTrue(e.getEventType().getName().contains("SpanEvent"));
-					});
+			int finishedEventSize = finishedSpans.size();
+			assertEquals(finishedEventSize, events.size());
+
+			for(RecordedEvent e : events){
+				MockSpan finishedSpan = finishedSpans.get(e.getString("operationName"));
+				assertNotNull(finishedSpan);
+				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
+				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
+				assertEquals(finishedSpan.operationName(), e.getString("operationName"));
+				assertTrue(e.getEventType().getName().contains("SpanEvent"));
+			}
 
 		} finally {
 			Files.delete(output);
