@@ -8,20 +8,18 @@ before_install:
   -
 matrix:
   include:
-    - env: JDK='OracleJDK 8'
-      jdk: oraclejdk8
     - env: JDK='OpenJDK 11'
       install: . ./install-jdk.sh -F 11 -L GPL
 script:
-  - jdk_switcher use oraclejdk8
   - export ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle
   - export ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
+  - jdk_switcher use oraclejdk8
   - export JAVA_HOME=$ORG_GRADLE_PROJECT_JAVA_8
   - echo $JAVA_HOME
   - echo $ORG_GRADLE_PROJECT_JAVA_8
   - echo $ORG_GRADLE_PROJECT_JAVA_11
   - java -version
-  - ./gradlew -version
+  - ./gradlew -version -Dorg.gradle.java.home=$ORG_GRADLE_PROJECT_JAVA_8
   - ./gradlew build -Dorg.gradle.java.home=$ORG_GRADLE_PROJECT_JAVA_8
 branches:
   only:
