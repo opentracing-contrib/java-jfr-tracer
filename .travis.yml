@@ -11,11 +11,7 @@ script:
   - export ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle
   - export ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
   - export JAVA_HOME=$ORG_GRADLE_PROJECT_JAVA_8
-  - echo $JAVA_HOME
-  - echo $ORG_GRADLE_PROJECT_JAVA_8
-  - echo $ORG_GRADLE_PROJECT_JAVA_11
-  - java -version
-  - ./gradlew build
+  - ./gradlew build --info
 branches:
   only:
     - feature/add-travis

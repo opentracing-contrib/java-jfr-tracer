@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,60 +34,62 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SuppressWarnings("deprecation")
 public class JFRTracerTest {
 
-	/**
-	 * Test JFR gets the generated span
-	 *
-	 * @throws java.io.IOException on error
-	 */
-	@Test
-	public void basicEvent() throws IOException {
-		Path output = Files.createTempFile("opentracing", ".jfr");
+    /**
+     * Test JFR gets the generated span
+     *
+     * @throws java.io.IOException on error
+     */
+    @Test
+    public void basicEvent() throws IOException {
+        Path output = Files.createTempFile("opentracing", ".jfr");
 
-		try {
-			// Setup tracers
-			MockTracer mockTracer = new MockTracer();
-			Tracer tracer = JfrTracerFactory.create(mockTracer);
+        try {
+            // Setup tracers
+            MockTracer mockTracer = new MockTracer();
+            Tracer tracer = JfrTracerFactory.create(mockTracer);
 
-			// Start JFR
-			JFRTestUtils.startJFR();
-			// Generate span
-			tracer.buildSpan("test span").start().finish();
+            // Start JFR
+            JFRTestUtils.startJFR();
+            // Generate span
+            tracer.buildSpan("test span").start().finish();
 
-			// Stop recording
-			List<FLREvent> events = JFRTestUtils.stopJfr(output);
+            // Stop recording
+            List<FLREvent> events = JFRTestUtils.stopJfr(output);
 
-			// Validate span was created and recorded in JFR
-			int mockTracerSpansSize = mockTracer.finishedSpans().size();
-			assertEquals(1, mockTracerSpansSize);
+            // Validate span was created and recorded in JFR
+            int mockTracerSpansSize = mockTracer.finishedSpans().size();
+            assertEquals(1, mockTracerSpansSize);
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
-					.collect(Collectors.toMap(MockSpan::operationName, e -> e));
+            Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+                    .collect(Collectors.toMap(MockSpan::operationName, e -> e));
 
-			assertEquals(mockTracerSpansSize, events.size());
+            assertEquals(mockTracerSpansSize, events.size());
 
-			for(FLREvent e: events){
-				MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
-				assertNotNull(finishedSpan);
-				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
-				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
-				assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
-			}
+            for (FLREvent e : events) {
+                MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
+                System.out.println("finishedSpan name: " + finishedSpan.operationName());
+                System.out.println("E name: " + e.getValue("operationName"));
+                assertNotNull(finishedSpan);
+                assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
+                assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
+                assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
+            }
 
-		} finally {
-			Files.delete(output);
-		}
-	}
+        } finally {
+            Files.delete(output);
+        }
+    }
 
-	@Test
-	public void noJFR() throws IOException {
-		// Setup tracers
-		MockTracer mockTracer = new MockTracer();
-		Tracer tracer = JfrTracerFactory.create(mockTracer);
+    @Test
+    public void noJFR() throws IOException {
+        // Setup tracers
+        MockTracer mockTracer = new MockTracer();
+        Tracer tracer = JfrTracerFactory.create(mockTracer);
 
-		// Generate span
-		tracer.buildSpan("test span").start().finish();
+        // Generate span
+        tracer.buildSpan("test span").start().finish();
 
-		// Validate span was created and recorded in JFR
-		assertEquals(1, mockTracer.finishedSpans().size());
-	}
+        // Validate span was created and recorded in JFR
+        assertEquals(1, mockTracer.finishedSpans().size());
+    }
 }
