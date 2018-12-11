@@ -58,12 +58,13 @@ public class JFRTracerTest {
 			List<FLREvent> events = JFRTestUtils.stopJfr(output);
 
 			// Validate span was created and recorded in JFR
-			assertEquals(1, mockTracer.finishedSpans().size());
+			int mockTracerSpansSize = mockTracer.finishedSpans().size();
+			assertEquals(1, mockTracerSpansSize);
 
 			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
 					.collect(Collectors.toMap(MockSpan::operationName, e -> e));
 
-			assertEquals(finishedSpans.size(), events.size());
+			assertEquals(mockTracerSpansSize, events.size());
 
 			for(FLREvent e: events){
 				MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
