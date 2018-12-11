@@ -118,8 +118,7 @@ public class ImplementationsJFRTest {
 
 			// Validate span was created and recorded in JFR
 			assertEquals(4, events.size());
-			events.stream()
-					.forEach(e -> {
+			events.forEach(e -> {
 						assertNotNull(e.getValue("operationName"));
 						if (e.getValue("operationName").equals("inner span")) {
 							assertNotNull(e.getValue("parentSpanId"));

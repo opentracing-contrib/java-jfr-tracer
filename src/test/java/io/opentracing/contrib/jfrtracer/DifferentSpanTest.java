@@ -71,8 +71,7 @@ public class DifferentSpanTest {
 
 			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
 			assertEquals(finishedSpans.size(), events.size());
-			events.stream()
-					.forEach(e -> {
+			events.forEach(e -> {
 						MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
 						assertNotNull(finishedSpan);
 						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
