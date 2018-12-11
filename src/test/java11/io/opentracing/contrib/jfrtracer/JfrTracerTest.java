@@ -64,7 +64,16 @@ public class JfrTracerTest {
 				System.out.println("SPAN: " + tracer);
 
 				recording.dump(output);
+				recording.stop();
+
 			}
+			//to be removed
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
 
 			// Validate span was created and recorded in JFR
 			int mockTracerSpansSize = mockTracer.finishedSpans().size();

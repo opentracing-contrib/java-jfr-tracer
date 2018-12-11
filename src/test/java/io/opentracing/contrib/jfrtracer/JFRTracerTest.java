@@ -63,6 +63,7 @@ public class JFRTracerTest {
             // Stop recording
             List<FLREvent> events = JFRTestUtils.stopJfr(output);
 
+            //to be removed
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
