@@ -68,7 +68,7 @@ public final class JFRTestUtils {
 					new Object[] {new String[] {"name=opentracing-jfr", "settings=" + jfrConfig.toAbsolutePath().toString()}},
 					new String[] {String[].class.getName()});
 
-			assertTimeout(Duration.ofSeconds(10), () -> {
+			assertTimeout(Duration.ofSeconds(20), () -> {
 				while (JFR.get().getMBean().getRecordings().isEmpty()) {
 					System.out.println("Waiting for recording to start");
 					Thread.sleep(10);
