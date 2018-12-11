@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,7 +60,9 @@ public class JFRTracerTest {
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
 
-			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream().collect(Collectors.toMap(e -> e.operationName(), e -> e));
+			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
+					.collect(Collectors.toMap(MockSpan::operationName, e -> e));
+
 			assertEquals(finishedSpans.size(), events.size());
 			events.stream()
 					.forEach(e -> {
