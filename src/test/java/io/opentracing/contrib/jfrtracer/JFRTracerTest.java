@@ -65,6 +65,13 @@ public class JFRTracerTest {
 
             assertEquals(mockTracerSpansSize, events.size());
 
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             for (FLREvent e : events) {
                 MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
                 System.out.println("finishedSpan name: " + finishedSpan.operationName());
