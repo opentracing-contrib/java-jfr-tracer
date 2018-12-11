@@ -30,7 +30,7 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 	private ScopeEvent currentEvent;
 
 	@Category("Open Tracing")
-	@Label("Scope Event")
+	@Label("Scope")
 	@Description("Open tracing event corresponding to an activation scope")
 	private static class ScopeEvent extends Event {
 

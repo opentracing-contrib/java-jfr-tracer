@@ -30,7 +30,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
 
 	private volatile SpanEvent currentEvent;
 
-	@Label("Span Event")
+	@Label("Span")
 	@Description("Open tracing event corresponding to a span.")
 	@Category("Open Tracing")
 	@StackTrace(false)

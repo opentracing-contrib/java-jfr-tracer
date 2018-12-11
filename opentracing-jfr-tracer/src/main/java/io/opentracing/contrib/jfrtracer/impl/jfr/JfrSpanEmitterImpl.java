@@ -69,7 +69,7 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
 	}
 
 	// Must be public for JFR to access it
-	@EventDefinition(path = "opentracing/spanevent", name = "SpanEvent", description = "And event representing an OpenTracing span", stacktrace = false, thread = true)
+	@EventDefinition(path = "opentracing/spanevent", name = "Span", description = "And event representing an OpenTracing span", stacktrace = false, thread = true)
 	public static class SpanEvent extends TimedEvent {
 
 		@ValueDefinition(name = "Operation Name")

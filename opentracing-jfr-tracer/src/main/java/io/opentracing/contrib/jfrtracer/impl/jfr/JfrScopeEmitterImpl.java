@@ -97,7 +97,7 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 		return null;
 	}
 
-	@EventDefinition(path = "opentracing/scopeevent", name = "ScopeEvent", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
+	@EventDefinition(path = "opentracing/scopeevent", name = "Scope", description = "A thread local event triggered by scope activation", stacktrace = true, thread = true)
 	public static class ScopeEvent extends TimedEvent {
 
 		@ValueDefinition(name = "Operation Name")
