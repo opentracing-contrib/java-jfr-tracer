@@ -76,7 +76,7 @@ public class JFRTracerTest {
             }
 
         } finally {
-            Files.delete(output);
+            //Files.delete(output);
         }
     }
 
