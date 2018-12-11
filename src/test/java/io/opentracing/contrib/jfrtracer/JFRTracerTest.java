@@ -64,14 +64,14 @@ public class JFRTracerTest {
 					.collect(Collectors.toMap(MockSpan::operationName, e -> e));
 
 			assertEquals(finishedSpans.size(), events.size());
-			events.stream()
-					.forEach(e -> {
-						MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
-						assertNotNull(finishedSpan);
-						assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
-						assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
-						assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
-					});
+
+			for(FLREvent e: events){
+				MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
+				assertNotNull(finishedSpan);
+				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));
+				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getValue("spanId"));
+				assertEquals(finishedSpan.operationName(), e.getValue("operationName"));
+			}
 
 		} finally {
 //			Files.delete(output);
