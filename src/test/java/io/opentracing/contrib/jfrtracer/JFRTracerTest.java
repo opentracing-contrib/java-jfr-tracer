@@ -53,6 +53,7 @@ public class JFRTracerTest {
             // Generate span
             tracer.buildSpan("test span").start().finish();
 
+            //to be removed
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
