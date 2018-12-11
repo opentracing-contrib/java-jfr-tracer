@@ -5,8 +5,11 @@ language: java
 install: true
 before_install:
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+  -
 matrix:
   include:
+    - env: JDK='OracleJDK 8'
+      jdk: oraclejdk8
     - env: JDK='OpenJDK 11'
       install: . ./install-jdk.sh -F 11 -L GPL
 script:
@@ -19,7 +22,7 @@ script:
   - echo $ORG_GRADLE_PROJECT_JAVA_11
   - java -version
   - ./gradlew -version
-  - ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME
+  - ./gradlew build -Dorg.gradle.java.home=$ORG_GRADLE_PROJECT_JAVA_8
 branches:
   only:
     - feature/add-travis
