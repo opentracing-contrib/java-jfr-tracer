@@ -28,6 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -35,6 +36,7 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.management.openmbean.OpenDataException;
 
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
@@ -62,19 +64,27 @@ public final class JFRTestUtils {
 		}
 
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+		final AtomicBoolean checkRecordings = new AtomicBoolean(true);
 		try {
 			mbs.invoke(new ObjectName("com.sun.management:type=DiagnosticCommand"), "vmUnlockCommercialFeatures", new Object[0], new String[0]);
 			mbs.invoke(new ObjectName("com.sun.management:type=DiagnosticCommand"), "jfrStart",
 					new Object[] {new String[] {"name=opentracing-jfr", "settings=" + jfrConfig.toAbsolutePath().toString()}},
 					new String[] {String[].class.getName()});
 
-			assertTimeout(Duration.ofSeconds(20), () -> {
-				while (JFR.get().getMBean().getRecordings().isEmpty()) {
-					System.out.println("Waiting for recording to start");
-					Thread.sleep(10);
+
+			while (checkRecordings.get()) {
+				if(JFR.get().getMBean().getRecordings().isEmpty()){
+					try {
+						System.out.println("Waiting for recording to start");
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} else {
+					checkRecordings.set(false);
 				}
-			});
-		} catch (InstanceNotFoundException | MBeanException | MalformedObjectNameException | ReflectionException ex) {
+			}
+		} catch (OpenDataException | InstanceNotFoundException | MBeanException | MalformedObjectNameException | ReflectionException ex) {
 			fail(ex.getMessage());
 		} finally {
 			if (nonNull(jfrConfig)) {
