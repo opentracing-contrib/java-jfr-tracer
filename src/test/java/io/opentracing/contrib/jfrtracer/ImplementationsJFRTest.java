@@ -118,16 +118,15 @@ public class ImplementationsJFRTest {
 
 			// Validate span was created and recorded in JFR
 			assertEquals(4, events.size());
-			events.stream()
-					.forEach(e -> {
-						assertNotNull(e.getValue("operationName"));
-						if (e.getValue("operationName").equals("inner span")) {
-							assertNotNull(e.getValue("parentSpanId"));
-						}
-						assertNotNull(e.getValue("traceId"));
-						assertNotNull(e.getValue("spanId"));
-					});
 
+			for(FLREvent e: events){
+				assertNotNull(e.getValue("operationName"));
+				if (e.getValue("operationName").equals("inner span")) {
+					assertNotNull(e.getValue("parentSpanId"));
+				}
+				assertNotNull(e.getValue("traceId"));
+				assertNotNull(e.getValue("spanId"));
+			}
 		} finally {
 			Files.delete(output);
 		}
