@@ -6,6 +6,8 @@ install: true
 jdk: oraclejdk8
 script:
   - sudo apt-get update && sudo apt-get install oracle-java8-installer
+  - sudo apt install oracle-java8-set-default
+  - java -version
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
   - sudo chmod 755 ./install-jdk.sh
   - sudo ./install-jdk.sh -F 11 -L GPL
