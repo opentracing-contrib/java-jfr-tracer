@@ -67,7 +67,7 @@ public class JfrTracerTest {
 				recording.stop();
 			}
 
-			//To be removed when test are fixed, it's used due to concurrency issue
+			// To be removed when test are fixed, it's used due to concurrency issue
 			Thread.sleep(100);
 
 			// Validate span was created and recorded in JFR
