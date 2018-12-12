@@ -49,8 +49,9 @@ public class JfrTracerTest {
 	 * @throws java.io.IOException
 	 *             on error
 	 */
+	@SuppressWarnings("deprecation")
 	@Test
-	public void basicEvent() throws IOException {
+	public void basicEvent() throws IOException, InterruptedException {
 		Path output = Files.createTempFile("test-recording", ".jfr");
 		try {
 			// Setup tracers
@@ -63,7 +64,11 @@ public class JfrTracerTest {
 				tracer.buildSpan("test span").start().finish();
 
 				recording.dump(output);
+				recording.stop();
 			}
+
+			// To be removed when test are fixed, it's used due to concurrency issue
+			Thread.sleep(100);
 
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());

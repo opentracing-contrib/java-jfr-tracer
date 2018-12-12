@@ -27,4 +27,5 @@ public final class JfrTestUtils {
 		recording.start();
 		return recording;
 	}
+	
 }
