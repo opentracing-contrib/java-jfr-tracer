@@ -1,0 +1,8 @@
+FROM travis_jdk8_11
+ENV APP_HOME=/usr/app/
+WORKDIR $APP_HOME
+ADD gradle $APP_HOME/gradle
+ENV ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle
+ENV ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
+COPY gradle.properties jdks.gradle build.gradle settings.gradle gradlew $APP_HOME
+RUN sudo ./gradlew build --info
