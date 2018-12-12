@@ -1,0 +1,192 @@
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply from: 'jdks.gradle'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+sourceSets {
+	java11 {
+		java {
+			srcDirs = ['src/main/java11']
+			compileClasspath += main.output.classesDirs
+			runtimeClasspath += main.output.classesDirs
+		}
+	}
+
+	testJava11 {
+		java {
+			srcDirs = ['src/test/java11']
+			compileClasspath += java11.output.classesDirs + main.output.classesDirs
+			runtimeClasspath += java11.output.classesDirs + main.output.classesDirs
+		}
+	}
+}
+configurations {
+	java11Compile {
+		extendsFrom compile
+	}
+
+	testJava11Compile {
+		extendsFrom testCompile
+	}
+}
+
+dependencies {
+	compile 'io.opentracing:opentracing-api:0.32.0-RC1'
+	testCompile 'io.opentracing:opentracing-mock:0.32.0-RC1'
+	testCompile 'io.jaegertracing:jaeger-core:0.32.0'
+	testCompile 'io.opentracing.brave:brave-opentracing:0.31.2'
+	testCompile 'io.opentracing.contrib:opentracing-concurrent:0.2.0'
+	testCompile 'org.awaitility:awaitility:3.1.3'
+	testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+	testCompile 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+compileJava {
+	options.compilerArgs.addAll(['-Xlint:all,-deprecation', '-Werror'])
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+}
+
+compileTestJava {
+	options.compilerArgs.addAll(['-Xlint:all,-deprecation'])
+	sourceCompatibility = compileJava.sourceCompatibility
+	targetCompatibility = compileJava.targetCompatibility
+}
+
+test {
+	def RESOLVED_8 = project.hasProperty('JAVA_8') ? project.getProperty('JAVA_8') :  System.env.JAVA_8
+	useJUnitPlatform()
+	executable = "${RESOLVED_8}/bin/java"
+	forkEvery = 1
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+compileJava11Java {
+	options.compilerArgs.addAll(['--release', '11', '-Xlint:all', '-Werror'])
+	sourceCompatibility = 11
+	targetCompatibility = 11
+}
+
+compileTestJava11Java {
+	options.compilerArgs.addAll(['--release', '11', '-Xlint:all'])
+	sourceCompatibility = compileJava11Java.sourceCompatibility
+	targetCompatibility = compileJava11Java.targetCompatibility
+}
+
+task testJava11(type: Test) {
+	def RESOLVED_11 = project.hasProperty('JAVA_11') ? project.getProperty('JAVA_11') :  System.env.JAVA_11
+	dependsOn testJava11Classes
+	testClassesDirs = sourceSets.testJava11.output.classesDirs
+	classpath = sourceSets.testJava11.runtimeClasspath
+	useJUnitPlatform()
+	executable = "${RESOLVED_11}/bin/java"
+	testLogging {
+		events "passed", "skipped", "failed"
+	}	
+}
+
+test.dependsOn testJava11
+
+jar {
+	into('META-INF/versions/11') {
+		from sourceSets.java11.output
+	}
+	manifest.attributes(
+		'Multi-Release': 'true', 
+	)
+}
+
+javadoc {
+	source = sourceSets.main.allJava
+	classpath = configurations.compile
+	include '**DelegatingJfrTracer**'
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifact sourcesJar
+			artifact javadocJar
+			groupId = 'io.opentracing.contrib'
+			artifactId = 'jfr-tracer'
+			
+			from components.java
+			
+			pom {
+				name = 'JFR Tracer'
+				description = 'An OpenTracing Tracer which records contextual information into the JDK Flight Recorder'
+				url = 'https://github.com/opentracing-contrib/java-jfr-tracer'
+
+				licenses {
+					license {
+						name = 'Apache v2.0'
+						url = 'https://www.apache.org/licenses/LICENSE-2.0'
+ 					}
+				}
+
+				developers {
+					developer {
+						id = 'thegreystone'
+						name = 'Marcus Hirt'
+						email = 'marcus@hirt.se'
+					}
+					developer {
+						id = 'sfriberg'
+						name = 'Staffan Friberg'
+						email = 'sfriberg@kth.se'
+					}
+				}
+
+				scm {
+					connection = 'scm:git:https://github.com/opentracing-contrib/java-jfr-tracer.git'
+					developerConnection = 'scm:git:https://github.com/opentracing-contrib/java-jfr-tracer.git'
+					url = 'https://github.com/opentracing-contrib/java-jfr-tracer'
+				}
+			}
+		}
+	}
+}
+
+def ossrhUsername = project.findProperty('ossrhUsername') ?: ''
+def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
+
+if(ossrhUsername?.trim() && ossrhPassword?.trim()){
+	apply plugin: 'signing'
+
+	repositories {
+		maven {
+			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username ossrhUsername
+				password ossrhPassword
+			}
+		}
+	}
+
+	signing {
+		sign publishing.publications.mavenJava
+	}
+}
