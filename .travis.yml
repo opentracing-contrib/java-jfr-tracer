@@ -17,3 +17,4 @@ script:
 branches:
   only:
     - travis-add
+    - feature/add-travis
