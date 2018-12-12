@@ -13,8 +13,7 @@ script:
   - export ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME
   - export ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
   - export JAVA_HOME=$ORG_GRADLE_PROJECT_JAVA_8
-  - ./opentracing-jfr-tracer/gradlew build
+  - ./gradlew build
 branches:
   only:
-    - master
     - travis-add
