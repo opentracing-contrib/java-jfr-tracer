@@ -1,4 +1,6 @@
 # JFR Tracer
+[![Build Status](https://travis-ci.org/mirage22/java-jfr-tracer.svg?branch=travis-add)](https://travis-ci.org/mirage22/java-jfr-tracer)
+
 This is a delegating tracer to be used with OpenTracing. It records span and scope information into the JDK Flight Recorder, enabling very deep tracing capabilities.
 
 ## Using the JFR Tracer
@@ -16,7 +18,7 @@ Next, in whatever code you use to set up the OpenTracing tracer, wrap your trace
 
 ```java
 GlobalTracer.register(
-	WrapperFactory.wrap(yourFavTracer));
+	JfrTracerFactory.create(yourFavouriteTracer));
 ```
 
 ## Supported Tracers
