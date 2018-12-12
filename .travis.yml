@@ -17,4 +17,3 @@ script:
 branches:
   only:
     - master
-    - travis-add
