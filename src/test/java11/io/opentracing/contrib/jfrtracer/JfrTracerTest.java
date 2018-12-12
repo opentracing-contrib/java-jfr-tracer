@@ -62,6 +62,14 @@ public class JfrTracerTest {
 				tracer.buildSpan("test span").start().finish();
 
 				recording.dump(output);
+				recording.stop();
+			}
+
+			//to be removed after test are fixed due to the concurrency
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 
 			// Validate span was created and recorded in JFR
