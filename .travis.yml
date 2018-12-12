@@ -16,5 +16,5 @@ script:
   - ./gradlew build
 branches:
   only:
-    - travis-add
+    - master
     - feature/add-travis
