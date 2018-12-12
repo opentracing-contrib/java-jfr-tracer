@@ -54,21 +54,14 @@ public class JFRTracerTest {
 			// Generate span
 			tracer.buildSpan("test span").start().finish();
 
-            //to be removed
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //To be removed when test are fixed, it's used due to concurrency issue
+			JFRTestUtils.sleepMethod();
 
 			// Stop recording
 			List<FLREvent> events = JFRTestUtils.stopJfr(output);
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+			//To be removed when test are fixed, it's used due to concurrency issue
+			JFRTestUtils.sleepMethod();
 
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
