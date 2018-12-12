@@ -41,7 +41,7 @@ public class JFRTracerTest {
 	 *             on error
 	 */
 	@Test
-	public void basicEvent() throws IOException {
+	public void basicEvent() throws IOException, InterruptedException {
 		Path output = Files.createTempFile("opentracing", ".jfr");
 
 		try {
@@ -55,13 +55,13 @@ public class JFRTracerTest {
 			tracer.buildSpan("test span").start().finish();
 
             //To be removed when test are fixed, it's used due to concurrency issue
-			JFRTestUtils.sleepMethod();
+			Thread.sleep(100);
 
 			// Stop recording
 			List<FLREvent> events = JFRTestUtils.stopJfr(output);
 
 			//To be removed when test are fixed, it's used due to concurrency issue
-			JFRTestUtils.sleepMethod();
+			Thread.sleep(100);
 
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());

@@ -51,18 +51,6 @@ public final class JFRTestUtils {
 		return jfrConfig;
 	}
 
-	/**
-	 * Following method should be removed when test are fixed
-	 */
-	@Deprecated
-	static void sleepMethod(){
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@SuppressWarnings("deprecation")
 	public static void startJFR() {
 

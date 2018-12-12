@@ -27,16 +27,5 @@ public final class JfrTestUtils {
 		recording.start();
 		return recording;
 	}
-
-	/**
-	 * Following method should be removed when test are fixed
-	 */
-	@Deprecated
-	static void sleepMethod(){
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+	
 }
