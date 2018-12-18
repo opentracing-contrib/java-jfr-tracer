@@ -7,7 +7,6 @@ dependencies {
     compile "org.springframework.boot:spring-boot-autoconfigure:2.1.1.RELEASE"
     testImplementation "io.opentracing:opentracing-mock:0.32.0-RC1"
     testImplementation "io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:1.0.1"
-    testImplementation 'io.jaegertracing:jaeger-core:0.32.0'
     testImplementation 'org.testcontainers:testcontainers:1.10.2'
     testImplementation "org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE"
     testImplementation "org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE"
@@ -74,11 +73,6 @@ publishing {
                         id = 'sfriberg'
                         name = 'Staffan Friberg'
                         email = 'sfriberg@kth.se'
-                    }
-                    developer {
-                        id = 'mirage22'
-                        name = 'Miro Wengner'
-                        email = 'miro.wengner@gmail.com'
                     }
                 }
 

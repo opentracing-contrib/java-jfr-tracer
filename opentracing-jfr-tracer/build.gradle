@@ -147,11 +147,6 @@ publishing {
 						name = 'Staffan Friberg'
 						email = 'sfriberg@kth.se'
 					}
-					developer {
-						id = 'mirage22'
-						name = 'Miro Wengner'
-						email = 'miro.wengner@gmail.com'
-					}
 				}
 
 				scm {
