@@ -17,4 +17,3 @@ script:
 branches:
   only:
     - master
-    - feature/opentracing-jfr-tracer-spring-autoconfigure
