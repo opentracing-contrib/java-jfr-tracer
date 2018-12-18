@@ -5,8 +5,7 @@ allprojects{
         mavenCentral()
         mavenLocal()
     }
-
-
+    
     dependencies {
         testCompile 'org.awaitility:awaitility:3.1.5'
         testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
