@@ -17,4 +17,4 @@ script:
 branches:
   only:
     - master
-    - feature/add-travis
+    - feature/opentracing-jfr-tracer-spring-autoconfigure

@@ -15,6 +15,8 @@
  */
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
+import io.jaegertracing.internal.JaegerSpanContext;
+import io.opentracing.contrib.jfrtracer.impl.wrapper.SpanContextUtil;
 import jdk.jfr.Event;
 import jdk.jfr.Label;
 import jdk.jfr.Category;
@@ -65,8 +67,8 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
 			currentEvent.parentId = parentId;
-			currentEvent.traceId = span.context().toTraceId();
-			currentEvent.spanId = span.context().toSpanId();
+			currentEvent.traceId = SpanContextUtil.getTraceIdBySpanContext(span.context());
+			currentEvent.spanId = SpanContextUtil.getSpanIdBySpanContext(span.context());
 		}
 		currentEvent.begin();
 	}

@@ -1,3 +1,5 @@
 rootProject.name = 'java-jfr-tracer'
 
 include 'opentracing-jfr-tracer'
+include 'opentracing-jfr-tracer-spring-autoconfigure'
+

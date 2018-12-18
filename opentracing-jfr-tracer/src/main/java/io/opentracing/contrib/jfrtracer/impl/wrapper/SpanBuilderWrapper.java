@@ -42,14 +42,14 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public SpanBuilder asChildOf(SpanContext parent) {
 		delegate.asChildOf(parent);
-		parentId = parent.toSpanId();
+		parentId = parent == null ? "" : SpanContextUtil.getSpanIdBySpanContext(parent);
 		return this;
 	}
 
 	@Override
 	public SpanBuilder asChildOf(Span parent) {
 		delegate.asChildOf(parent);
-		parentId = parent.context().toSpanId();
+		parentId = SpanContextUtil.getSpanIdBySpanContext(parent.context());
 		return this;
 	}
 

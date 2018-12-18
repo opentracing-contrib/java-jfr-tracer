@@ -2,11 +2,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply from: 'jdks.gradle'
 
-repositories {
-	mavenCentral()
-	mavenLocal()
-}
-
 sourceSets {
 	java11 {
 		java {
@@ -36,13 +31,10 @@ configurations {
 
 dependencies {
 	compile 'io.opentracing:opentracing-api:0.32.0-RC1'
+	compile 'io.jaegertracing:jaeger-core:0.32.0'
 	testCompile 'io.opentracing:opentracing-mock:0.32.0-RC1'
-	testCompile 'io.jaegertracing:jaeger-core:0.32.0'
-	testCompile 'io.opentracing.brave:brave-opentracing:0.31.2'
+	testCompile group: 'io.opentracing.brave', name: 'brave-opentracing', version: '0.33.9'
 	testCompile 'io.opentracing.contrib:opentracing-concurrent:0.2.0'
-	testCompile 'org.awaitility:awaitility:3.1.3'
-	testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-	testCompile 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
 compileJava {
@@ -128,7 +120,7 @@ publishing {
 			artifact sourcesJar
 			artifact javadocJar
 			groupId = 'io.opentracing.contrib'
-			artifactId = 'jfr-tracer'
+			artifactId = 'opentracing-jfr-tracer'
 			
 			from components.java
 			
