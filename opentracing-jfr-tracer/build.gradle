@@ -159,6 +159,9 @@ publishing {
 	}
 }
 
+def ossrhUsername = project.findProperty('ossrhUsername') ?: ''
+def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
+
 if(ossrhUsername?.trim() && ossrhPassword?.trim()){
 	apply plugin: 'signing'
 
