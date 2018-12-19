@@ -22,15 +22,9 @@ GlobalTracer.register(
 ```
 
 ## Using JFR Tracer with spring
-First add JFR Tracer and realated spring autoconfig dependencies.
+First add JFR Tracer spring autoconfig dependencies in Maven.
 
 ```xml
-	<dependency>
-	    <groupId>io.opentracing.contrib</groupId>
-	    <artifactId>opentracing-jfr-tracer</artifactId>
-	    <version>0.0.4</version>
-	</dependency>
-	
 	<dependency>
 	    <groupId>io.opentracing.contrib</groupId>
 	    <artifactId>opentracing-jfr-tracer-spring-autoconfigure</artifactId>
