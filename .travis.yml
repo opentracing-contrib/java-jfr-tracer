@@ -6,10 +6,6 @@ install: true
 jdk: openjdk11
 script:
   - sudo apt-get update && sudo apt-get install oracle-java8-installer
-#  - sudo apt install oracle-java8-set-default
-#  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-#  - sudo chmod 755 ./install-jdk.sh
-#  - sudo ./install-jdk.sh -F 11 -L GPL
   - export ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle
   - export ORG_GRADLE_PROJECT_JAVA_11=$JAVA_HOME
   - export JAVA_HOME=$ORG_GRADLE_PROJECT_JAVA_11
