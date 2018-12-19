@@ -1,10 +1,17 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+compileJava {
+    sourceCompatibility = 11
+}
+
 dependencies {
-    compile project(':opentracing-jfr-tracer')
+    // compile project(':opentracing-jfr-tracer')  jfr-tracer is used to the older tracers support <0.32.0
+    // when OpenTracing version 0.32.0 will be available the jfr-tracer will be sused
+    compile 'se.hirt.jmc:jfr-tracer:0.0.3'
     compile "org.springframework.boot:spring-boot:2.1.1.RELEASE"
     compile "org.springframework.boot:spring-boot-autoconfigure:2.1.1.RELEASE"
+    compile 'io.opentracing:opentracing-api:0.32.0-RC1'
     testImplementation "io.opentracing:opentracing-mock:0.32.0-RC1"
     testImplementation "io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:1.0.1"
     testImplementation 'org.testcontainers:testcontainers:1.10.2'
@@ -19,7 +26,7 @@ test {
 }
 
 tasks.withType(Test){
-    jvmArgs += ['-XX:+UnlockCommercialFeatures', '-XX:+FlightRecorder']
+    jvmArgs += ['-XX:+FlightRecorder']
 }
 
 javadoc {
@@ -73,6 +80,11 @@ publishing {
                         id = 'sfriberg'
                         name = 'Staffan Friberg'
                         email = 'sfriberg@kth.se'
+                    }
+                    developer {
+                        id = 'mirage22'
+                        name = 'Miro Wengner'
+                        email = 'miro.wengner@gmail.com'
                     }
                 }
 

@@ -15,15 +15,12 @@
  */
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
-import io.jaegertracing.internal.JaegerSpanContext;
-import io.opentracing.contrib.jfrtracer.impl.wrapper.SpanContextUtil;
-import jdk.jfr.Event;
-import jdk.jfr.Label;
+import io.opentracing.Span;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
+import jdk.jfr.Event;
+import jdk.jfr.Label;
 import jdk.jfr.StackTrace;
-
-import io.opentracing.Span;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.
@@ -109,8 +106,8 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
 		if (currentEvent.isEnabled()) {
 			currentEvent.operationName = operationName;
 			currentEvent.parentId = parentId;
-			currentEvent.traceId = SpanContextUtil.getTraceIdBySpanContext(span.context());
-			currentEvent.spanId = SpanContextUtil.getSpanIdBySpanContext(span.context());
+			currentEvent.traceId = span.context().toTraceId();
+			currentEvent.spanId = span.context().toSpanId();
 			currentEvent.startThread = Thread.currentThread();
 		}
 		EXECUTOR.execute(new BeginEventCommand(currentEvent));

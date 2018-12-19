@@ -6,13 +6,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 import io.opentracing.Tracer;
-import io.opentracing.contrib.jfrtracer.JfrTracerFactory;
+import se.hirt.jmc.opentracing.DelegatingJfrTracer;
 
 /**
  * BeanPostProcessor {@link BeanPostProcessor} wraps available {@link Tracer} into jfr
- * {@link io.opentracing.contrib.jfrtracer.impl.wrapper.TracerWrapper}. Configuration is enabled by
- * default and can be disabled by setting up environment variable opentracing.jfr-tracer.enabled to
- * false
+ * {@link se.hirt.jmc.opentracing.DelegatingJfrTracer}. Configuration is enabled by default and can
+ * be disabled by setting up environment variable opentracing.jfr-tracer.enabled to false //TODO:
+ * use io.opentracing.contrib.jfrtracer.impl.wrapper.TracerWrapper (when 0.32.0 is available)
+ * //TODO: update documentation
  */
 @Configuration
 @ConditionalOnProperty(value = "opentracing.jfr-tracer.enabled", havingValue = "true", matchIfMissing = true)
@@ -30,10 +31,11 @@ public class JfrTracerBeanPostProcessor implements BeanPostProcessor {
 	 * @throws BeansException
 	 *             bean exception
 	 */
+	@Deprecated
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof Tracer) {
-			return JfrTracerFactory.create((Tracer) bean);
+			return new DelegatingJfrTracer((Tracer) bean);
 		}
 		return bean;
 	}

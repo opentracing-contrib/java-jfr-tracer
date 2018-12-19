@@ -31,8 +31,8 @@ configurations {
 
 dependencies {
 	compile 'io.opentracing:opentracing-api:0.32.0-RC1'
-	compile 'io.jaegertracing:jaeger-core:0.32.0'
-	compile 'io.opentracing.brave:brave-opentracing:0.33.9'
+	testCompile 'io.jaegertracing:jaeger-core:0.32.0'
+	testCompile 'io.opentracing.brave:brave-opentracing:0.33.9'
 	testCompile 'io.opentracing:opentracing-mock:0.32.0-RC1'
 	testCompile 'io.opentracing.contrib:opentracing-concurrent:0.2.0'
 }
@@ -158,9 +158,6 @@ publishing {
 		}
 	}
 }
-
-def ossrhUsername = project.findProperty('ossrhUsername') ?: ''
-def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
 
 if(ossrhUsername?.trim() && ossrhPassword?.trim()){
 	apply plugin: 'signing'

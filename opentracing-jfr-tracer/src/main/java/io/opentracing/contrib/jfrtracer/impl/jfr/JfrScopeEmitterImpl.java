@@ -17,7 +17,6 @@ package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.net.URI;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.oracle.jrockit.jfr.EventDefinition;
 import com.oracle.jrockit.jfr.EventToken;
@@ -28,9 +27,7 @@ import com.oracle.jrockit.jfr.Producer;
 import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
 
-import io.jaegertracing.internal.JaegerSpanContext;
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.impl.wrapper.SpanContextUtil;
 
 /**
  * This is the JDK 8 implementation. For the JDK 11 and later implementation, see src/main/java11.
@@ -70,8 +67,8 @@ final class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 		currentEvent = new ScopeEvent(SCOPE_EVENT_TOKEN);
 		currentEvent.operationName = operationName;
 		currentEvent.parentId = parentId;
-		currentEvent.traceId = SpanContextUtil.getTraceIdBySpanContext(span.context());
-		currentEvent.spanId = SpanContextUtil.getSpanIdBySpanContext(span.context());
+		currentEvent.traceId = span.context().toTraceId();
+		currentEvent.spanId = span.context().toSpanId();
 		currentEvent.begin();
 	}
 

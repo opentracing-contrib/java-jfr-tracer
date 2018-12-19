@@ -20,9 +20,7 @@ import com.oracle.jrockit.jfr.EventToken;
 import com.oracle.jrockit.jfr.TimedEvent;
 import com.oracle.jrockit.jfr.ValueDefinition;
 
-import io.jaegertracing.internal.JaegerSpanContext;
 import io.opentracing.Span;
-import io.opentracing.contrib.jfrtracer.impl.wrapper.SpanContextUtil;
 
 /**
  * This is the JDK 8 implementation for emitting Span events. For the JDK 11 and later
@@ -48,8 +46,8 @@ final class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
 		currentEvent = new SpanEvent(SPAN_EVENT_TOKEN);
 		if (currentEvent.getEventInfo().isEnabled()) {
 			currentEvent.operationName = operationName;
-			currentEvent.traceId = SpanContextUtil.getTraceIdBySpanContext(span.context());
-			currentEvent.spanId = SpanContextUtil.getSpanIdBySpanContext(span.context());
+			currentEvent.traceId = span.context().toTraceId();
+			currentEvent.spanId = span.context().toSpanId();
 			currentEvent.parentId = parentId;
 			currentEvent.startThread = Thread.currentThread();
 		}
