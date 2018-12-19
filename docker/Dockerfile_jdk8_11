@@ -5,4 +5,4 @@ ADD gradle $APP_HOME/gradle
 ENV ORG_GRADLE_PROJECT_JAVA_8=/usr/lib/jvm/java-8-oracle
 ENV ORG_GRADLE_PROJECT_JAVA_11=/home/travis/jdk-11.0.1
 COPY . $APP_HOME
-RUN sudo ./gradlew build --info
+RUN sudo ./gradlew build -Dorg.gradle.java.home=$ORG_GRADLE_PROJECT_JAVA_11

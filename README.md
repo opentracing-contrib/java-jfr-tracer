@@ -21,6 +21,28 @@ GlobalTracer.register(
 	JfrTracerFactory.create(yourFavouriteTracer));
 ```
 
+## Using JFR Tracer with spring
+First add JFR Tracer and realated spring autoconfig dependencies.
+
+```xml
+	<dependency>
+	    <groupId>io.opentracing.contrib</groupId>
+	    <artifactId>opentracing-jfr-tracer</artifactId>
+	    <version>0.0.4</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>io.opentracing.contrib</groupId>
+	    <artifactId>opentracing-jfr-tracer-spring-autoconfigure</artifactId>
+	    <version>0.0.4</version>
+    </dependency>
+```
+The spring-autoconfigure module will automatically wrap the available Tracer bean. In case you
+want to disable set the environment variable: 
+```
+opentracing.jfr-tracer.enabled=false 
+```
+
 ## Supported Tracers
 The JFR tracer supports all tracers that support OpenTracing 0.32.0 or later.
 
