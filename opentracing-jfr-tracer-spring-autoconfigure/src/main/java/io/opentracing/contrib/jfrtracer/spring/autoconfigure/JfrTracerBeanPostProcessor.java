@@ -11,9 +11,10 @@ import se.hirt.jmc.opentracing.DelegatingJfrTracer;
 /**
  * BeanPostProcessor {@link BeanPostProcessor} wraps available {@link Tracer} into jfr
  * {@link se.hirt.jmc.opentracing.DelegatingJfrTracer}. Configuration is enabled by default and can
- * be disabled by setting up environment variable opentracing.jfr-tracer.enabled to false //TODO:
- * use io.opentracing.contrib.jfrtracer.impl.wrapper.TracerWrapper (when 0.32.0 is available)
- * //TODO: update documentation
+ * be disabled by setting up environment variable opentracing.jfr-tracer.enabled to false
+ * <p>
+ * Note: when 0.32.0 is available use io.opentracing.contrib.jfrtracer.impl.wrapper.TracerWrapper
+ * and update documentation
  */
 @Configuration
 @ConditionalOnProperty(value = "opentracing.jfr-tracer.enabled", havingValue = "true", matchIfMissing = true)
