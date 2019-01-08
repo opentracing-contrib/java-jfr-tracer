@@ -42,6 +42,9 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public SpanBuilder asChildOf(SpanContext parent) {
 		delegate.asChildOf(parent);
+		if (parent == null) {
+			return this;
+		}
 		parentId = parent.toSpanId();
 		return this;
 	}
@@ -49,6 +52,9 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public SpanBuilder asChildOf(Span parent) {
 		delegate.asChildOf(parent);
+		if (parent == null) {
+			return this;
+		}
 		parentId = parent.context().toSpanId();
 		return this;
 	}
@@ -117,5 +123,12 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	private String getParentSpanId() {
 		Span activeSpan = owner.scopeManager().activeSpan();
 		return parentId != null ? parentId : activeSpan != null ? activeSpan.context().toSpanId() : null;
+	}
+
+	/**
+	 * hook for unit test
+	 */
+	String parentId() {
+		return parentId;
 	}
 }
