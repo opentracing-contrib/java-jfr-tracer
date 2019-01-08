@@ -1,5 +1,6 @@
 package io.opentracing.contrib.jfrtracer.impl.wrapper;
 
+import io.opentracing.References;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer.SpanBuilder;
@@ -65,6 +66,34 @@ class SpanBuilderWrapperTest {
                 delegateTracer.buildSpan(operationName));
 
         SpanBuilder spanBuilder = spanBuilderWrapper.asChildOf((Span) null);
+        assertSame(spanBuilderWrapper, spanBuilder);
+        assertNull(spanBuilderWrapper.parentId());
+    }
+
+    @Test
+    void addReferenceOnParentSpanContext() {
+        MockTracer delegateTracer = new MockTracer();
+        Span parentSpan = delegateTracer.buildSpan("parentSpan").start();
+        TracerWrapper tracerWrapper = new TracerWrapper(delegateTracer);
+        String operationName = "addReferenceOnParentSpanContext";
+        SpanBuilderWrapper spanBuilderWrapper = new SpanBuilderWrapper(tracerWrapper, operationName,
+                delegateTracer.buildSpan(operationName));
+
+        SpanBuilder spanBuilder = spanBuilderWrapper.addReference(References.CHILD_OF, parentSpan.context());
+        assertSame(spanBuilderWrapper, spanBuilder);
+        assertNotNull(spanBuilderWrapper.parentId());
+        assertEquals(parentSpan.context().toSpanId(), spanBuilderWrapper.parentId());
+    }
+
+    @Test
+    void addReferenceOnParentSpanContextNull() {
+        MockTracer delegateTracer = new MockTracer();
+        TracerWrapper tracerWrapper = new TracerWrapper(delegateTracer);
+        String operationName = "addReferenceOnParentSpanContextNull";
+        SpanBuilderWrapper spanBuilderWrapper = new SpanBuilderWrapper(tracerWrapper, operationName,
+                delegateTracer.buildSpan(operationName));
+
+        SpanBuilder spanBuilder = spanBuilderWrapper.addReference(References.CHILD_OF, null);
         assertSame(spanBuilderWrapper, spanBuilder);
         assertNull(spanBuilderWrapper.parentId());
     }

@@ -62,6 +62,10 @@ final class SpanBuilderWrapper implements SpanBuilder {
 	@Override
 	public SpanBuilder addReference(String referenceType, SpanContext referencedContext) {
 		delegate.addReference(referenceType, referencedContext);
+		if (referencedContext == null) {
+			return this;
+		}
+		parentId = referencedContext.toSpanId();
 		return this;
 	}
 
