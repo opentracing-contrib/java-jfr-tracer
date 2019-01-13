@@ -1,6 +1,5 @@
-# JFR Tracer
 [![Build Status](https://travis-ci.org/opentracing-contrib/java-jfr-tracer.svg?branch=master)](https://travis-ci.org/opentracing-contrib/java-jfr-tracer)
-
+# JFR Tracer
 This is a delegating tracer to be used with OpenTracing. It records span and scope information into the JDK Flight Recorder, enabling very deep tracing capabilities.
 
 ## Using the JFR Tracer
