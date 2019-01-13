@@ -40,14 +40,14 @@ import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public final class JFRTestUtils {
+public final class JfrTestUtils {
 
-	private JFRTestUtils() {
+	private JfrTestUtils() {
 	}
 
 	private static Path getJfrConfig() throws IOException {
 		Path jfrConfig = Files.createTempFile("opentracing", ".jfc");
-		Files.copy(JFRTestUtils.class.getResourceAsStream("opentracing.jfc"), jfrConfig, StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(JfrTestUtils.class.getResourceAsStream("opentracing.jfc"), jfrConfig, StandardCopyOption.REPLACE_EXISTING);
 		return jfrConfig;
 	}
 
@@ -107,6 +107,15 @@ public final class JFRTestUtils {
 				}
 			}
 			return readAllEvents;
+		}
+	}
+
+	public static void delete(Path output) {
+		try {
+			Files.delete(output);
+		} catch (Throwable t) {
+			// Should not affect test...
+			System.err.println("Failed to delete test JFR-file: " + t.getMessage());
 		}
 	}
 }

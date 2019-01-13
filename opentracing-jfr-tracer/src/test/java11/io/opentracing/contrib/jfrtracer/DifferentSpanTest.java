@@ -46,14 +46,13 @@ public class DifferentSpanTest {
 	@Test
 	public void spansInMultipleThreads()
 			throws IOException, InterruptedException, ExecutionException, TimeoutException {
-		Path output = Files.createTempFile("test-recording", ".jfr");
+		Path output = Files.createTempFile("test-recording-span-multiple", ".jfr");
 		try {
 			// Setup tracers
 			MockTracer mockTracer = new MockTracer();
 			Tracer tracer = JfrTracerFactory.create(mockTracer);
 
 			try (Recording recording = JfrTestUtils.startJFR()) {
-
 				// Generate spans
 				Scope scope = tracer.activateSpan(tracer.buildSpan("test span").start());
 				TracedExecutorService executor = new TracedExecutorService(Executors.newSingleThreadExecutor(), tracer);
@@ -90,7 +89,7 @@ public class DifferentSpanTest {
 	@Test
 	public void passingSpanBetweenThreads()
 			throws IOException, InterruptedException, TimeoutException, ExecutionException {
-		Path output = Files.createTempFile("test-recording", ".jfr");
+		Path output = Files.createTempFile("test-recording-span-between-threads", ".jfr");
 		try {
 			// Setup tracers
 			MockTracer mockTracer = new MockTracer();

@@ -28,4 +28,10 @@ public final class JfrTestUtils {
 		return recording;
 	}
 	
+	public static void sleep(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+		}
+	}
 }
