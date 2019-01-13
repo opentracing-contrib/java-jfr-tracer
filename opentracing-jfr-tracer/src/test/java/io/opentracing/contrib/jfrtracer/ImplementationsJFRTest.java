@@ -91,7 +91,7 @@ public class ImplementationsJFRTest {
 			Tracer tracer = JfrTracerFactory.create(testTracer);
 
 			// Start JFR
-			JFRTestUtils.startJFR();
+			JfrTestUtils.startJFR();
 
 			// Generate span
 			Span start = tracer.buildSpan("outer span").start();
@@ -105,7 +105,7 @@ public class ImplementationsJFRTest {
 				Thread.sleep(100);
 			} catch (InterruptedException ex) {
 			}
-			List<FLREvent> events = JFRTestUtils.stopJfr(output);
+			List<FLREvent> events = JfrTestUtils.stopJfr(output);
 
 			// Validate span was created and recorded in JFR
 			assertEquals(4, events.size());

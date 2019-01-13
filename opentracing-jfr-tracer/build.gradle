@@ -65,6 +65,7 @@ test {
 	forkEvery = 1
 	testLogging {
 		events "passed", "skipped", "failed"
+        exceptionFormat "full"
 	}
 }
 

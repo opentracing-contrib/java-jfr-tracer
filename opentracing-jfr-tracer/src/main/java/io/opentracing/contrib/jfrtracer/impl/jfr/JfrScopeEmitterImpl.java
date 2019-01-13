@@ -17,7 +17,6 @@ package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import java.net.URI;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.oracle.jrockit.jfr.EventDefinition;
 import com.oracle.jrockit.jfr.EventToken;
