@@ -58,7 +58,6 @@ final class ScopeManagerWrapper implements ScopeManager {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public Scope activate(Span arg) {
 		return activate(arg, false);
 	}

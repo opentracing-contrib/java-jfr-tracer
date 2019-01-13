@@ -45,7 +45,7 @@ public class DifferentSpanTest {
 	@Test
 	public void spansInMultipleThreads()
 			throws IOException, InterruptedException, ExecutionException, TimeoutException {
-		Path output = Files.createTempFile("test-recording", ".jfr");
+		Path output = Files.createTempFile("test-recording-multple-threads", ".jfr");
 
 		try {
 			// Setup tracers
@@ -53,7 +53,7 @@ public class DifferentSpanTest {
 			Tracer tracer = JfrTracerFactory.create(mockTracer);
 
 			// Start JFR
-			JFRTestUtils.startJFR();
+			JfrTestUtils.startJFR();
 
 			// Generate spans
 			Span span = tracer.buildSpan("test span").start();
@@ -66,7 +66,7 @@ public class DifferentSpanTest {
 			// Stop recording
 			//Ugly Sleep for now
 			Thread.sleep(100);
-			List<FLREvent> events = JFRTestUtils.stopJfr(output);
+			List<FLREvent> events = JfrTestUtils.stopJfr(output);
 
 			// Validate span was created and recorded in JFR
 			assertEquals(2, mockTracer.finishedSpans().size());
@@ -83,14 +83,14 @@ public class DifferentSpanTest {
 			});
 
 		} finally {
-			Files.delete(output);
+			JfrTestUtils.delete(output);
 		}
 	}
 
 	@Test
 	public void passingSpanBetweenThreads()
 			throws IOException, InterruptedException, TimeoutException, ExecutionException {
-		Path output = Files.createTempFile("test-recording", ".jfr");
+		Path output = Files.createTempFile("test-recording-between-threads", ".jfr");
 
 		try {
 			// Setup tracers
@@ -98,7 +98,7 @@ public class DifferentSpanTest {
 			Tracer tracer = JfrTracerFactory.create(mockTracer);
 
 			// Start JFR
-			JFRTestUtils.startJFR();
+			JfrTestUtils.startJFR();
 
 			// Generate spans
 			TracedExecutorService executor = new TracedExecutorService(Executors.newSingleThreadExecutor(), tracer);
@@ -111,7 +111,7 @@ public class DifferentSpanTest {
 
 			// Stop recording
 			Thread.sleep(100);
-			List<FLREvent> events = JFRTestUtils.stopJfr(output);
+			List<FLREvent> events = JfrTestUtils.stopJfr(output);
 
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
@@ -132,7 +132,7 @@ public class DifferentSpanTest {
 			});
 
 		} finally {
-			Files.delete(output);
+			JfrTestUtils.delete(output);
 		}
 	}
 }
