@@ -40,6 +40,7 @@ import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@SuppressWarnings("deprecation")
 public final class JfrTestUtils {
 
 	private JfrTestUtils() {
@@ -51,7 +52,6 @@ public final class JfrTestUtils {
 		return jfrConfig;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void startJFR() {
 
 		Path jfrConfig = null;
@@ -86,7 +86,6 @@ public final class JfrTestUtils {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static List<FLREvent> stopJfr(Path output) throws IOException {
 		try {
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
