@@ -15,6 +15,9 @@
  */
 package io.opentracing.contrib.jfrtracer;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import jdk.jfr.Recording;
 
 public final class JfrTestUtils {
@@ -32,6 +35,15 @@ public final class JfrTestUtils {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
+		}
+	}
+
+	public static void delete(Path output) {
+		try {
+			Files.delete(output);
+		} catch (Throwable t) {
+			// Should not affect test...
+			System.err.println("Failed to delete test JFR-file: " + t.getMessage());
 		}
 	}
 }

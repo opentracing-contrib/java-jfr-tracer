@@ -52,7 +52,7 @@ public class JfrTracerTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void basicEvent() throws IOException, InterruptedException {
-		Path output = Files.createTempFile("test-recording", ".jfr");
+		Path output = Files.createTempFile("test-recording-basic-11", ".jfr");
 		try {
 			// Setup tracers
 			MockTracer mockTracer = new MockTracer();
@@ -87,7 +87,7 @@ public class JfrTracerTest {
 			});
 
 		} finally {
-			Files.delete(output);
+			JfrTestUtils.delete(output);
 		}
 	}
 
