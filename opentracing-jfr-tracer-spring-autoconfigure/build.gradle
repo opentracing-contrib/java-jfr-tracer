@@ -1,0 +1,125 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+compileJava {
+    sourceCompatibility = 11
+}
+
+dependencies {
+    // compile project(':opentracing-jfr-tracer')  jfr-tracer is used to the older tracers support <0.32.0
+    // when OpenTracing version 0.32.0 will be available the jfr-tracer will be sused
+    compile 'se.hirt.jmc:jfr-tracer:0.0.3'
+    compile "org.springframework.boot:spring-boot:2.1.1.RELEASE"
+    compile "org.springframework.boot:spring-boot-autoconfigure:2.1.1.RELEASE"
+    compile 'io.opentracing:opentracing-api:0.32.0-RC1'
+    testImplementation "io.opentracing:opentracing-mock:0.32.0-RC1"
+    testImplementation "io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:1.0.1"
+    testImplementation 'org.testcontainers:testcontainers:1.10.2'
+    testImplementation "org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE"
+    testImplementation "org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE"
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+tasks.withType(Test){
+    jvmArgs += ['-XX:+FlightRecorder']
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact sourcesJar
+            artifact javadocJar
+            groupId = 'io.opentracing.contrib'
+            artifactId = 'opentracing-jfr-tracer-spring-autoconfigure'
+
+            from components.java
+
+            pom {
+                name = 'JFR Tracer Spring auto-configuration'
+                description = 'Spring auto-configuration for Jfr Tracer which records contextual information into the JDK Flight Recorder'
+                url = 'https://github.com/opentracing-contrib/java-jfr-tracer'
+
+                licenses {
+                    license {
+                        name = 'Apache v2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'thegreystone'
+                        name = 'Marcus Hirt'
+                        email = 'marcus@hirt.se'
+                    }
+                    developer {
+                        id = 'sfriberg'
+                        name = 'Staffan Friberg'
+                        email = 'sfriberg@kth.se'
+                    }
+                    developer {
+                        id = 'mirage22'
+                        name = 'Miro Wengner'
+                        email = 'miro.wengner@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:https://github.com/opentracing-contrib/java-jfr-tracer.git'
+                    developerConnection = 'scm:git:https://github.com/opentracing-contrib/java-jfr-tracer.git'
+                    url = 'https://github.com/opentracing-contrib/java-jfr-tracer'
+                }
+            }
+        }
+    }
+}
+
+def ossrhUsername = project.findProperty('ossrhUsername') ?: ''
+def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
+
+if(ossrhUsername?.trim() && ossrhPassword?.trim()){
+    apply plugin: 'signing'
+
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}
+
+
+

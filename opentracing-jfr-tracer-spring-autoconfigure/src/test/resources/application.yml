@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: jfr-spring-test-application
+server:
+  port: 8081

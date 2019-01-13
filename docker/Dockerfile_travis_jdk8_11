@@ -1,0 +1,8 @@
+FROM ruslo/travis-linux-docker
+ENV APP_HOME=/usr/app/
+RUN sudo mkdir $APP_HOME
+WORKDIR $APP_HOME
+RUN sudo apt-get -f install
+RUN sudo wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+RUN sudo chmod 755 ./install-jdk.sh
+RUN ./install-jdk.sh -F 11 -L GPL

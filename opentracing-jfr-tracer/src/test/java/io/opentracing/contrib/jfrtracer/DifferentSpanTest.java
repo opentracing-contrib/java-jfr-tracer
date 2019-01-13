@@ -15,13 +15,9 @@
  */
 package io.opentracing.contrib.jfrtracer;
 
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.concurrent.TracedExecutorService;
-import io.opentracing.mock.MockSpan;
-import io.opentracing.mock.MockTracer;
-import oracle.jrockit.jfr.parser.FLREvent;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,9 +30,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.contrib.concurrent.TracedExecutorService;
+import io.opentracing.mock.MockSpan;
+import io.opentracing.mock.MockTracer;
+import oracle.jrockit.jfr.parser.FLREvent;
 
 @SuppressWarnings("deprecation")
 public class DifferentSpanTest {
@@ -71,9 +72,9 @@ public class DifferentSpanTest {
 			assertEquals(2, mockTracer.finishedSpans().size());
 
 			Map<String, MockSpan> finishedSpans = mockTracer.finishedSpans().stream()
-					.collect(Collectors.toMap(e -> e.operationName(), e -> e));
+					.collect(Collectors.toMap(MockSpan::operationName, e -> e));
 			assertEquals(finishedSpans.size(), events.size());
-			events.stream().forEach(e -> {
+			events.forEach(e -> {
 				MockSpan finishedSpan = finishedSpans.get(e.getValue("operationName").toString());
 				assertNotNull(finishedSpan);
 				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getValue("traceId"));

@@ -15,12 +15,11 @@
  */
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
-import jdk.jfr.Event;
-import jdk.jfr.Label;
+import io.opentracing.Span;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
-
-import io.opentracing.Span;
+import jdk.jfr.Event;
+import jdk.jfr.Label;
 
 /**
  * This is the JDK 9 or later implementation of the JfrEmitter.

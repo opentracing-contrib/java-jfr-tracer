@@ -15,6 +15,23 @@
  */
 package io.opentracing.contrib.jfrtracer;
 
+import static io.jaegertracing.Configuration.JAEGER_AGENT_HOST;
+import static io.jaegertracing.Configuration.JAEGER_AGENT_PORT;
+import static io.jaegertracing.Configuration.JAEGER_PROPAGATION;
+import static io.jaegertracing.Configuration.JAEGER_SAMPLER_PARAM;
+import static io.jaegertracing.Configuration.JAEGER_SAMPLER_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
 import brave.propagation.B3Propagation;
@@ -28,22 +45,6 @@ import io.opentracing.Tracer;
 import jdk.jfr.Recording;
 import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-
-import static io.jaegertracing.Configuration.JAEGER_AGENT_HOST;
-import static io.jaegertracing.Configuration.JAEGER_AGENT_PORT;
-import static io.jaegertracing.Configuration.JAEGER_PROPAGATION;
-import static io.jaegertracing.Configuration.JAEGER_SAMPLER_PARAM;
-import static io.jaegertracing.Configuration.JAEGER_SAMPLER_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Skip until Jaeger and Brave supports 0.32.0")
 public class ImplementationsJFRTest {
