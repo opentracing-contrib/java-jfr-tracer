@@ -53,7 +53,7 @@ compileJava {
 }
 
 compileTestJava {
-	options.compilerArgs.addAll(['-Xlint:all,-deprecation'])
+	options.compilerArgs.addAll(['-Xlint:all,-deprecation,-path'])
 	sourceCompatibility = compileJava.sourceCompatibility
 	targetCompatibility = compileJava.targetCompatibility
 }
