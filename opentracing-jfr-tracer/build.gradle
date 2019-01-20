@@ -90,6 +90,7 @@ task testJava11(type: Test) {
 	executable = "${RESOLVED_11}/bin/java"
 	testLogging {
 		events "passed", "skipped", "failed"
+		exceptionFormat "full"
 	}	
 }
 
