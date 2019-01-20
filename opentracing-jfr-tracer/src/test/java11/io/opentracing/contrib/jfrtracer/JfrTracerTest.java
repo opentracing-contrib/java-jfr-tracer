@@ -63,12 +63,12 @@ public class JfrTracerTest {
 				// Generate span
 				tracer.buildSpan("test span").start().finish();
 
+				// To be removed when test are fixed, it's used due to concurrency issue
+				Thread.sleep(100);
+
 				recording.dump(output);
 				recording.stop();
 			}
-
-			// To be removed when test are fixed, it's used due to concurrency issue
-			Thread.sleep(100);
 
 			// Validate span was created and recorded in JFR
 			assertEquals(1, mockTracer.finishedSpans().size());
