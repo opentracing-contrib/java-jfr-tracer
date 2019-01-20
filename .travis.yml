@@ -11,7 +11,7 @@ script:
   - sudo chmod 755 ./install-jdk.sh
   - sudo ./install-jdk.sh -F 11 -L GPL -t jdk-11 -e -s
   - export ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME
-  - export ORG_GRADLE_PROJECT_JAVA_11=$HOME/jdk-11
+  - export ORG_GRADLE_PROJECT_JAVA_11=/home/travis/build/opentracing-contrib/java-jfr-tracer/jdk-11
   - export JAVA_HOME=$ORG_GRADLE_PROJECT_JAVA_8
   - ./gradlew build
 branches:
