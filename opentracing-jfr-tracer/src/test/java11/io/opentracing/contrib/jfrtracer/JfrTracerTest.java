@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Disabled;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -107,6 +108,7 @@ public class JfrTracerTest {
 	}
 
 	@Test
+	@Disabled("This test is currently unreliable, and should be fixed")
 	@SuppressWarnings("try")
 	public void noRunningJFR() throws IOException, InterruptedException {
 		// Setup tracers
