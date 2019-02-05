@@ -83,7 +83,7 @@ public class JfrTracerTest {
 				assertEquals(Long.toString(finishedSpan.context().traceId()), e.getString("traceId"));
 				assertEquals(Long.toString(finishedSpan.context().spanId()), e.getString("spanId"));
 				assertEquals(finishedSpan.operationName(), e.getString("operationName"));
-				assertTrue(e.getEventType().getName().contains("SpanEvent"));
+				assertTrue(e.getEventType().getName().contains("Span"));
 			});
 
 		} finally {
@@ -135,7 +135,7 @@ public class JfrTracerTest {
 		try (Scope scope = tracer.activateSpan(tracer.buildSpan("separate span").start())) {
 			Scope activeScope = tracer.scopeManager().active();
 			assertNotNull(activeScope);
-			assertFalse(activeScope.getClass().getSimpleName().contains("ScopeEvent"));
+			assertFalse(activeScope.getClass().getSimpleName().contains("Scope"));
 		}
 
 		// Validate span was created and recorded in JFR

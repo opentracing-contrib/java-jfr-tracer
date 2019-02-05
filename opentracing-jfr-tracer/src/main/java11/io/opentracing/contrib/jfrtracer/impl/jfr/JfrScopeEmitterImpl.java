@@ -16,6 +16,7 @@
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import jdk.jfr.Event;
+import jdk.jfr.Name;
 import jdk.jfr.Label;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
@@ -29,6 +30,7 @@ public class JfrScopeEmitterImpl extends AbstractJfrEmitter {
 
 	private ScopeEvent currentEvent;
 
+	@Name("io.opentracing.Scope")
 	@Category("Open Tracing")
 	@Label("Scope")
 	@Description("Open tracing event corresponding to an activation scope")

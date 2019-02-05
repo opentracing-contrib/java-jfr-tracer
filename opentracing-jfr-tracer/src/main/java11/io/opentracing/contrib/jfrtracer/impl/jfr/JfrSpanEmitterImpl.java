@@ -16,6 +16,7 @@
 package io.opentracing.contrib.jfrtracer.impl.jfr;
 
 import jdk.jfr.Event;
+import jdk.jfr.Name;
 import jdk.jfr.Label;
 import jdk.jfr.Category;
 import jdk.jfr.Description;
@@ -30,6 +31,7 @@ public class JfrSpanEmitterImpl extends AbstractJfrSpanEmitter {
 
 	private volatile SpanEvent currentEvent;
 
+	@Name("io.opentracing.Span")
 	@Label("Span")
 	@Description("Open tracing event corresponding to a span.")
 	@Category("Open Tracing")
