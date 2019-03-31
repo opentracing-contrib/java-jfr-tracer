@@ -79,4 +79,9 @@ public final class TracerWrapper implements Tracer {
 	public Scope activateSpan(Span span) {
 		return scopeManager.activate(span, true);
 	}
+
+	@Override
+	public void close() {
+		delegate.close();
+	}
 }

@@ -16,6 +16,7 @@
 package io.opentracing.contrib.jfrtracer;
 
 import io.opentracing.Scope;
+import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
@@ -23,6 +24,7 @@ import jdk.jfr.FlightRecorder;
 import jdk.jfr.Recording;
 import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -33,7 +35,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Disabled;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -99,12 +100,12 @@ public class JfrTracerTest {
 		Tracer tracer = JfrTracerFactory.create(mockTracer);
 
 		// Generate span
-		assertNull(tracer.scopeManager().active());
+		assertNull(tracer.scopeManager().activeSpan());
 		tracer.activateSpan(tracer.buildSpan("test span").start()).close();
 
 		// Validate span was created and recorded in JFR
 		assertEquals(1, mockTracer.finishedSpans().size());
-		assertNull(tracer.scopeManager().active());
+		assertNull(tracer.scopeManager().activeSpan());
 	}
 
 	@Test
@@ -118,10 +119,10 @@ public class JfrTracerTest {
 		Recording recording = JfrTestUtils.startJFR();
 
 		// Generate span
-		assertNull(tracer.scopeManager().active());
+		assertNull(tracer.scopeManager().activeSpan());
 		try (Scope scope = tracer.activateSpan(tracer.buildSpan("outer span").start())) {
-			Scope activeScopeOuter = tracer.scopeManager().active();
-			assertNotNull(activeScopeOuter);
+			Span activeSpanOuter = tracer.scopeManager().activeSpan();
+			assertNotNull(activeSpanOuter);
 			recording.close();
 			while (!FlightRecorder.getFlightRecorder().getRecordings().isEmpty()) {
 				System.out.println(FlightRecorder.getFlightRecorder().getRecordings().size());
@@ -129,19 +130,19 @@ public class JfrTracerTest {
 			await().atMost(20, TimeUnit.SECONDS)
 					.until(() -> FlightRecorder.getFlightRecorder().getRecordings().isEmpty());
 			try (Scope inner = tracer.activateSpan(tracer.buildSpan("inner span").start())) {
-				Scope activeScopeInner = tracer.scopeManager().active();
-				assertNotNull(activeScopeInner);
-				assertNotEquals(activeScopeOuter, activeScopeInner);
+				Span activeSpanInner = tracer.scopeManager().activeSpan();
+				assertNotNull(activeSpanInner);
+				assertNotEquals(activeSpanOuter, activeSpanInner);
 			}
 		}
 		try (Scope scope = tracer.activateSpan(tracer.buildSpan("separate span").start())) {
-			Scope activeScope = tracer.scopeManager().active();
-			assertNotNull(activeScope);
-			assertFalse(activeScope.getClass().getSimpleName().contains("Scope"));
+			Span activeSpan = tracer.scopeManager().activeSpan();
+			assertNotNull(activeSpan);
+			assertFalse(activeSpan.getClass().getSimpleName().contains("Span"));
 		}
 
 		// Validate span was created and recorded in JFR
 		assertEquals(3, mockTracer.finishedSpans().size());
-		assertNull(tracer.scopeManager().active());
+		assertNull(tracer.scopeManager().activeSpan());
 	}
 }

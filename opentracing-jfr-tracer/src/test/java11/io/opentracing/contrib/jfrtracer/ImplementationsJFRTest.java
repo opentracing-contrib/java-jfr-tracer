@@ -23,6 +23,7 @@ import brave.propagation.Propagation.Factory;
 import io.jaegertracing.Configuration.CodecConfiguration;
 import io.jaegertracing.Configuration.ReporterConfiguration;
 import io.jaegertracing.Configuration.SamplerConfiguration;
+import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jdk.jfr.Recording;
@@ -85,6 +86,7 @@ public class ImplementationsJFRTest {
 		innerTest(BraveTracer.create(braveTracing));
 	}
 
+	@SuppressWarnings("try")
 	private void innerTest(Tracer testTracer) throws IOException {
 		Path output = Files.createTempFile("test-recording", ".jfr");
 		try {
@@ -95,9 +97,9 @@ public class ImplementationsJFRTest {
 
 				// Generate span
 				Span start = tracer.buildSpan("outer span").start();
-				tracer.scopeManager().activate(start);
-				tracer.activateSpan(tracer.buildSpan("inner span").start()).close();
-				tracer.scopeManager().active().close();
+                                try (Scope activate = tracer.scopeManager().activate(start)) {
+                                    tracer.activateSpan(tracer.buildSpan("inner span").start()).close();
+                                }
 				start.finish();
 
 				recording.dump(output);

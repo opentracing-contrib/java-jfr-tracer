@@ -49,6 +49,7 @@ final class ScopeManagerWrapper implements ScopeManager {
 	}
 
 	@Override
+        @Deprecated
 	public Scope active() {
 		return activeScope.get();
 	}
