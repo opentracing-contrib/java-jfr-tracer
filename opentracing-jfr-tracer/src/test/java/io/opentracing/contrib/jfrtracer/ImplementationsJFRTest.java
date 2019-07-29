@@ -44,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SuppressWarnings("deprecation")
-@Disabled("Skip until Jaeger and Brave supports 0.32.0")
 public class ImplementationsJFRTest {
 
 	@Test

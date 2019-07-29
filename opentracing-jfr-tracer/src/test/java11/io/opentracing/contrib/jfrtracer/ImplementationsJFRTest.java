@@ -46,7 +46,6 @@ import static io.jaegertracing.Configuration.JAEGER_SAMPLER_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("Skip until Jaeger and Brave supports 0.32.0")
 public class ImplementationsJFRTest {
 
 	@Test
