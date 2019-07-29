@@ -38,8 +38,8 @@ configurations {
 dependencies {
 	compile 'io.opentracing:opentracing-api:0.32.0'
 	testCompile 'io.opentracing:opentracing-mock:0.32.0'
-	testCompile 'io.jaegertracing:jaeger-core:0.34.0'
-	testCompile 'io.opentracing.brave:brave-opentracing:0.33.11'
+	testCompile 'io.jaegertracing:jaeger-core:0.35.2'
+	testCompile 'io.opentracing.brave:brave-opentracing:0.34.0'
 	testCompile 'io.opentracing.contrib:opentracing-concurrent:0.2.0'
 	testCompile 'org.awaitility:awaitility:3.1.3'
 	testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'

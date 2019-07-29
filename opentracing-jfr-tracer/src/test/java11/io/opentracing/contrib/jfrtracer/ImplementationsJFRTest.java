@@ -46,7 +46,6 @@ import static io.jaegertracing.Configuration.JAEGER_SAMPLER_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("Skip until Jaeger and Brave supports 0.32.0")
 public class ImplementationsJFRTest {
 
 	@Test
@@ -111,7 +110,7 @@ public class ImplementationsJFRTest {
 			events.stream().forEach(e -> {
 				assertNotNull(e.getString("operationName"));
 				if (e.getString("operationName").equals("inner span")) {
-					assertNotNull(e.getString("parentSpanId"));
+					assertNotNull(e.getString("parentId"));
 				}
 				assertNotNull(e.getString("traceId"));
 				assertNotNull(e.getString("spanId"));

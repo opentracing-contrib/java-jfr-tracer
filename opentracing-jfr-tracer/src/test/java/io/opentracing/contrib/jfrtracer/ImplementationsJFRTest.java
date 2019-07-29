@@ -44,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SuppressWarnings("deprecation")
-@Disabled("Skip until Jaeger and Brave supports 0.32.0")
 public class ImplementationsJFRTest {
 
 	@Test
@@ -112,7 +111,7 @@ public class ImplementationsJFRTest {
 			events.stream().forEach(e -> {
 				assertNotNull(e.getValue("operationName"));
 				if (e.getValue("operationName").equals("inner span")) {
-					assertNotNull(e.getValue("parentSpanId"));
+					assertNotNull(e.getValue("parentId"));
 				}
 				assertNotNull(e.getValue("traceId"));
 				assertNotNull(e.getValue("spanId"));
