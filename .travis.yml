@@ -4,7 +4,9 @@ addons:
 language: java
 install: true
 dist: trusty
-jdk: oraclejdk8
+jdk:
+  - openjdk11
+  - oraclejdk8
 script:
   - export ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME
   - export ORG_GRADLE_PROJECT_JAVA_11=`jdk_switcher home openjdk11`
