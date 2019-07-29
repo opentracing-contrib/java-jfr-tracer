@@ -4,12 +4,14 @@ addons:
 language: java
 install: true
 dist: trusty
-jdk:
-  - openjdk11
-  - oraclejdk8
+jdk: oraclejdk8
 script:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+  - sudo chmod 755 ./install-jdk.sh
+  - sudo ./install-jdk.sh -F 11 -L GPL -t jdk-11 -e -s
   - export ORG_GRADLE_PROJECT_JAVA_8=$JAVA_HOME
-  - export ORG_GRADLE_PROJECT_JAVA_11=`jdk_switcher home openjdk11`
+  - export ORG_GRADLE_PROJECT_JAVA_11=/home/travis/build/opentracing-contrib/java-jfr-tracer/jdk-11
+  - export JAVA_HOME=$ORG_GRADLE_PROJECT_JAVA_8
   - ./gradlew build
 branches:
   only:
