@@ -111,7 +111,7 @@ public class ImplementationsJFRTest {
 			events.stream().forEach(e -> {
 				assertNotNull(e.getValue("operationName"));
 				if (e.getValue("operationName").equals("inner span")) {
-					assertNotNull(e.getValue("parentSpanId"));
+					assertNotNull(e.getValue("parentId"));
 				}
 				assertNotNull(e.getValue("traceId"));
 				assertNotNull(e.getValue("spanId"));
